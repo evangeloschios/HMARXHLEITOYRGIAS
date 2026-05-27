@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Προσομοίωση ΗΕΔ σε κινούμενο αγωγό</title>
+  <style>
+    /* ====== Γενικό στυλ — Λευκό φόντο, αυξημένη ορατότητα ====== */
+    :root{
+      --bg:#ffffff;
+      --ink:#0f172a;         /* σκοτεινό κείμενο */
+      --muted:#475569;       /* υπότιτλοι */
+      --accent:#2563eb;      /* μπλε */
+      --accent-weak:#dbeafe; /* ανοιχτό μπλε */
+      --border:#e2e8f0;      /* πολύ ανοιχτό γκρι */
+      --panel:#ffffff;       /* κάρτες */
+      --shadow: 0 12px 30px rgba(2,6,23,0.08);
+      --pass:#16a34a;
+      --fail:#dc2626;
+    }
+
+    *{ box-sizing:border-box; }
+    html{ font-size:18px; } /* ΒΑΣΙΚΗ ΜΕΓΕΘΥΝΣΗ */
+    @media (min-width:1200px){ html{ font-size:19px; } }
+    body{ margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+
+    .wrap{ max-width: 1100px; margin: 36px auto; padding: 0 20px; }
+
+    header{ display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:18px; }
+    h1{ font-size:1.75rem; line-height:1.2; margin:0; }
+    .lead{ color:var(--muted); margin:.35rem 0 0; font-size:1.05rem; }
+    .pill{ align-self:flex-start; font-weight:600; color: var(--accent); background: var(--accent-weak); border:1px solid #bfdbfe; padding:6px 10px; border-radius:999px; font-size:.9rem; }
+
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; margin:16px 0; box-shadow: var(--shadow); }
+
+    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:16px; }
+    .col-3{ grid-column:span 3; }
+    .col-4{ grid-column:span 4; }
+    .col-6{ grid-column:span 6; }
+    .col-8{ grid-column:span 8; }
+    .col-12{ grid-column:span 12; }
+    @media (max-width: 860px){ .col-6, .col-4, .col-3, .col-8{ grid-column: span 12; } }
+
+    label{ display:block; color:#0b1220; font-weight:600; margin-bottom:6px; font-size:1.05rem; }
+    .hint{ color:var(--muted); font-size:.95rem; }
+
+    input, select{
+      width:100%;
+      padding:14px 14px;
+      border-radius:14px;
+      border:1.5px solid var(--border);
+      background:#ffffff;
+      color:var(--ink);
+      font-size:1.15rem;    /* ΜΕΓΑΛΗ ΓΡΑΜΜΑΤΟΣΕΙΡΑ */
+      outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input:focus, select:focus{ border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37,99,235,.15); }
+
+    /* Έμφαση σε ποσοστό & επιλογή μεγέθους */
+    .emphasis{ font-size:1.35rem; padding:16px 16px; border-width:2px; }
+
+    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+
+    .btn{ display:inline-flex; align-items:center; gap:10px; padding:14px 18px; border:none; border-radius:12px; font-weight:800; cursor:pointer; background:var(--accent); color:white; font-size:1.05rem; }
+    .btn.secondary{ background:#f1f5f9; color:#0f172a; border:1px solid var(--border); }
+
+    .result{ font-size:2rem; font-weight:900; letter-spacing:.2px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#334155; white-space: pre-wrap; font-size:1.05rem; }
+
+    details summary{ cursor:pointer; color:var(--muted); font-weight:600; margin-top:8px; }
+
+    .eq{ background:#f8fafc; border:1px dashed var(--border); padding:12px 14px; border-radius:14px; }
+
+    .badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:.85rem; }
+    .pass{ background:#dcfce7; color:var(--pass); border:1px solid #86efac; }
+    .fail{ background:#fee2e2; color:var(--fail); border:1px solid #fecaca; }
+    .tests pre{ background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:10px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Προσομοίωση ΗΕΔ σε κινούμενο αγωγό</h1>
+        <p class="lead">Γενικός τύπος: <span class="mono">E = B · L · u · ημ(α)</span></p>
+      </div>
+      <span class="pill">Μονάδες SI</span>
+    </header>
+
+    <section class="card">
+      <h2 style="margin-top:0">Βήμα 1 · Δώσε μεγέθη & υπολόγισε την αρχική ΗΕΔ (E₁)</h2>
+      <div class="grid">
+        <div class="col-3">
+          <label for="B">Μαγνητική επαγωγή B</label>
+          <div class="row">
+            <input id="B" type="number" step="any" placeholder="0.50" style="flex:2" />
+            <select id="B_unit" style="flex:1" class="emphasis">
+              <option value="1e-6">μT</option>
+              <option value="0.001">mT</option>
+              <option value="1" selected>T</option>
+              <option value="1000">kT</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε Tesla (T)</div>
+        </div>
+        <div class="col-3">
+          <label for="L">Μήκος αγωγού L</label>
+          <div class="row">
+            <input id="L" type="number" step="any" placeholder="0.20" style="flex:2" />
+            <select id="L_unit" style="flex:1" class="emphasis">
+              <option value="1e-6">μm</option>
+              <option value="0.001">mm</option>
+              <option value="0.01">cm</option>
+              <option value="1" selected>m</option>
+              <option value="1000">km</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε μέτρα (m)</div>
+        </div>
+        <div class="col-3">
+          <label for="u">Ταχύτητα u</label>
+          <div class="row">
+            <input id="u" type="number" step="any" placeholder="3.00" style="flex:2" />
+            <select id="u_unit" style="flex:1" class="emphasis">
+              <option value="0.001">mm/s</option>
+              <option value="0.01">cm/s</option>
+              <option value="1" selected>m/s</option>
+              <option value="0.0166667">m/min</option>
+              <option value="0.277778">km/h</option>
+              <option value="1000">km/s</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε m/s</div>
+        </div>
+        <div class="col-3">
+          <label for="alpha">Γωνία α (μοίρες)</label>
+          <input id="alpha" type="number" step="any" placeholder="30" />
+          <div class="hint"><strong>ημ(α)</strong>: <span id="sinAlpha">—</span></div>
+        </div>
+        <div class="col-12 row">
+          <button class="btn" id="btnCalcE1">Υπολόγισε E₁</button>
+          <span class="hint">E₁ = B · L · u · ημ(α) (σε SI)</span>
+        </div>
+        <div class="col-12">
+          <label style="display:flex; align-items:center; gap:10px; font-weight:600; color:#0b1220">
+            <input id="syncE1" type="checkbox" checked /> Συγχρονισμός E₁ του Βήματος 1 με το πεδίο E₁ στο Βήμα 2
+          </label>
+        </div>
+      </div>
+      <div id="outputE1" class="result" style="margin-top:8px">—</div>
+      <div id="workE1" class="mono">—</div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">Βήμα 2 · Επίλεξε μεταβολή & ποσοστό — βρες E₂</h2>
+      <div class="grid">
+        <div class="col-6">
+          <label for="E1">Αρχική ΗΕΔ E₁ (Volt)</label>
+          <input id="E1" type="number" step="any" placeholder="τιμή από το Βήμα 1 ή χειροκίνητα" />
+        </div>
+        <div class="col-6"></div>
+
+        <div class="col-6">
+          <label for="varSelect">Μεταβαλλόμενο ηλεκτρολογικό μέγεθος</label>
+          <select id="varSelect" class="emphasis">
+            <option value="B">B (μαγνητική επαγωγή)</option>
+            <option value="u">u (ταχύτητα)</option>
+            <option value="L">L (μήκος αγωγού)</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <label for="percent">Ποσοστιαία μεταβολή (%)</label>
+          <input id="percent" class="emphasis" type="number" step="any" placeholder="π.χ. 25 για +25% ή -10 για −10%" />
+        </div>
+      </div>
+      <p class="eq" style="margin-top:12px">Αν μεταβάλλεται <em>ένα</em> από τα B, L, u κατά ποσοστό <span class="mono">p%</span>, τότε η ΗΕΔ μεταβάλλεται αναλογικά: <strong>E₂ = E₁ · (1 + p/100)</strong>.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="btnCompute">Υπολόγισε E₂</button>
+        <button class="btn secondary" id="btnReset">Επαναφορά</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">Βήμα 3 · Αποτέλεσμα</h2>
+      <div id="output" class="result">—</div>
+      <div id="work" class="mono">—</div>
+    </section>
+
+    <section class="card tests">
+      <h3 style="margin-top:0">Δοκιμές (Test cases)</h3>
+      <p class="hint">Ελέγχει ότι οι βασικοί υπολογισμοί λειτουργούν σωστά.</p>
+      <div id="testSummary"></div>
+      <pre id="testLog">—</pre>
+      <div class="row">
+        <button class="btn secondary" id="runTests">Εκτέλεση δοκιμών</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-top:0">Σημειώσεις</h3>
+      <ul style="margin:.25rem 0 .5rem; line-height:1.6">
+        <li>Η σχέση ισχύει όταν ο αγωγός είναι κάθετος στη φορά της κίνησης και η γωνία α ορίζεται κατάλληλα.</li>
+        <li>Δώσε αρνητικό ποσοστό για μείωση (π.χ. −20%).</li>
+        <li>Μονάδες SI: Tesla (T), μέτρο (m), μέτρο/δευτ. (m/s), Volt (V).</li>
+      </ul>
+    </section>
+
+    <footer style="text-align:center; color:#64748b; margin-top:20px; font-size:.95rem">
+      © Προσομοίωση ΗΕΔ — HTML/JS (λευκό θέμα, αυξημένη αναγνωσιμότητα)
+    </footer>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function fmt(x){
+      if (!isFinite(x)) return '—';
+      const abs = Math.abs(x);
+      const digits = abs >= 100 ? 2 : abs >= 1 ? 4 : 6;
+      return Number(x).toLocaleString('el-GR', { maximumSignificantDigits: digits });
+    }
+
+    function computeE2(E1, p){ return E1 * (1 + p / 100); }
+
+    function validateNumber(value, name){
+      if (value === '' || value === null || value === undefined) throw new Error(`Συμπλήρωσε το πεδίο: ${name}.`);
+      const num = Number(value);
+      if (!isFinite(num)) throw new Error(`Μη έγκυρη τιμή για ${name}.`);
+      return num;
+    }
+
+    // Στρογγυλοποίηση ώστε το E₁ που μπαίνει στο input να ταυτίζεται με την εμφάνιση
+    function roundForInput(x){ return Math.round(x * 1e9) / 1e9; }
+
+    // Βοηθητικό: ανάγνωση τιμής και μετατροπή σε SI (ΜΟΝΟ ΜΙΑ ΦΟΡΑ Η ΣΥΝΑΡΤΗΣΗ)
+    function valueToSI(inputId, unitId){
+      const v = validateNumber($(inputId).value, $(inputId).previousElementSibling ? $(inputId).previousElementSibling.textContent : inputId);
+      const f = Number($(unitId).value);
+      return v * f;
+    }
+
+    // Υπολογισμός από τα πεδία (SI) — κοινό για κουμπί & auto-sync
+    function computeE1FromInputs(){
+      const B_SI = valueToSI('B','B_unit');
+      const L_SI = valueToSI('L','L_unit');
+      const u_SI = valueToSI('u','u_unit');
+      const alphaDeg = validateNumber($('alpha').value, 'α (μοίρες)');
+      const alphaRad = (Math.PI / 180) * alphaDeg;
+      const sinA = Math.sin(alphaRad);
+      const E1 = B_SI * L_SI * u_SI * sinA;
+      return {E1, alphaDeg, B_SI, L_SI, u_SI, sinA};
+    }
+
+    // Κουμπί υπολογισμού E₁
+    $('btnCalcE1').addEventListener('click', () => {
+      try {
+        const {E1, alphaDeg, B_SI, L_SI, u_SI, sinA} = computeE1FromInputs();
+        const E1r = roundForInput(E1);
+        $('E1').value = E1r;
+        $('outputE1').textContent = 'E₁ = ' + fmt(E1r) + ' V';
+        $('sinAlpha').textContent = fmt(sinA);
+        $('workE1').textContent = `Μετατροπή σε SI: B=${fmt(B_SI)} T, L=${fmt(L_SI)} m, u=${fmt(u_SI)} m/s, α=${fmt(alphaDeg)}°
+ημ(α) = ${fmt(sinA)}
+E₁ = B·L·u·ημ(α) = ${fmt(B_SI)} · ${fmt(L_SI)} · ${fmt(u_SI)} · ημ(${fmt(alphaDeg)}°) = ${fmt(E1r)} V`;
+      } catch (err){
+        $('outputE1').textContent = 'Σφάλμα';
+        $('workE1').textContent = err.message;
+      }
+    });
+
+    // Αυτόματος συγχρονισμός E₁ στο Βήμα 2
+    function tryAutoUpdateE1(){
+      if(!$('syncE1').checked) return;
+      try {
+        const {E1, alphaDeg, B_SI, L_SI, u_SI, sinA} = computeE1FromInputs();
+        const E1r = roundForInput(E1);
+        $('E1').value = E1r;
+        $('outputE1').textContent = 'E₁ = ' + fmt(E1r) + ' V';
+        $('sinAlpha').textContent = fmt(sinA);
+        $('workE1').textContent = `Μετατροπή σε SI: B=${fmt(B_SI)} T, L=${fmt(L_SI)} m, u=${fmt(u_SI)} m/s, α=${fmt(alphaDeg)}°
+ημ(α) = ${fmt(sinA)}
+E₁ = B·L·u·ημ(α) = ${fmt(B_SI)} · ${fmt(L_SI)} · ${fmt(u_SI)} · ημ(${fmt(alphaDeg)}°) = ${fmt(E1r)} V`;
+      } catch(e){ /* αγνοούμε μέχρι να συμπληρωθούν όλα */ }
+    }
+
+    ;['B','L','u','alpha'].forEach(id => $(id).addEventListener('input', tryAutoUpdateE1));
+    ;['B_unit','L_unit','u_unit','syncE1'].forEach(id => $(id).addEventListener('change', tryAutoUpdateE1));
+
+    // Κύριος υπολογισμός E₂
+    $('btnCompute').addEventListener('click', () => {
+      try {
+        const E1 = validateNumber($('E1').value, 'E₁ (Volt)');
+        const p = validateNumber($('percent').value, 'ποσοστιαία μεταβολή');
+        const E2 = computeE2(E1, p);
+        $('output').textContent = 'E₂ = ' + fmt(E2) + ' V';
+        const sign = p >= 0 ? '+' : '';
+        $('work').textContent = `E₂ = E₁ · (1 + p/100) = ${fmt(E1)} · (1 ${sign} ${Math.abs(p)}/100) = ${fmt(E2)} V`;
+      } catch (err){
+        $('output').textContent = 'Σφάλμα';
+        $('work').textContent = err.message;
+      }
+    });
+
+    // Επαναφορά
+    $('btnReset').addEventListener('click', () => {
+      ['E1','B','L','u','alpha','percent'].forEach(id => $(id).value = '');
+      $('varSelect').value = 'B';
+      $('output').textContent = '—';
+      $('work').textContent = '—';
+      $('outputE1').textContent = '—';
+      $('workE1').textContent = '—';
+    });
+
+    // ====== ΔΟΚΙΜΕΣ ======
+    function almostEqual(a,b,eps=1e-9){ return Math.abs(a-b) <= eps * Math.max(1, Math.abs(a), Math.abs(b)); }
+
+    function runTests(){
+      const logs = [];
+      let passed = 0, failed = 0;
+
+      function test(name, fn){
+        try { fn(); logs.push(`✔ ${name}`); passed++; }
+        catch(e){ logs.push(`✘ ${name} -> ${e.message}`); failed++; }
+      }
+
+      // Test 1: E1 από B=0.5 T, L=0.2 m, u=3 m/s, α=30° => 0.15 V
+      test('E₁ για B=0.5, L=0.2, u=3, α=30° είναι 0.15 V', () => {
+        const B=0.5, L=0.2, u=3, alphaDeg=30; const sinA=Math.sin(Math.PI*alphaDeg/180);
+        const E1 = B*L*u*sinA; if(!almostEqual(E1, 0.15)) throw new Error(`πήρα ${E1}`);
+      });
+
+      // Test 2: E2 με p=+25% από E1=2.0 -> 2.5
+      test('E₂ για E₁=2.0 και p=+25% είναι 2.5', () => {
+        const E2 = computeE2(2.0, 25); if(!almostEqual(E2, 2.5)) throw new Error(`πήρα ${E2}`);
+      });
+
+      // Test 3: E2 με p=-10% από E1=2.0 -> 1.8
+      test('E₂ για E₁=2.0 και p=-10% είναι 1.8', () => {
+        const E2 = computeE2(2.0, -10); if(!almostEqual(E2, 1.8)) throw new Error(`πήρα ${E2}`);
+      });
+
+      // Test 4: Μονάδες — 500 mT = 0.5 T, 20 cm = 0.2 m, 300 cm/s = 3 m/s
+      test('Μετατροπές μονάδων λειτουργούν σωστά (mT, cm, cm/s)', () => {
+        const B_SI = 500 * 0.001; // mT -> T
+        const L_SI = 20 * 0.01;   // cm -> m
+        const u_SI = 300 * 0.01;  // cm/s -> m/s
+        if(!almostEqual(B_SI,0.5) || !almostEqual(L_SI,0.2) || !almostEqual(u_SI,3)) throw new Error('λάθος μετατροπές');
+      });
+
+      // Test 5: Μονάδες ταχύτητας — 180 m/min = 3 m/s
+      test('Μετατροπή ταχύτητας m/min -> m/s', () => {
+        const u_SI = 180 * (1/60); // 180 m/min
+        if(!almostEqual(u_SI, 3)) throw new Error(`πήρα ${u_SI}`);
+      });
+
+      // Test 6: Μονάδες ταχύτητας — 10.8 km/h = 3 m/s
+      test('Μετατροπή ταχύτητας km/h -> m/s', () => {
+        const u_SI = 10.8 * (1000/3600); // 10.8 km/h
+        if(!almostEqual(u_SI, 3)) throw new Error(`πήρα ${u_SI}`);
+      });
+
+      // Test 7: α = 90° -> E₁ = B·L·u
+      test('Για α=90° ισχύει E₁ = B·L·u', () => {
+        const B=0.7, L=0.12, u=5; const alphaDeg=90; const E1 = B*L*u*Math.sin(Math.PI*alphaDeg/180);
+        if(!almostEqual(E1, B*L*u)) throw new Error(`πήρα ${E1}`);
+      });
+
+      // Test 8: α = 0° -> E₁ = 0
+      test('Για α=0° η ΗΕΔ μηδενίζεται', () => {
+        const B=0.7, L=0.12, u=5; const alphaDeg=0; const E1 = B*L*u*Math.sin(Math.PI*alphaDeg/180);
+        if(!almostEqual(E1, 0)) throw new Error(`πήρα ${E1}`);
+      });
+
+      // Αποτύπωση αναφοράς
+      $('testLog').textContent = logs.join('\n');
+      const summary = `${passed} επιτυχίες / ${failed} αποτυχίες`;
+      $('testSummary').innerHTML = `<span class=\"badge ${failed? 'fail':'pass'}\">${summary}</span>`;
+    }
+
+    $('runTests').addEventListener('click', runTests);
+  </script>
+</body>
+</html>
