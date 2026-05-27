@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Προσομοίωση: E = B·u·L·ημ(α)</title>
+  <style>
+    :root{ --bg:#ffffff; --ink:#0f172a; --muted:#475569; --accent:#2563eb; --accent-weak:#dbeafe; --border:#e2e8f0; --panel:#ffffff; --shadow:0 12px 30px rgba(2,6,23,.08); }
+    *{ box-sizing:border-box; }
+    html{ font-size:18px; }
+    @media (min-width:1200px){ html{ font-size:19px; } }
+    body{ margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap{ max-width:1100px; margin:32px auto; padding:0 20px; }
+    header{ display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:12px; }
+    h1{ margin:0; font-size:1.75rem; }
+    .lead{ color:var(--muted); margin:.25rem 0 0; }
+    .pill{ align-self:flex-start; color:var(--accent); background:var(--accent-weak); border:1px solid #bfdbfe; border-radius:999px; padding:6px 10px; font-weight:600; }
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; margin:14px 0; box-shadow:var(--shadow); }
+    .grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+    .col-6{ grid-column:span 6; }
+    @media (max-width:860px){ .col-6{ grid-column:span 12; } }
+    label{ display:block; font-weight:800; margin-bottom:6px; }
+    .hint{ color:var(--muted); font-size:.95rem; }
+    input, select{ width:100%; padding:14px; border-radius:14px; border:1.5px solid var(--border); font-size:1.15rem; outline:none; }
+    input:focus, select:focus{ border-color:var(--accent); box-shadow:0 0 0 4px rgba(37,99,235,.15); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn{ display:inline-flex; align-items:center; gap:10px; padding:14px 18px; border:none; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; cursor:pointer; }
+    .btn.secondary{ background:#f1f5f9; color:#0f172a; border:1px solid var(--border); }
+    .result{ font-size:2rem; font-weight:900; }
+    .mono{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:#334155; white-space:pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Προσομοίωση Ηλεκτρεγερτικής Δύναμης</h1>
+        <p class="lead">Τύπος: <span class="mono">E = B · L · u · ημ(α)</span> — Δώσε <strong>τέσσερις</strong> τιμές (με μονάδες) και βρες την <strong>πέμπτη</strong>.</p>
+      </div>
+      <span class="pill">Μονάδες SI εσωτερικά</span>
+    </header>
+
+    <section class="card">
+      <h2 style="margin-top:0">1) Επίλεξε ποιο μέγεθος είναι άγνωστο</h2>
+      <div class="grid">
+        <div class="col-6">
+          <label for="unknown">Άγνωστο μέγεθος</label>
+          <select id="unknown">
+            <option value="E">E (ηλεκτρεγερτική δύναμη)</option>
+            <option value="B">B (μαγνητική επαγωγή)</option>
+            <option value="L">L (μήκος αγωγού)</option>
+            <option value="u">u (ταχύτητα)</option>
+            <option value="alpha">α (μοίρες)</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint">Θα συμπληρώσεις τα υπόλοιπα τέσσερα. Το πεδίο του άγνωστου θα είναι απενεργοποιημένο.</p>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">2) Δώσε τιμές (με μονάδες)</h2>
+      <div class="grid">
+        <div class="col-6">
+          <label for="E">E (ηλεκτρεγερτική δύναμη)</label>
+          <div class="row">
+            <input id="E" type="number" step="any" placeholder="π.χ. 0.150" style="flex:2"/>
+            <select id="E_unit" style="flex:1">
+              <option value="1e-6">μV</option>
+              <option value="0.001">mV</option>
+              <option value="1" selected>V</option>
+              <option value="1000">kV</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε Volt (V)</div>
+        </div>
+
+        <div class="col-6">
+          <label for="B">B (μαγνητική επαγωγή)</label>
+          <div class="row">
+            <input id="B" type="number" step="any" placeholder="π.χ. 0.50" style="flex:2"/>
+            <select id="B_unit" style="flex:1">
+              <option value="1e-6">μT</option>
+              <option value="0.001">mT</option>
+              <option value="1" selected>T</option>
+              <option value="1000">kT</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε Tesla (T)</div>
+        </div>
+
+        <div class="col-6">
+          <label for="L">L (μήκος αγωγού)</label>
+          <div class="row">
+            <input id="L" type="number" step="any" placeholder="π.χ. 0.20" style="flex:2"/>
+            <select id="L_unit" style="flex:1">
+              <option value="1e-6">μm</option>
+              <option value="0.001">mm</option>
+              <option value="0.01">cm</option>
+              <option value="1" selected>m</option>
+              <option value="1000">km</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε μέτρα (m)</div>
+        </div>
+
+        <div class="col-6">
+          <label for="u">u (ταχύτητα)</label>
+          <div class="row">
+            <input id="u" type="number" step="any" placeholder="π.χ. 3.0" style="flex:2"/>
+            <select id="u_unit" style="flex:1">
+              <option value="0.001">mm/s</option>
+              <option value="0.01">cm/s</option>
+              <option value="1" selected>m/s</option>
+              <option value="0.0166667">m/min</option>
+              <option value="0.277778">km/h</option>
+              <option value="1000">km/s</option>
+            </select>
+          </div>
+          <div class="hint">Υπολογισμός πάντα σε m/s</div>
+        </div>
+
+        <div class="col-6">
+          <label for="alpha">α (μοίρες)</label>
+          <input id="alpha" type="number" step="any" placeholder="π.χ. 30"/>
+          <div class="hint">ημ(α): <span id="sinAlpha">—</span></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="btnSolve">Υπολόγισε το άγνωστο</button>
+        <button class="btn secondary" id="btnReset">Επαναφορά</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">3) Αποτέλεσμα</h2>
+      <div id="output" class="result">—</div>
+      <div id="work" class="mono">—</div>
+    </section>
+
+    <footer style="text-align:center;color:#64748b;margin-top:16px;font-size:.95rem">© Προσομοίωση ΗΕΔ — Εύρεση άγνωστου μεγέθους</footer>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const rad = d => d*Math.PI/180; const deg = r => r*180/Math.PI;
+    function fmt(x){ if(!isFinite(x)) return '—'; const a=Math.abs(x); const d=a>=100?2:a>=1?4:6; return Number(x).toLocaleString('el-GR',{maximumSignificantDigits:d}); }
+    function readVal(id,label){ const v=$(id).value; if(v===''||v===null) throw new Error(`Συμπλήρωσε ${label}.`); const n=Number(v); if(!isFinite(n)) throw new Error(`Μη έγκυρη τιμή για ${label}.`); return n; }
+    function toSI(v, f){ return v*f; }
+
+    function readKnownsSI(){
+      const unknown = $('unknown').value;
+      const known = {};
+      if(unknown!=='E'){ known.E = toSI(readVal('E','E'), Number($('E_unit').value)); }
+      if(unknown!=='B'){ known.B = toSI(readVal('B','B'), Number($('B_unit').value)); }
+      if(unknown!=='L'){ known.L = toSI(readVal('L','L'), Number($('L_unit').value)); }
+      if(unknown!=='u'){ known.u = toSI(readVal('u','u'), Number($('u_unit').value)); }
+      if(unknown!=='alpha'){ known.alpha = readVal('alpha','α (μοίρες)'); }
+      return {unknown, known};
+    }
+
+    function solve(){
+      const {unknown, known} = readKnownsSI();
+      let E,B,L,u,alpha; const work=[];
+      switch(unknown){
+        case 'E':
+          ({B,L,u,alpha} = known); const s = Math.sin(rad(alpha)); $('sinAlpha').textContent = fmt(s);
+          E = B*L*u*s; $('output').textContent = `E = ${fmt(E)} V`;
+          work.push(`sin(α) = ${fmt(s)}`);
+          work.push(`E = B·L·u·ημ(α) = ${fmt(B)} · ${fmt(L)} · ${fmt(u)} · ${fmt(s)} = ${fmt(E)} V`);
+          break;
+        case 'B':
+          ({E,L,u,alpha} = known); const s1 = Math.sin(rad(alpha)); $('sinAlpha').textContent = fmt(s1);
+          if(s1===0 || L===0 || u===0) throw new Error('Μηδενικός παρονομαστής: L, u ή ημ(α) είναι 0.');
+          B = E/(L*u*s1); $('output').textContent = `B = ${fmt(B)} T`;
+          work.push(`sin(α) = ${fmt(s1)}`);
+          work.push(`B = E / (L·u·ημ(α)) = ${fmt(E)} / (${fmt(L)}·${fmt(u)}·${fmt(s1)}) = ${fmt(B)} T`);
+          break;
+        case 'L':
+          ({E,B,u,alpha} = known); const s2 = Math.sin(rad(alpha)); $('sinAlpha').textContent = fmt(s2);
+          if(s2===0 || B===0 || u===0) throw new Error('Μηδενικός παρονομαστής: B, u ή ημ(α) είναι 0.');
+          L = E/(B*u*s2); $('output').textContent = `L = ${fmt(L)} m`;
+          work.push(`sin(α) = ${fmt(s2)}`);
+          work.push(`L = E / (B·u·ημ(α)) = ${fmt(E)} / (${fmt(B)}·${fmt(u)}·${fmt(s2)}) = ${fmt(L)} m`);
+          break;
+        case 'u':
+          ({E,B,L,alpha} = known); const s3 = Math.sin(rad(alpha)); $('sinAlpha').textContent = fmt(s3);
+          if(s3===0 || B===0 || L===0) throw new Error('Μηδενικός παρονομαστής: B, L ή ημ(α) είναι 0.');
+          u = E/(B*L*s3); $('output').textContent = `u = ${fmt(u)} m/s`;
+          work.push(`sin(α) = ${fmt(s3)}`);
+          work.push(`u = E / (B·L·ημ(α)) = ${fmt(E)} / (${fmt(B)}·${fmt(L)}·${fmt(s3)}) = ${fmt(u)} m/s`);
+          break;
+        case 'alpha':
+          ({E,B,L,u} = known); const denom = B*L*u; if(denom===0) throw new Error('Μηδενικό γινόμενο B·L·u — δεν ορίζεται α.');
+          const x = E/denom; if(Math.abs(x)>1) throw new Error(`|E|/(B·L·u) = ${fmt(x)} > 1 — δεν υπάρχει πραγματική λύση για α.`);
+          alpha = deg(Math.asin(x)); const alt = 180 - alpha;
+          $('sinAlpha').textContent = fmt(x);
+          $('output').textContent = `α = ${fmt(alpha)}° (εναλλακτικά: ${fmt(alt)}°)`;
+          work.push(`ημ(α) = E/(B·L·u) = ${fmt(E)} / (${fmt(B)}·${fmt(L)}·${fmt(u)}) = ${fmt(x)}`);
+          work.push(`α = arcsin(${fmt(x)}) = ${fmt(alpha)}°  (ή ${fmt(alt)}°)`);
+          break;
+      }
+      $('work').textContent = work.join('\n');
+    }
+
+    function updateDisabled(){
+      const u = $('unknown').value; const ids=['E','B','L','u','alpha'];
+      ids.forEach(id=>{ const dis = id===u; $(id).disabled = dis; if(id!=='alpha'){ const sel = $(`${id}_unit`); if(sel) sel.disabled = dis; } });
+      $('output').textContent='—'; $('work').textContent='—'; $('sinAlpha').textContent='—';
+    }
+
+    function showSinAlpha(){ try{ const a = readVal('alpha','α'); const s=Math.sin(rad(a)); $('sinAlpha').textContent = fmt(s); }catch(e){ $('sinAlpha').textContent = '—'; } }
+
+    $('unknown').addEventListener('change', updateDisabled);
+    $('alpha').addEventListener('input', showSinAlpha);
+    $('btnSolve').addEventListener('click', ()=>{ try{ solve(); }catch(err){ $('output').textContent='Σφάλμα'; $('work').textContent = err.message; } });
+    $('btnReset').addEventListener('click', ()=>{ ['E','B','L','u','alpha'].forEach(id=>$(id).value=''); ['E_unit','B_unit','L_unit','u_unit'].forEach(id=>$(id).value='1'); updateDisabled(); });
+
+    updateDisabled();
+  </script>
+</body>
+</html>
