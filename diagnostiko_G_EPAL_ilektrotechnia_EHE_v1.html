@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Διαγνωστικό τεστ Γ΄ Ηλεκτρολόγων – Ηλεκτροτεχνία & Εσωτερικές Ηλεκτρικές Εγκαταστάσεις</title>
+<style>
+:root{--ink:#10213a;--blue:#155b99;--blue2:#0f4c81;--bg:#eef6ff;--ok:#15803d;--bad:#b91c1c;--soft:#eff6ff;--line:#cbd5e1;--amber:#9a6700}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,#dbeafe,#f8fafc);line-height:1.45}
+header{background:linear-gradient(120deg,#102a4c,#155b99);color:white;padding:25px 14px;text-align:center}header h1{margin:0 0 6px;font-size:clamp(1.45rem,4vw,2.15rem)}header p{margin:4px 0}.wrap{max-width:1000px;margin:20px auto;padding:0 14px 30px}.panel,.q{background:white;border-radius:17px;padding:20px;box-shadow:0 8px 24px #17385d1c;margin-bottom:15px}.meta{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.meta label{font-weight:800}.meta input{width:100%;display:block;padding:11px;border:2px solid var(--line);border-radius:10px;margin-top:6px;font:inherit}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.tag{background:#dbeafe;color:#174f83;border-radius:999px;padding:6px 10px;font-weight:800;font-size:.92rem}.timer{position:sticky;top:10px;z-index:3;margin:0 0 12px auto;width:max-content;background:#102a4c;color:white;padding:10px 16px;border-radius:12px;font-weight:900;box-shadow:0 4px 16px #0002}.progress{font-weight:800;margin-top:12px}.section-label{display:inline-block;border-radius:999px;padding:4px 9px;font-size:.82rem;font-weight:900;margin-bottom:5px}.section-label.electro{background:#e0f2fe;color:#075985}.section-label.install{background:#ecfdf5;color:#166534}.q{border:2px solid transparent}.q.correct{border-color:#22c55e}.q.wrong{border-color:#ef4444}.q p{font-weight:850;margin:6px 0 12px}.opts{display:grid;gap:8px}.opts label{background:var(--soft);padding:11px;border-radius:10px;cursor:pointer;border:1px solid #dbeafe}.opts label:hover{background:#e0efff}.feedback{font-weight:850;margin-top:9px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.actions button{border:0;border-radius:11px;background:var(--blue);color:white;padding:13px 18px;font:inherit;font-weight:850;cursor:pointer}.actions button:disabled{opacity:.45;cursor:not-allowed}.result{font-size:1.08rem;font-weight:800}.result h2{margin-top:0}.warning{color:var(--bad);font-weight:850}.okmsg{color:var(--ok);font-weight:850}.scores{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.scorebox{background:#f8fafc;border:1px solid #dbe4ee;border-radius:12px;padding:14px}.scorebox strong{display:block;font-size:1.3rem}.diagnostic{margin-top:12px;padding:12px;border-radius:12px;background:#fffbeb;border:1px solid #fde68a;color:#713f12}.hidden{display:none}footer{text-align:center;padding:20px;color:#475569;font-size:.9rem}@media(max-width:700px){.meta,.scores{grid-template-columns:1fr}.panel,.q{padding:16px}.timer{top:6px}}@media print{.timer,.actions{display:none!important}body{background:white}.panel,.q{box-shadow:none;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+<header>
+<h1>Διαγνωστικό τεστ Γ΄ Ηλεκτρολόγων</h1>
+<p>Γνώσεις από τη Β΄ ΕΠΑΛ</p>
+<p>Ηλεκτροτεχνία • Εσωτερικές Ηλεκτρικές Εγκαταστάσεις • Ε. Κοκκώδης</p>
+</header>
+<main class="wrap">
+<div class="timer" id="timer">30:00</div>
+<section class="panel">
+<div class="meta">
+<label>Ονοματεπώνυμο<input id="studentName" autocomplete="name" required></label>
+<label>Τμήμα<input id="classSection" value="Γ΄ Ηλεκτρολόγων" required></label>
+<label>Ημερομηνία<input id="testDate" type="date" required></label>
+</div>
+<div class="tags"><span class="tag">30 ερωτήσεις</span><span class="tag">15 + 15</span><span class="tag">Εύκολες–μέτριες</span><span class="tag">Τυχαία σειρά</span><span class="tag">30 λεπτά</span><span class="tag">Αποθήκευση στο Drive</span></div>
+<p><b>Σκοπός:</b> να διαπιστώσουμε ποιες βασικές γνώσεις της Β΄ τάξης έχουν διατηρηθεί. Το τεστ είναι διαγνωστικό και δεν εστιάζει στα δύσκολα σημεία της ύλης. Οι ερωτήσεις και οι επιλογές εμφανίζονται σε διαφορετική σειρά σε κάθε άνοιγμα του τεστ.</p>
+<div class="progress" id="progress">Απαντήθηκαν: 0/30</div>
+</section>
+<section id="quiz"></section>
+<div class="actions"><button id="checkBtn">Οριστικός έλεγχος</button><button id="submitBtn" disabled>Υποβολή στο Drive</button></div>
+<div id="message" class="panel result">Το τεστ δεν έχει ακόμη βαθμολογηθεί.</div>
+<form id="postForm" class="hidden" method="POST" target="submissionWindow" action="https://script.google.com/macros/s/AKfycbwLxjjxI9PWRlpNiBRtG_8Qd4k1Arv0u0g5FZYYXGyEfacnCPnWGY1HiJcjAphA9-YU/exec"></form>
+</main>
+<footer>Διαγνωστικό τεστ • Γ΄ Ηλεκτρολόγων • Γνώσεις Β΄ ΕΠΑΛ</footer>
+<script>
+const ENDPOINT='https://script.google.com/macros/s/AKfycbwLxjjxI9PWRlpNiBRtG_8Qd4k1Arv0u0g5FZYYXGyEfacnCPnWGY1HiJcjAphA9-YU/exec';
+const QUIZ_CODE='DIAGNOSTIC_G_EPAL_ELECTROTECHNIA_EHE_V1_2026';
+const QUIZ_TITLE='Διαγνωστικό τεστ Γ΄ Ηλεκτρολόγων – Ηλεκτροτεχνία & Εσωτερικές Ηλεκτρικές Εγκαταστάσεις';
+const DURATION_SECONDS=30*60;
+const sectionNames={E:'Ηλεκτροτεχνία',I:'Εσωτερικές Ηλεκτρικές Εγκαταστάσεις'};
+const source=[
+{s:'E',q:'Ποια είναι η μονάδα μέτρησης της έντασης του ηλεκτρικού ρεύματος;',o:['Volt (V)','Ampere (A)','Ohm (Ω)','Watt (W)'],a:1},
+{s:'E',q:'Ο Νόμος του Ωμ γράφεται ως…',o:['U = R·I','U = R/I','I = U·R','R = U·I'],a:0},
+{s:'E',q:'Σε αντίσταση 6 Ω εφαρμόζεται τάση 12 V. Το ρεύμα είναι…',o:['0,5 A','2 A','6 A','72 A'],a:1},
+{s:'E',q:'Δύο αντιστάσεις 4 Ω και 6 Ω συνδέονται σε σειρά. Η συνολική αντίσταση είναι…',o:['2 Ω','5 Ω','10 Ω','24 Ω'],a:2},
+{s:'E',q:'Σε σύνδεση αντιστάσεων σε σειρά, ποιο μέγεθος είναι ίδιο σε όλες τις αντιστάσεις;',o:['Η τάση','Το ρεύμα','Η ισχύς','Η αντίσταση'],a:1},
+{s:'E',q:'Σε παράλληλη σύνδεση αντιστάσεων, ποιο μέγεθος είναι ίδιο στα άκρα όλων των κλάδων;',o:['Η τάση','Το ρεύμα','Η αντίσταση','Η ισχύς'],a:0},
+{s:'E',q:'Δύο ίσες αντιστάσεις των 6 Ω συνδέονται παράλληλα. Η ισοδύναμη αντίσταση είναι…',o:['12 Ω','6 Ω','3 Ω','1 Ω'],a:2},
+{s:'E',q:'Ο 1ος νόμος του Kirchhoff σε έναν κόμβο εκφράζει ότι…',o:['το άθροισμα των ρευμάτων που εισέρχονται ισούται με το άθροισμα των ρευμάτων που εξέρχονται','η τάση είναι πάντα 230 V','όλες οι αντιστάσεις είναι ίσες','η ισχύς είναι μηδενική'],a:0},
+{s:'E',q:'Η ηλεκτρική ισχύς σε απλό κύκλωμα υπολογίζεται από τη σχέση…',o:['P = U·I','P = U/I','P = R/I','P = U·t'],a:0},
+{s:'E',q:'Συσκευή λειτουργεί με 230 V και ρεύμα 2 A. Η ισχύς της είναι…',o:['115 W','230 W','460 W','920 W'],a:2},
+{s:'E',q:'Μια μπαταρία τροφοδοτεί συνήθως ένα κύκλωμα με…',o:['συνεχές ρεύμα (DC)','εναλλασσόμενο ρεύμα (AC)','τριφασικό ρεύμα μόνο','ρεύμα συχνότητας 50 kHz'],a:0},
+{s:'E',q:'Η συχνότητα του δικτύου εναλλασσόμενου ρεύματος στην Ελλάδα είναι…',o:['25 Hz','50 Hz','100 Hz','230 Hz'],a:1},
+{s:'E',q:'Αν η συχνότητα είναι 50 Hz, η περίοδος είναι…',o:['0,02 s','0,2 s','2 s','50 s'],a:0},
+{s:'E',q:'Σε καθαρά ωμικό φορτίο στο εναλλασσόμενο ρεύμα, τάση και ρεύμα είναι…',o:['σε φάση','με διαφορά φάσης 90°','πάντα αντίθετα','χωρίς καμία σχέση'],a:0},
+{s:'E',q:'Ένα πηνίο, όταν διαρρέεται από ρεύμα, δημιουργεί κυρίως…',o:['μαγνητικό πεδίο','χημική αντίδραση','μόνο θερμότητα χωρίς πεδίο','μηχανική τάση'],a:0},
+
+{s:'I',q:'Μια εσωτερική ηλεκτρική εγκατάσταση είναι κυρίως…',o:['το σύνολο αγωγών και συσκευών για μεταφορά και διανομή ηλεκτρικής ενέργειας στους καταναλωτές','μόνο ο ηλεκτρικός πίνακας','μόνο οι πρίζες ενός κτιρίου','μόνο τα φωτιστικά'],a:0},
+{s:'I',q:'Καλώδιο ονομάζεται…',o:['το σύνολο μονωμένων αγωγών μέσα στο ίδιο περίβλημα','κάθε γυμνό χάλκινο σύρμα','μόνο ο αγωγός γείωσης','ο πλαστικός σωλήνας της εγκατάστασης'],a:0},
+{s:'I',q:'Ο αγωγός προστασίας (γείωσης) αναγνωρίζεται συνήθως από το χρώμα…',o:['πράσινο-κίτρινο','μπλε','μαύρο','κόκκινο'],a:0},
+{s:'I',q:'Ο ουδέτερος αγωγός αναγνωρίζεται συνήθως από το χρώμα…',o:['μπλε','πράσινο-κίτρινο','πορτοκαλί','λευκό'],a:0},
+{s:'I',q:'Η ονομαστική τάση μιας συνηθισμένης μονοφασικής παροχής χαμηλής τάσης είναι περίπου…',o:['24 V','110 V','230 V','400 V μεταξύ φάσης και ουδετέρου'],a:2},
+{s:'I',q:'Σε ένα τριφασικό δίκτυο χαμηλής τάσης, η τάση μεταξύ δύο φάσεων είναι περίπου…',o:['12 V','230 V','400 V','1000 V'],a:2},
+{s:'I',q:'Η ασφάλεια ή ο μικροαυτόματος μιας γραμμής προστατεύει κυρίως από…',o:['υπερένταση και βραχυκύκλωμα','πτώση φωτισμού','χαμηλή θερμοκρασία','έλλειψη γείωσης μόνο'],a:0},
+{s:'I',q:'Ο διακόπτης διαφορικού ρεύματος (ρελέ διαρροής) χρησιμοποιείται κυρίως για…',o:['προστασία από επικίνδυνα ρεύματα διαρροής και ηλεκτροπληξία','αύξηση της τάσης','μέτρηση της ενέργειας','εκκίνηση κινητήρων'],a:0},
+{s:'I',q:'Ο απλός διακόπτης φωτισμού χρησιμοποιείται για έλεγχο ενός φωτιστικού σημείου από…',o:['μία θέση','δύο θέσεις υποχρεωτικά','τρεις θέσεις υποχρεωτικά','τον ηλεκτρικό πίνακα μόνο'],a:0},
+{s:'I',q:'Η συνδεσμολογία αλέ-ρετούρ επιτρέπει τον έλεγχο ενός φωτιστικού από…',o:['δύο διαφορετικές θέσεις','μία μόνο θέση','μόνο τον πίνακα','δύο διαφορετικές φάσεις'],a:0},
+{s:'I',q:'Ο κύριος σκοπός της γείωσης προστασίας είναι…',o:['να μειώνει τον κίνδυνο ηλεκτροπληξίας σε περίπτωση βλάβης μόνωσης','να αυξάνει την κατανάλωση','να αυξάνει την τάση στις πρίζες','να αντικαθιστά όλες τις ασφάλειες'],a:0},
+{s:'I',q:'Ο ηλεκτρικός πίνακας μιας κατοικίας χρησιμοποιείται για…',o:['διανομή, έλεγχο και προστασία των επιμέρους γραμμών','παραγωγή ηλεκτρικής ενέργειας','αποθήκευση ηλεκτρικής ενέργειας','μόνο μέτρηση φωτισμού'],a:0},
+{s:'I',q:'Ο ρευματοδότης είναι…',o:['η πρίζα στην οποία συνδέεται ένας ρευματολήπτης','το φις μιας συσκευής','η ασφάλεια του πίνακα','ο διακόπτης φωτισμού'],a:0},
+{s:'I',q:'Όταν αυξάνεται η διατομή ενός αγωγού, για ίδιο υλικό και μήκος, η αντίστασή του γενικά…',o:['μειώνεται','αυξάνεται','μένει πάντα ίδια','μηδενίζεται υποχρεωτικά'],a:0},
+{s:'I',q:'Πριν από εργασία σε ηλεκτρικό κύκλωμα, η ασφαλής βασική ενέργεια είναι…',o:['διακοπή της τροφοδοσίας και έλεγχος ότι δεν υπάρχει τάση','αλλαγή ασφάλειας με το κύκλωμα υπό τάση','άγγιγμα του αγωγού για δοκιμή','βραχυκύκλωση φάσης και ουδετέρου'],a:0}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let questions=source.map((x,i)=>({...x,id:i,order:shuffle(x.o.map((_,j)=>j))}));
+shuffle(questions);
+const quiz=document.getElementById('quiz'),msg=document.getElementById('message'),checkBtn=document.getElementById('checkBtn'),submitBtn=document.getElementById('submitBtn'),progress=document.getElementById('progress');
+let hasChecked=false,submitted=false,score=0,sectionScores={E:0,I:0};
+testDate.value=new Date().toISOString().slice(0,10);
+quiz.innerHTML=questions.map((x,i)=>`<article class="q" data-i="${i}" data-section="${x.s}"><span class="section-label ${x.s==='E'?'electro':'install'}">${sectionNames[x.s]}</span><p>${i+1}. ${x.q}</p><div class="opts">${x.order.map(j=>`<label><input type="radio" name="q${i}" value="${j}"> ${x.o[j]}</label>`).join('')}</div><div class="feedback"></div></article>`).join('');
+function updateProgress(){const n=questions.filter((_,i)=>document.querySelector(`input[name=q${i}]:checked`)).length;progress.textContent=`Απαντήθηκαν: ${n}/${questions.length}`}
+quiz.addEventListener('change',updateProgress);
+function allComplete(){return studentName.value.trim()&&classSection.value.trim()&&testDate.value&&questions.every((_,i)=>document.querySelector(`input[name=q${i}]:checked`))}
+function levelText(v){if(v>=12)return 'Καλή διατήρηση βασικών γνώσεων.';if(v>=9)return 'Ικανοποιητική βάση, με ορισμένα σημεία για επανάληψη.';return 'Χρειάζεται βασική επανάληψη πριν προχωρήσουμε σε πιο σύνθετα θέματα.'}
+function grade(){
+ if(hasChecked)return;
+ if(!allComplete()){msg.innerHTML='<span class="warning">Συμπλήρωσε τα στοιχεία σου και απάντησε σε όλες τις ερωτήσεις.</span>';return}
+ hasChecked=true;score=0;sectionScores={E:0,I:0};
+ document.querySelectorAll('.q').forEach((el,i)=>{const v=+el.querySelector('input:checked').value,q=questions[i],ok=v===q.a;if(ok){score++;sectionScores[q.s]++}el.classList.add(ok?'correct':'wrong');el.querySelector('.feedback').textContent=ok?'Σωστά':'Λάθος';el.querySelectorAll('input').forEach(x=>x.disabled=true)});
+ studentName.disabled=classSection.disabled=testDate.disabled=true;checkBtn.disabled=true;submitBtn.disabled=false;
+ const percent=Math.round(score/questions.length*100),grade20=(score/questions.length*20).toFixed(1).replace('.',',');
+ msg.innerHTML=`<h2>Αποτέλεσμα διαγνωστικού</h2><div>Σύνολο: <b>${score}/${questions.length}</b> • ${percent}% <span style="font-weight:500">(ενδεικτικά ${grade20}/20)</span></div><div class="scores"><div class="scorebox"><strong>${sectionScores.E}/15</strong>Ηλεκτροτεχνία<br><small>${levelText(sectionScores.E)}</small></div><div class="scorebox"><strong>${sectionScores.I}/15</strong>Εσωτερικές Ηλεκτρικές Εγκαταστάσεις<br><small>${levelText(sectionScores.I)}</small></div></div><div class="diagnostic">Το αποτέλεσμα είναι διαγνωστικό. Στόχος είναι να εντοπιστούν τα βασικά σημεία που χρειάζονται επανάληψη στην αρχή της Γ΄ τάξης.</div><p class="okmsg">Τώρα μπορείς να πατήσεις «Υποβολή στο Drive».</p>`;
+}
+checkBtn.onclick=grade;
+function compactCopy(){
+ const clone=document.documentElement.cloneNode(true),originalInputs=[...document.querySelectorAll('input')],clonedInputs=[...clone.querySelectorAll('input')],stamp=new Date().toISOString();
+ originalInputs.forEach((src,i)=>{const dst=clonedInputs[i];if(!dst)return;if(src.type==='radio'||src.type==='checkbox'){src.checked?dst.setAttribute('checked',''):dst.removeAttribute('checked')}else dst.setAttribute('value',src.value);dst.setAttribute('disabled','')});
+ clone.querySelectorAll('.q').forEach((el,i)=>{const feedback=el.querySelector('.feedback'),q=questions[i];if(feedback&&q&&feedback.textContent.trim()==='Λάθος')feedback.textContent='Λάθος • Σωστή απάντηση: '+q.o[q.a]});
+ clone.querySelectorAll('script').forEach(el=>el.remove());const form=clone.querySelector('#postForm');if(form)form.remove();clone.querySelectorAll('button').forEach(el=>el.setAttribute('disabled',''));
+ const timerCopy=clone.querySelector('#timer');if(timerCopy)timerCopy.textContent='Ολοκληρώθηκε';const messageCopy=clone.querySelector('#message');if(messageCopy)messageCopy.innerHTML=msg.innerHTML+'<p>Υποβλήθηκε: '+new Date(stamp).toLocaleString('el-GR')+'</p>';
+ const bodyCopy=clone.querySelector('body');if(bodyCopy)bodyCopy.setAttribute('data-submission-copy','locked');const meta=document.createElement('meta');meta.name='submission-created-at';meta.content=stamp;clone.querySelector('head').appendChild(meta);
+ return '<!doctype html>'+clone.outerHTML
+}
+function field(n,v){const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;postForm.appendChild(i)}
+submitBtn.onclick=()=>{
+ if(!hasChecked){msg.innerHTML='<span class="warning">Πρέπει πρώτα να γίνει ο οριστικός έλεγχος.</span>';return}
+ if(submitted)return;submitted=true;submitBtn.disabled=true;postForm.innerHTML='';
+ const percent=Math.round(score/questions.length*100),grade20=(score/questions.length*20).toFixed(1);
+ const answers=questions.map((x,i)=>{const selected=+document.querySelector(`input[name=q${i}]:checked`).value;return{id:x.id,section:x.s,sectionName:sectionNames[x.s],question:x.q,selected,selectedText:x.o[selected],correct:x.a,correctText:x.o[x.a],isCorrect:selected===x.a}});
+ const sectionResult={E:{name:sectionNames.E,score:sectionScores.E,total:15},I:{name:sectionNames.I,score:sectionScores.I,total:15}};
+ [['quizCode',QUIZ_CODE],['quizTitle',QUIZ_TITLE],['studentName',studentName.value],['classSection',classSection.value],['testDate',testDate.value],['score',score],['total',questions.length],['percent',percent],['grade20',grade20],['sectionScores',JSON.stringify(sectionResult)],['answers',JSON.stringify(answers)],['htmlContent',compactCopy()],['userAgent',navigator.userAgent],['submittedAt',new Date().toISOString()]].forEach(x=>field(...x));
+ window.open('','submissionWindow');postForm.submit();msg.innerHTML+='<p class="okmsg">Η υποβολή άνοιξε σε νέα καρτέλα. Αν εμφανιστεί «OK», το αρχείο αποθηκεύτηκε στο Google Drive.</p>';
+};
+let deadline=Date.now()+DURATION_SECONDS*1000;
+const timerHandle=setInterval(()=>{if(hasChecked){timer.textContent='Ολοκληρώθηκε';clearInterval(timerHandle);return}const left=Math.max(0,Math.ceil((deadline-Date.now())/1000));timer.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left===0){clearInterval(timerHandle);timer.textContent='00:00';msg.innerHTML='<span class="warning">Ο χρόνος ολοκληρώθηκε. Συμπλήρωσε τυχόν κενές απαντήσεις και κάνε οριστικό έλεγχο.</span>'}},1000);
+updateProgress();
+</script>
+</body>
+</html>
