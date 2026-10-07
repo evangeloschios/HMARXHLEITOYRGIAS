@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drag & Drop Ακροδεκτών Μηχανής Σ.Ρ.</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --soft:#eef4ff;
+      --line:#dbe3ef;
+      --good:#15803d;
+      --bad:#b91c1c;
+      --accent:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:linear-gradient(180deg,#eaf2ff 0%, #f4f7fb 45%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.45;
+    }
+    header,main,footer{
+      max-width:1260px;
+      margin:0 auto;
+      padding-left:18px;
+      padding-right:18px;
+    }
+    header{padding-top:20px}
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px 20px;
+      box-shadow:0 12px 34px rgba(15,23,42,.08);
+    }
+    h1{
+      margin:0 0 6px;
+      font-size:clamp(1.35rem,2.5vw,2rem);
+      color:#0f172a;
+    }
+    .subtitle{margin:0;color:var(--muted)}
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    .chip{
+      background:var(--soft);
+      border:1px solid #cfe0ff;
+      color:#1e3a8a;
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:800;
+    }
+    main{padding-top:10px;padding-bottom:34px}
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      margin:14px 0;
+      box-shadow:0 8px 24px rgba(15,23,42,.05);
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:2px 0 10px;
+      padding-bottom:8px;
+      border-bottom:1px solid var(--line);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:32px;
+      height:32px;
+      border-radius:999px;
+      background:#dbeafe;
+      color:#1d4ed8;
+      font-weight:900;
+    }
+    h2{margin:0;font-size:1.16rem}
+    .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem}
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(250px,.42fr) minmax(680px,1.58fr);
+      gap:14px;
+      align-items:start;
+    }
+    .bank{
+      border:1px dashed #b9c5d6;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:12px;
+      position:sticky;
+      top:8px;
+    }
+    .bank-title{font-weight:900;color:#334155;margin:0 0 8px}
+    .cards{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .card{
+      user-select:none;
+      border:1px solid #cbd5e1;
+      background:#fff;
+      border-radius:12px;
+      padding:9px 12px;
+      cursor:grab;
+      font-weight:900;
+      font-size:.94rem;
+      box-shadow:0 4px 12px rgba(15,23,42,.06);
+      touch-action:manipulation;
+    }
+    .card:active{cursor:grabbing}
+    .card.selected{
+      outline:3px solid rgba(37,99,235,.22);
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+
+    .buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.92rem;
+      transition:.15s ease;
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#e2e8f0;color:#0f172a}
+    .btn-secondary:hover{background:#cbd5e1}
+
+    .board{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+      background:#fbfdff;
+    }
+    .terminal-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(300px,1fr));
+      gap:12px;
+    }
+    .terminal-box{
+      border:1px solid #dbe3ef;
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+    }
+    .terminal-box h3{
+      display:none;
+    }
+    .mini-diagram{
+      position:relative;
+      min-height:70px;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      background:#fcfdff;
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+    .component,
+    .armature,
+    .wire-left,
+    .wire-right,
+    .top-left,
+    .top-right{
+      display:none;
+    }
+
+    
+    .mini-label{
+      position:absolute;
+      left:50%;
+      bottom:10px;
+      transform:translateX(-50%);
+      font-size:1.08rem;
+      font-weight:900;
+      color:#dc2626;
+      text-align:center;
+      width:90%;
+      line-height:1.2;
+    }
+
+    .drop-row{
+      display:grid;
+      grid-template-columns:40px 1fr;
+      gap:8px;
+      align-items:start;
+      margin-top:8px;
+    }
+    .num-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:32px;
+      height:32px;
+      border-radius:999px;
+      background:#fef3c7;
+      color:#92400e;
+      border:1px solid #fcd34d;
+      font-size:.9rem;
+      font-weight:900;
+      margin-top:4px;
+    }
+    .drop-card{
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      background:#fbfdff;
+      padding:10px;
+    }
+    .prompt{
+      font-weight:800;
+      margin-bottom:7px;
+      color:#0f172a;
+    }
+    .sub{
+      color:#64748b;
+      font-size:.84rem;
+      margin-bottom:8px;
+    }
+    .dropzone{
+      min-height:44px;
+      border:2px dashed #cbd5e1;
+      background:#fff;
+      border-radius:12px;
+      padding:6px;
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .dropzone.over{border-color:var(--primary);background:#eff6ff}
+    .dropzone.correct{border-color:#22c55e;background:#f0fdf4}
+    .dropzone.wrong{border-color:#ef4444;background:#fef2f2}
+
+    .result{
+      display:none;
+      margin-top:12px;
+      padding:14px;
+      border-radius:18px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+    }
+    .score-big{font-size:1.7rem;font-weight:900;color:#1d4ed8;margin:2px 0 8px}
+    .progress{height:12px;background:#dbeafe;border-radius:999px;overflow:hidden;margin:10px 0 4px}
+    .bar{width:0%;height:100%;background:linear-gradient(90deg,#2563eb,#16a34a);transition:width .35s ease}
+    .answer-list{margin:10px 0 0;padding-left:20px}
+    .answer-list li{margin:4px 0}
+    .ok{color:var(--good);font-weight:900}
+    .no{color:var(--bad);font-weight:900}
+
+    footer{color:var(--muted);font-size:.9rem;padding-bottom:26px}
+
+    @media(max-width:980px){
+      .layout,.terminal-grid{grid-template-columns:1fr}
+      .bank{position:static}
+      .hero,.panel{padding:14px}
+      button{width:100%}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <h1>Drag &amp; Drop Ακροδεκτών Μηχανής Σ.Ρ.</h1>
+    <p class="subtitle">Σύρε κάθε ακροδέκτη στη σωστή θέση σύμφωνα με την τυποποίηση των μηχανών συνεχούς ρεύματος.</p>
+    <div class="chips">
+      <span class="chip">Κεφ. 2.2.3</span>
+      <span class="chip">Ακροδέκτες μηχανών Σ.Ρ.</span>
+      <span class="chip">8 αντιστοιχίσεις</span>
+      <span class="chip">Drag &amp; Drop</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="section-title">
+      <span class="badge">Α</span>
+      <h2>Δραστηριότητα</h2>
+    </div>
+    <p class="hint">Στόχος: να αντιστοιχίσεις σωστά τους ακροδέκτες <strong>A1, A2, S1, S2, S3, S4, F1, F2</strong> με το στοιχείο και τη θέση όπου ανήκουν. Σε κινητό μπορείς και με κλικ: πάτησε πρώτα την κάρτα και μετά το πλαίσιο.</p>
+
+    <div class="layout">
+      <div class="bank">
+        <p class="bank-title">Κάρτες ακροδεκτών</p>
+        <div id="bank" class="cards"></div>
+
+        <div class="buttons">
+          <button class="btn-primary" onclick="checkAnswers()">Έλεγχος</button>
+          <button class="btn-secondary" onclick="resetGame()">Καθαρισμός</button>
+        </div>
+
+        <div id="result" class="result">
+          <h2>Αποτέλεσμα</h2>
+          <div id="scoreText" class="score-big"></div>
+          <div class="progress"><div id="scoreBar" class="bar"></div></div>
+          <p id="message"></p>
+          <ul id="details" class="answer-list"></ul>
+        </div>
+      </div>
+
+      <div class="board">
+        <div class="terminal-grid">
+          <div class="terminal-box">
+            <div class="mini-diagram">
+              <div class="component armature">Επαγωγικό<br>τύμπανο</div>
+              <div class="top-left"></div>
+              <div class="top-right"></div>
+              <div class="wire-left"></div>
+              <div class="wire-right"></div>
+              <div class="mini-label">Επαγωγικό τύμπανο</div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">1</div>
+              <div class="drop-card">
+                <div class="prompt">(+) του επαγωγικού τυμπάνου</div>
+                <div class="sub">Ο θετικός ακροδέκτης του τυμπάνου</div>
+                <div class="dropzone" data-answer="A1"></div>
+              </div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">2</div>
+              <div class="drop-card">
+                <div class="prompt">(-) του επαγωγικού τυμπάνου</div>
+                <div class="sub">Ο αρνητικός ακροδέκτης του τυμπάνου</div>
+                <div class="dropzone" data-answer="A2"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="terminal-box">
+            <div class="mini-diagram">
+              <div class="component">Τύλιγμα βοηθητικών πόλων</div>
+              <div class="top-left"></div>
+              <div class="top-right"></div>
+              <div class="wire-left"></div>
+              <div class="wire-right"></div>
+              <div class="mini-label">Τύλιγμα βοηθητικών πόλων</div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">3</div>
+              <div class="drop-card">
+                <div class="prompt">(C<sub>1</sub>) του τυλίγματος βοηθητικών πόλων</div>
+                <div class="sub">Αριστερός ακροδέκτης βοηθητικών πόλων</div>
+                <div class="dropzone" data-answer="S3"></div>
+              </div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">4</div>
+              <div class="drop-card">
+                <div class="prompt">(C<sub>2</sub>) του τυλίγματος βοηθητικών πόλων</div>
+                <div class="sub">Δεξιός ακροδέκτης βοηθητικών πόλων</div>
+                <div class="dropzone" data-answer="S4"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="terminal-box">
+            <div class="mini-diagram">
+              <div class="component">Τύλιγμα σειράς</div>
+              <div class="top-left"></div>
+              <div class="top-right"></div>
+              <div class="wire-left"></div>
+              <div class="wire-right"></div>
+              <div class="mini-label">Τύλιγμα σειράς</div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">5</div>
+              <div class="drop-card">
+                <div class="prompt">(E) του τυλίγματος σειράς</div>
+                <div class="sub">Αριστερός ακροδέκτης σειράς</div>
+                <div class="dropzone" data-answer="S1"></div>
+              </div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">6</div>
+              <div class="drop-card">
+                <div class="prompt">(F) του τυλίγματος σειράς</div>
+                <div class="sub">Δεξιός ακροδέκτης σειράς</div>
+                <div class="dropzone" data-answer="S2"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="terminal-box">
+            <div class="mini-diagram">
+              <div class="component">Παράλληλο τύλιγμα</div>
+              <div class="top-left"></div>
+              <div class="top-right"></div>
+              <div class="wire-left"></div>
+              <div class="wire-right"></div>
+              <div class="mini-label">Παράλληλο τύλιγμα</div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">7</div>
+              <div class="drop-card">
+                <div class="prompt">(C) του παράλληλου τυλίγματος</div>
+                <div class="sub">Αριστερός ακροδέκτης του παράλληλου τυλίγματος</div>
+                <div class="dropzone" data-answer="F1"></div>
+              </div>
+            </div>
+
+            <div class="drop-row">
+              <div class="num-badge">8</div>
+              <div class="drop-card">
+                <div class="prompt">(D) του παράλληλου τυλίγματος</div>
+                <div class="sub">Δεξιός ακροδέκτης του παράλληλου τυλίγματος</div>
+                <div class="dropzone" data-answer="F2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Εκπαιδευτικό αρχείο HTML για Γ΄ ΕΠΑ.Λ. — Ακροδέκτες μηχανών Σ.Ρ.
+</footer>
+
+<script>
+  const terminals = ["A1","A2","S1","S2","S3","S4","F1","F2"];
+  let draggedId = null;
+  let selectedCard = null;
+
+  function shuffle(arr){
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  function makeCard(label){
+    const div = document.createElement("div");
+    div.className = "card";
+    div.draggable = true;
+    div.id = "card-" + label + "-" + Math.random().toString(16).slice(2);
+    div.dataset.value = label;
+    div.textContent = label;
+
+    div.addEventListener("dragstart", e => {
+      draggedId = div.id;
+      e.dataTransfer.setData("text/plain", div.id);
+    });
+
+    div.addEventListener("click", () => {
+      document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+      if(selectedCard === div.id){
+        selectedCard = null;
+        return;
+      }
+      selectedCard = div.id;
+      div.classList.add("selected");
+    });
+
+    return div;
+  }
+
+  function renderBank(){
+    const bank = document.getElementById("bank");
+    bank.innerHTML = "";
+    shuffle(terminals).forEach(label => bank.appendChild(makeCard(label)));
+  }
+
+  function createBankCard(label){
+    document.getElementById("bank").appendChild(makeCard(label));
+  }
+
+  function setupDropZones(){
+    document.querySelectorAll(".dropzone").forEach(zone => {
+      zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("over");
+      });
+
+      zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("over");
+        const id = e.dataTransfer.getData("text/plain") || draggedId;
+        if(id) placeCard(id, zone);
+      });
+
+      zone.addEventListener("click", () => {
+        if(selectedCard){
+          placeCard(selectedCard, zone);
+          document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+          selectedCard = null;
+        }
+      });
+    });
+  }
+
+  function placeCard(cardId, zone){
+    const card = document.getElementById(cardId);
+    if(!card) return;
+
+    const existing = zone.querySelector(".card");
+    if(existing){
+      createBankCard(existing.dataset.value);
+      existing.remove();
+    }
+
+    zone.appendChild(card);
+    zone.classList.remove("correct","wrong");
+  }
+
+  function checkAnswers(){
+    let correct = 0;
+    const total = terminals.length;
+    const missing = [];
+    const wrong = [];
+
+    document.querySelectorAll(".dropzone").forEach((zone, idx) => {
+      zone.classList.remove("correct","wrong");
+      const card = zone.querySelector(".card");
+      if(card){
+        if(card.dataset.value === zone.dataset.answer){
+          correct++;
+          zone.classList.add("correct");
+        }else{
+          zone.classList.add("wrong");
+          wrong.push(`Σημείο ${idx+1}: μπήκε ${card.dataset.value} αντί για ${zone.dataset.answer}`);
+        }
+      }else{
+        zone.classList.add("wrong");
+        missing.push(`Σημείο ${idx+1}: λείπει ο ακροδέκτης ${zone.dataset.answer}`);
+      }
+    });
+
+    const percent = Math.round(correct / total * 100);
+    document.getElementById("result").style.display = "block";
+    document.getElementById("scoreText").textContent = `${correct}/${total} (${percent}%)`;
+    document.getElementById("scoreBar").style.width = `${percent}%`;
+
+    let message = "";
+    if(percent >= 88){
+      message = "Πολύ καλή επίδοση. Αναγνωρίζεις σωστά την τυποποίηση των ακροδεκτών.";
+    }else if(percent >= 63){
+      message = "Καλή προσπάθεια. Δες ξανά κυρίως τη διάκριση S1–S2, S3–S4 και F1–F2.";
+    }else{
+      message = "Χρειάζεται επανάληψη. Ξεκίνα από το ποιο τύλιγμα αντιστοιχεί σε κάθε ζεύγος ακροδεκτών.";
+    }
+    document.getElementById("message").textContent = message;
+
+    const details = [];
+    details.push(`<li><span class="${percent >= 63 ? 'ok' : 'no'}">Σωστές τοποθετήσεις:</span> ${correct} από ${total}</li>`);
+    if(wrong.length){
+      details.push(...wrong.map(x => `<li><span class="no">${x}</span></li>`));
+    }
+    if(missing.length){
+      details.push(...missing.map(x => `<li><span class="no">${x}</span></li>`));
+    }
+    if(correct === total){
+      details.push(`<li><span class="ok">Μπράβο!</span> Όλες οι αντιστοιχίσεις είναι σωστές.</li>`);
+    }
+    document.getElementById("details").innerHTML = details.join("");
+    document.getElementById("result").scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  function resetGame(){
+    selectedCard = null;
+    draggedId = null;
+    document.getElementById("result").style.display = "none";
+    document.getElementById("scoreBar").style.width = "0%";
+    document.querySelectorAll(".dropzone").forEach(z => {
+      z.classList.remove("correct","wrong","over");
+      z.innerHTML = "";
+    });
+    renderBank();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  renderBank();
+  setupDropZones();
+</script>
+</body>
+</html>

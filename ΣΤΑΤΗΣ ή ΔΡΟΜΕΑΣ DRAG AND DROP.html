@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop: Στάτης ή Δρομέας;</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --soft:#eef4ff;
+      --line:#dbe3ef;
+      --good:#15803d;
+      --bad:#b91c1c;
+      --warn:#b45309;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:linear-gradient(180deg,#eaf2ff 0%, var(--bg) 45%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.55;
+    }
+    header, main, footer{
+      max-width:1150px;
+      margin:0 auto;
+      padding-left:18px;
+      padding-right:18px;
+    }
+    header{padding-top:28px}
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 12px 34px rgba(15,23,42,.08);
+    }
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.45rem,2.8vw,2.25rem);
+      color:#0f172a;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    .chip{
+      background:var(--soft);
+      border:1px solid #cfe0ff;
+      color:#1e3a8a;
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:.92rem;
+      font-weight:800;
+    }
+    main{
+      padding-top:12px;
+      padding-bottom:36px;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:20px;
+      margin:18px 0;
+      box-shadow:0 8px 24px rgba(15,23,42,.05);
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:4px 0 14px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--line);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:34px;
+      height:34px;
+      border-radius:999px;
+      background:#dbeafe;
+      color:#1d4ed8;
+      font-weight:900;
+    }
+    h2{margin:0;font-size:1.22rem}
+    .hint{
+      color:var(--muted);
+      margin:0 0 14px;
+      font-size:.95rem;
+    }
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(260px,.8fr) minmax(350px,1.2fr);
+      gap:16px;
+      align-items:start;
+    }
+    .bank,.zones{
+      border:1px dashed #b9c5d6;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:14px;
+      min-height:120px;
+    }
+    .bank-title,.zones-title{
+      font-weight:900;
+      color:#334155;
+      margin:0 0 10px;
+    }
+    .cards{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .card{
+      user-select:none;
+      border:1px solid #cbd5e1;
+      background:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:grab;
+      font-weight:900;
+      box-shadow:0 4px 12px rgba(15,23,42,.06);
+      touch-action:manipulation;
+    }
+    .card:active{cursor:grabbing}
+    .card.selected{
+      outline:3px solid rgba(37,99,235,.22);
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+    .category-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+    .dropzone{
+      min-height:260px;
+      border:2px dashed #cbd5e1;
+      background:#fff;
+      border-radius:14px;
+      padding:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-content:flex-start;
+      align-items:flex-start;
+    }
+    .dropzone.over{
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+    .dropzone.correct{
+      border-color:#22c55e;
+      background:#f0fdf4;
+    }
+    .dropzone.wrong{
+      border-color:#ef4444;
+      background:#fef2f2;
+    }
+    .dropzone h3{
+      width:100%;
+      margin:0 0 8px;
+      font-size:1.04rem;
+      color:#1e3a8a;
+    }
+    .buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 16px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.98rem;
+      transition:.15s ease;
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#e2e8f0;color:#0f172a}
+    .btn-secondary:hover{background:#cbd5e1}
+    .result{
+      display:none;
+      margin-top:16px;
+      padding:18px;
+      border-radius:18px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+    }
+    .score-big{
+      font-size:2rem;
+      font-weight:900;
+      color:#1d4ed8;
+      margin:2px 0 8px;
+    }
+    .progress{
+      height:16px;
+      background:#dbeafe;
+      border-radius:999px;
+      overflow:hidden;
+      margin:12px 0 4px;
+    }
+    .bar{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#2563eb,#16a34a);
+      transition:width .35s ease;
+    }
+    .answer-list{
+      margin:12px 0 0;
+      padding-left:20px;
+    }
+    .answer-list li{margin:6px 0}
+    .ok{color:var(--good);font-weight:900}
+    .no{color:var(--bad);font-weight:900}
+    .explain{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(240px,1fr));
+      gap:12px;
+    }
+    .ex-card{
+      border:1px solid var(--line);
+      background:#fbfdff;
+      border-radius:16px;
+      padding:14px;
+    }
+    .ex-card h3{
+      margin:0 0 8px;
+      font-size:1.05rem;
+      color:#0f172a;
+    }
+    .ex-card ul{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+    footer{
+      color:var(--muted);
+      font-size:.9rem;
+      padding-bottom:26px;
+    }
+    @media(max-width:880px){
+      .layout,.category-grid,.explain{
+        grid-template-columns:1fr;
+      }
+      .hero,.panel{padding:16px}
+      button{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1>Drag & Drop: Στάτης ή Δρομέας;</h1>
+      <p class="subtitle">Σύρε κάθε μέρος της μηχανής Σ.Ρ. στη σωστή κατηγορία. Μπορείς και με κλικ σε κινητό: πάτησε πρώτα την κάρτα και μετά τη στήλη.</p>
+      <div class="chips">
+        <span class="chip">Κεφάλαια 2.2.1 – 2.2.3</span>
+        <span class="chip">Μηχανές Σ.Ρ.</span>
+        <span class="chip">Στάτης / Δρομέας</span>
+        <span class="chip">14 κάρτες</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="section-title">
+        <span class="badge">Α</span>
+        <h2>Δραστηριότητα</h2>
+      </div>
+      <p class="hint">Στόχος: να ξεχωρίσεις ποια μέρη ανήκουν στο ακίνητο μέρος της μηχανής (στάτης) και ποια στο κινητό μέρος (δρομέας).</p>
+
+      <div class="layout">
+        <div class="bank">
+          <p class="bank-title">Κάρτες</p>
+          <div id="bank" class="cards dropzone" data-bank="true" data-activity="sort"></div>
+
+          <div class="buttons">
+            <button class="btn-primary" onclick="checkAnswers()">Έλεγχος</button>
+            <button class="btn-secondary" onclick="resetGame()">Καθαρισμός</button>
+          </div>
+
+          <div id="result" class="result">
+            <h2>Αποτέλεσμα</h2>
+            <div id="scoreText" class="score-big"></div>
+            <div class="progress"><div id="scoreBar" class="bar"></div></div>
+            <p id="message"></p>
+            <ul id="details" class="answer-list"></ul>
+          </div>
+        </div>
+
+        <div class="zones">
+          <p class="zones-title">Κατηγορίες</p>
+          <div class="category-grid" id="zones"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Εκπαιδευτικό αρχείο HTML για Γ΄ ΕΠΑ.Λ. — Ηλεκτρικές Μηχανές Σ.Ρ.
+  </footer>
+
+<script>
+  const items = [
+    {id:"c1", text:"Ζύγωμα", target:"stator"},
+    {id:"c2", text:"Κύριοι πόλοι", target:"stator"},
+    {id:"c3", text:"Τυλίγματα κύριων πόλων", target:"stator"},
+    {id:"c4", text:"Βοηθητικοί πόλοι", target:"stator"},
+    {id:"c5", text:"Τυλίγματα βοηθητικών πόλων", target:"stator"},
+    {id:"c6", text:"Ψήκτρες", target:"stator"},
+    {id:"c7", text:"Ψηκτροθήκες", target:"stator"},
+    {id:"c8", text:"Κιβώτιο ακροδεκτών", target:"stator"},
+    {id:"c9", text:"Άξονας", target:"rotor"},
+    {id:"c10", text:"Πυρήνας επαγωγικού τυμπάνου", target:"rotor"},
+    {id:"c11", text:"Τύλιγμα επαγωγικού τυμπάνου", target:"rotor"},
+    {id:"c12", text:"Συλλέκτης", target:"rotor"},
+    {id:"c13", text:"Ανεμιστήρας", target:"rotor"},
+    {id:"c14", text:"Πλήμνη", target:"rotor"}
+  ];
+
+  const categories = [
+    {id:"stator", title:"Στάτης"},
+    {id:"rotor", title:"Δρομέας"}
+  ];
+
+  let draggedId = null;
+  let selectedCard = null;
+
+  function shuffle(array){
+    return [...array].sort(() => Math.random() - 0.5);
+  }
+
+  function makeCard(item){
+    const div = document.createElement("div");
+    div.className = "card";
+    div.draggable = true;
+    div.id = item.id;
+    div.dataset.activity = "sort";
+    div.dataset.target = item.target;
+    div.textContent = item.text;
+
+    div.addEventListener("dragstart", e => {
+      draggedId = div.id;
+      e.dataTransfer.setData("text/plain", div.id);
+    });
+
+    div.addEventListener("click", () => {
+      document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+      if(selectedCard === div.id){
+        selectedCard = null;
+        return;
+      }
+      selectedCard = div.id;
+      div.classList.add("selected");
+    });
+
+    return div;
+  }
+
+  function setupDropZone(zone){
+    zone.addEventListener("dragover", e => {
+      e.preventDefault();
+      zone.classList.add("over");
+    });
+
+    zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.classList.remove("over");
+      const id = e.dataTransfer.getData("text/plain") || draggedId;
+      if(id) moveCardToZone(id, zone);
+    });
+
+    zone.addEventListener("click", () => {
+      if(selectedCard){
+        moveCardToZone(selectedCard, zone);
+        document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+        selectedCard = null;
+      }
+    });
+  }
+
+  function moveCardToZone(cardId, zone){
+    const card = document.getElementById(cardId);
+    if(!card) return;
+    if(card.dataset.activity !== zone.dataset.activity) return;
+    zone.appendChild(card);
+  }
+
+  function renderGame(){
+    const bank = document.getElementById("bank");
+    const zones = document.getElementById("zones");
+    bank.innerHTML = "";
+    zones.innerHTML = "";
+
+    shuffle(items).forEach(item => bank.appendChild(makeCard(item)));
+    setupDropZone(bank);
+
+    categories.forEach(cat => {
+      const dz = document.createElement("div");
+      dz.className = "dropzone";
+      dz.dataset.activity = "sort";
+      dz.dataset.accept = cat.id;
+
+      const title = document.createElement("h3");
+      title.textContent = cat.title;
+      dz.appendChild(title);
+
+      setupDropZone(dz);
+      zones.appendChild(dz);
+    });
+  }
+
+  function checkAnswers(){
+    let correct = 0;
+    const total = items.length;
+    const wrongItems = [];
+    const missingItems = [];
+
+    document.querySelectorAll("#zones .dropzone").forEach(zone => {
+      zone.classList.remove("correct","wrong");
+      let allCorrectInZone = true;
+      let placedCards = [...zone.querySelectorAll(".card")];
+
+      if(placedCards.length === 0){
+        allCorrectInZone = false;
+      }
+
+      placedCards.forEach(card => {
+        if(card.dataset.target === zone.dataset.accept){
+          correct++;
+        } else {
+          allCorrectInZone = false;
+          wrongItems.push(`${card.textContent} → μπήκε στο "${zone.querySelector("h3").textContent}"`);
+        }
+      });
+
+      if(placedCards.length > 0){
+        zone.classList.add(allCorrectInZone ? "correct" : "wrong");
+      }
+    });
+
+    const bankCards = [...document.querySelectorAll("#bank .card")];
+    bankCards.forEach(card => missingItems.push(card.textContent));
+
+    const percent = Math.round(correct / total * 100);
+    const result = document.getElementById("result");
+    result.style.display = "block";
+    document.getElementById("scoreText").textContent = `${correct}/${total} (${percent}%)`;
+    document.getElementById("scoreBar").style.width = `${percent}%`;
+
+    let message = "";
+    if(percent >= 85){
+      message = "Πολύ καλή επίδοση. Ξεχωρίζεις πολύ καλά τα μέρη του στάτη και του δρομέα.";
+    }else if(percent >= 60){
+      message = "Καλή προσπάθεια. Κοίτα ξανά κυρίως τις ψήκτρες, τον συλλέκτη και τα τυλίγματα.";
+    }else{
+      message = "Χρειάζεται επανάληψη. Ξεκίνα από το βασικό: στάτης = ακίνητο μέρος, δρομέας = κινητό μέρος.";
+    }
+    document.getElementById("message").textContent = message;
+
+    const details = [];
+    details.push(`<span class="${percent >= 60 ? 'ok' : 'no'}">Σωστές τοποθετήσεις:</span> ${correct} από ${total}`);
+
+    if(wrongItems.length){
+      details.push(`<span class="no">Λανθασμένες τοποθετήσεις:</span>`);
+      wrongItems.forEach(w => details.push(w));
+    }
+
+    if(missingItems.length){
+      details.push(`<span class="no">Κάρτες που δεν τοποθετήθηκαν:</span> ${missingItems.join(", ")}`);
+    }
+
+    if(!wrongItems.length && !missingItems.length){
+      details.push(`<span class="ok">Μπράβο!</span> Όλες οι κάρτες μπήκαν σωστά.`);
+    }
+
+    document.getElementById("details").innerHTML = details.map(d => `<li>${d}</li>`).join("");
+    result.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  function resetGame(){
+    selectedCard = null;
+    draggedId = null;
+    document.getElementById("result").style.display = "none";
+    document.getElementById("scoreBar").style.width = "0%";
+    renderGame();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  renderGame();
+</script>
+</body>
+</html>

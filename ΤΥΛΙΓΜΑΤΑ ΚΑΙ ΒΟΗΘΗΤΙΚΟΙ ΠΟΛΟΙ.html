@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ: Τυλίγματα και Βοηθητικοί Πόλοι Γεννητριών Σ.Ρ.</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --ink:#1c2430;
+      --muted:#5d6b7c;
+      --brand:#155e9f;
+      --brand2:#0b7d73;
+      --danger:#b42318;
+      --ok:#16783a;
+      --warn:#a15c00;
+      --border:#d8e0ea;
+      --shadow:0 10px 30px rgba(10,40,80,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(135deg,#eaf3ff 0%,#f7fbf9 50%,#fff8ec 100%);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#144e86,#0b7d73);
+      color:white;
+      padding:30px 18px;
+      text-align:center;
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.55rem,3.2vw,2.35rem)}
+    header p{margin:5px auto 0;max-width:900px;font-size:1.03rem;opacity:.94}
+    .wrap{max-width:1120px;margin:0 auto;padding:22px 14px 50px}
+    .intro,.section,.score-panel{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(216,224,234,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin:18px 0;
+    }
+    .intro strong{color:var(--brand)}
+    .section h2{margin:0 0 10px;color:#0d4779;font-size:1.45rem}
+    .section h3{margin:22px 0 8px;color:#16425f}
+    .note{font-size:.95rem;color:var(--muted);margin:6px 0 16px}
+    .q{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      margin:12px 0;
+      background:#fff;
+    }
+    .q-title{font-weight:700;margin-bottom:9px}
+    label.option{
+      display:block;
+      padding:9px 10px;
+      margin:7px 0;
+      border:1px solid #e3e8ef;
+      border-radius:10px;
+      cursor:pointer;
+      background:#fafcff;
+      transition:.15s;
+    }
+    label.option:hover{border-color:#9db8d7;background:#f1f7ff}
+    input[type="radio"]{margin-right:8px;transform:translateY(1px)}
+    .feedback{font-weight:700;margin-top:8px;min-height:1.2em}
+    .correct{border-color:rgba(22,120,58,.65)!important;background:#effaf3!important}
+    .wrong{border-color:rgba(180,35,24,.55)!important;background:#fff2f0!important}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--danger)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+    button{
+      border:0;
+      border-radius:12px;
+      padding:11px 16px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--brand);
+      color:#fff;
+      box-shadow:0 7px 18px rgba(21,94,159,.18);
+    }
+    button.secondary{background:#f0f4f8;color:#17415f;box-shadow:none;border:1px solid #d8e0ea}
+    button:hover{filter:brightness(.97)}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.dropzone{min-height:110px}}
+    .deck{
+      background:#fff;
+      border:1px dashed #aebdca;
+      border-radius:14px;
+      padding:12px;
+      min-height:85px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .card-drag{
+      user-select:none;
+      touch-action:none;
+      padding:9px 11px;
+      background:#fff9e9;
+      border:1px solid #ead29b;
+      border-radius:999px;
+      font-weight:700;
+      cursor:grab;
+      box-shadow:0 4px 12px rgba(0,0,0,.06);
+      max-width:100%;
+    }
+    .card-drag:active{cursor:grabbing}
+    .card-drag.selected{outline:3px solid rgba(21,94,159,.25);background:#eaf4ff;border-color:#93badc}
+    .dropzone{
+      background:#fff;
+      border:2px dashed #c7d3df;
+      border-radius:16px;
+      min-height:240px;
+      padding:12px;
+      transition:.15s;
+    }
+    .dropzone h3{margin:0 0 8px;color:#fff;font-size:1.05rem;border-radius:12px;padding:10px;text-align:center;background:linear-gradient(135deg,#155e9f,#0b7d73)}
+    .dropzone.over{background:#f1f7ff;border-color:#155e9f}
+    .dropzone .card-drag{display:inline-block;margin:5px 4px;background:#f8fbff;border-color:#ccdae8;border-radius:12px}
+    .dropzone.correct-zone{border-color:rgba(22,120,58,.7);background:#f5fff8}
+    .dropzone.wrong-zone{border-color:rgba(180,35,24,.55);background:#fff7f5}
+    .match-row{
+      display:grid;
+      grid-template-columns:minmax(180px,1fr) minmax(230px,1.3fr);
+      gap:12px;
+      align-items:center;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      margin:10px 0;
+      background:#fff;
+    }
+    @media (max-width:700px){.match-row{grid-template-columns:1fr}}
+    .term{font-weight:800;color:#123d63}
+    select{
+      width:100%;
+      padding:10px 11px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      font-size:1rem;
+      background:#fff;
+    }
+    .score-panel{position:sticky;bottom:10px;z-index:4}
+    .score-big{font-size:1.25rem;font-weight:900;color:#0d4779}
+    .progressbar{height:14px;background:#e5edf5;border-radius:99px;overflow:hidden;margin:10px 0}
+    .progressbar div{height:100%;width:0%;background:linear-gradient(90deg,#155e9f,#0b7d73);transition:.25s}
+    .small{font-size:.9rem;color:var(--muted)}
+    .pill{display:inline-block;background:#eef6ff;border:1px solid #cce1f5;color:#16425f;border-radius:999px;padding:5px 10px;font-size:.9rem;font-weight:700;margin:3px 4px 3px 0}
+    .source{font-size:.88rem;color:#667085;margin-top:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Κουίζ: Τυλίγματα και Βοηθητικοί Πόλοι Γεννητριών Σ.Ρ.</h1>
+    <p>Ενότητα 2.3 — Παράγραφοι 2.3.1 έως 2.3.3</p>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <strong>Οδηγίες:</strong> Το κουίζ έχει τρία μέρη. Πρώτα απαντάς στις ερωτήσεις, μετά ταξινομείς τις κάρτες στις σωστές κατηγορίες και στο τέλος κάνεις αντιστοίχιση βασικών όρων. Πάτησε <strong>Έλεγχος απαντήσεων</strong> όταν τελειώσεις.
+      <div class="source">Βασίζεται στις παραγράφους 2.3.1 «Τύλιγμα επαγωγικού τυμπάνου», 2.3.2 «Τύλιγμα διέγερσης» και 2.3.3 «Βοηθητικοί πόλοι» του σχολικού βιβλίου.</div>
+    </section>
+
+    <section class="section" id="partA">
+      <h2>Μέρος Α — Ερωτήσεις Σωστό/Λάθος και Πολλαπλής Επιλογής</h2>
+      <p class="note">Κάθε ερώτηση δίνει 1 μονάδα. Οι σωστές λύσεις δεν εμφανίζονται πριν τον έλεγχο.</p>
+      <div id="questions"></div>
+    </section>
+
+    <section class="section" id="partB">
+      <h2>Μέρος Β — Drag & Drop Ταξινόμηση</h2>
+      <p class="note">Σύρε κάθε κάρτα στη σωστή στήλη. Σε κινητό ή tablet μπορείς να πατήσεις πρώτα την κάρτα και μετά τη στήλη.</p>
+      <div class="deck" id="deck" aria-label="Κάρτες προς ταξινόμηση"></div>
+      <div class="grid" id="zones">
+        <div class="dropzone" data-zone="loop"><h3>Βροχοτύλιγμα</h3></div>
+        <div class="dropzone" data-zone="wave"><h3>Κυματοτύλιγμα</h3></div>
+        <div class="dropzone" data-zone="interpoles"><h3>Βοηθητικοί πόλοι</h3></div>
+      </div>
+      <div class="feedback" id="dragFeedback"></div>
+    </section>
+
+    <section class="section" id="partC">
+      <h2>Μέρος Γ — Αντιστοίχιση Όρων</h2>
+      <p class="note">Διάλεξε από το μενού τη σωστή περιγραφή για κάθε όρο.</p>
+      <div id="matching"></div>
+    </section>
+
+    <section class="score-panel" aria-live="polite">
+      <div class="score-big" id="scoreText">Σκορ: Δεν έχει γίνει έλεγχος ακόμα.</div>
+      <div class="progressbar"><div id="bar"></div></div>
+      <div class="toolbar">
+        <button id="checkBtn">Έλεγχος απαντήσεων</button>
+        <button class="secondary" id="resetBtn">Επαναφορά</button>
+        <span class="small" id="detailScore"></span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        q:"Το τύλιγμα του επαγωγικού τυμπάνου είναι σημαντικό, γιατί μέσα σε αυτό αναπτύσσονται ΗΕΔ στις γεννήτριες ή ζεύγη δυνάμεων στους κινητήρες.",
+        type:"tf",
+        options:["Σωστό","Λάθος"],
+        answer:"Σωστό"
+      },
+      {
+        q:"Τα βροχοτυλίγματα χρησιμοποιούνται κυρίως σε μηχανές:",
+        options:["υψηλής τάσης και χαμηλής έντασης","χαμηλής τάσης και υψηλής έντασης","μεσαίας τάσης και μηδενικής έντασης","μόνο σε μονοφασικούς κινητήρες"],
+        answer:"χαμηλής τάσης και υψηλής έντασης"
+      },
+      {
+        q:"Στα απλά βροχοτυλίγματα συνήθως δημιουργούνται τόσοι παράλληλοι κλάδοι όσοι είναι οι πόλοι της μηχανής.",
+        type:"tf",
+        options:["Σωστό","Λάθος"],
+        answer:"Σωστό"
+      },
+      {
+        q:"Τα κυματοτυλίγματα χρησιμοποιούνται κυρίως σε μηχανές:",
+        options:["χαμηλής τάσης και υψηλής έντασης","υψηλής τάσης και χαμηλής έντασης","μόνο πολύ μεγάλης έντασης","μόνο με μόνιμους μαγνήτες"],
+        answer:"υψηλής τάσης και χαμηλής έντασης"
+      },
+      {
+        q:"Στα απλά κυματοτυλίγματα δημιουργούνται πάντοτε:",
+        options:["δύο παράλληλοι κλάδοι","τόσοι κλάδοι όσες είναι οι ψήκτρες","κανένας παράλληλος κλάδος","τέσσερις κλάδοι ανεξάρτητα από τη μηχανή"],
+        answer:"δύο παράλληλοι κλάδοι"
+      },
+      {
+        q:"Στα κυματοτυλίγματα οι περιελίξεις συνδέονται σε σειρά.",
+        type:"tf",
+        options:["Σωστό","Λάθος"],
+        answer:"Σωστό"
+      },
+      {
+        q:"Το ρεύμα που διαρρέει το πηνίο κάθε πόλου ονομάζεται:",
+        options:["ρεύμα τυμπάνου","ρεύμα συλλέκτη","ρεύμα διέγερσης","ρεύμα σπινθηρισμού"],
+        answer:"ρεύμα διέγερσης"
+      },
+      {
+        q:"Όταν το τύλιγμα διέγερσης τροφοδοτείται από συστοιχία ή άλλη μικρή γεννήτρια Σ.Ρ., η γεννήτρια χαρακτηρίζεται ως:",
+        options:["γεννήτρια παράλληλης διέγερσης","γεννήτρια διέγερσης σειράς","γεννήτρια ανεξάρτητης ή ξένης διέγερσης","γεννήτρια σύνθετης διέγερσης"],
+        answer:"γεννήτρια ανεξάρτητης ή ξένης διέγερσης"
+      },
+      {
+        q:"Το τύλιγμα σειράς αποτελείται από λίγες σπείρες, σύρμα μεγάλης διατομής και παρουσιάζει μικρή ωμική αντίσταση.",
+        type:"tf",
+        options:["Σωστό","Λάθος"],
+        answer:"Σωστό"
+      },
+      {
+        q:"Ο βασικός σκοπός των βοηθητικών πόλων είναι:",
+        options:["να αυξάνουν μόνο τις στροφές της μηχανής","να μειώνουν τη μάζα του δρομέα","να δημιουργούν πεδίο αντιστάθμισης ώστε να αποφεύγονται σπινθηρισμοί","να αντικαθιστούν τελείως τους κύριους πόλους"],
+        answer:"να δημιουργούν πεδίο αντιστάθμισης ώστε να αποφεύγονται σπινθηρισμοί"
+      }
+    ];
+
+    const dragCards = [
+      {text:"Χαμηλή τάση", zone:"loop"},
+      {text:"Υψηλή ένταση ρεύματος", zone:"loop"},
+      {text:"Αγωγοί μεγάλης διατομής", zone:"loop"},
+      {text:"Περιελίξεις σε παράλληλη σύνδεση", zone:"loop"},
+      {text:"Παράδειγμα: μίζες αυτοκινήτων", zone:"loop"},
+      {text:"Υψηλή τάση", zone:"wave"},
+      {text:"Χαμηλή ένταση ρεύματος", zone:"wave"},
+      {text:"Δύο παράλληλοι κλάδοι", zone:"wave"},
+      {text:"Περιελίξεις σε σειρά", zone:"wave"},
+      {text:"Παράδειγμα: μικρές χειροκίνητες γεννήτριες MEGGER", zone:"wave"},
+      {text:"Τοποθέτηση στις ουδέτερες ζώνες", zone:"interpoles"},
+      {text:"Σύνδεση σε σειρά με το τύλιγμα τυμπάνου", zone:"interpoles"},
+      {text:"Λίγες σπείρες χοντρού μονωμένου σύρματος", zone:"interpoles"},
+      {text:"Μαγνητικό πεδίο αντιστάθμισης", zone:"interpoles"},
+      {text:"Αποφυγή σπινθηρισμών σε ψήκτρες και συλλέκτη", zone:"interpoles"}
+    ];
+
+    const matches = [
+      {term:"Ρεύμα διέγερσης", answer:"Ρεύμα που διαρρέει το πηνίο κάθε πόλου"},
+      {term:"Ξένη / ανεξάρτητη διέγερση", answer:"Τροφοδότηση τυλίγματος πόλων από εξωτερική πηγή ή διεγέρτρια"},
+      {term:"Παράλληλη διέγερση", answer:"Τα πηνία των πόλων τροφοδοτούνται παράλληλα με το τύμπανο και το εξωτερικό κύκλωμα"},
+      {term:"Διέγερση σειράς", answer:"Τα πηνία των πόλων τροφοδοτούνται σε σειρά με το τύμπανο και το φορτίο"},
+      {term:"Σύνθετη διέγερση", answer:"Υπάρχει ένα τύλιγμα σειράς και ένα παράλληλο τύλιγμα"},
+      {term:"Μαγνητογεννήτρια", answer:"Το μαγνητικό πεδίο δημιουργείται από μόνιμους μαγνήτες"}
+    ];
+
+    const allMatchOptions = matches.map(m=>m.answer);
+
+    function shuffle(arr){
+      return [...arr].sort(()=>Math.random()-0.5);
+    }
+
+    function renderQuestions(){
+      const root = document.getElementById('questions');
+      root.innerHTML = '';
+      questions.forEach((item, i)=>{
+        const box = document.createElement('div');
+        box.className = 'q';
+        box.dataset.index = i;
+        const title = document.createElement('div');
+        title.className = 'q-title';
+        title.textContent = `${i+1}. ${item.q}`;
+        box.appendChild(title);
+        item.options.forEach(opt=>{
+          const label = document.createElement('label');
+          label.className = 'option';
+          label.innerHTML = `<input type="radio" name="q${i}" value="${escapeHtml(opt)}"> ${opt}`;
+          box.appendChild(label);
+        });
+        const fb = document.createElement('div');
+        fb.className = 'feedback';
+        fb.id = `qfb${i}`;
+        box.appendChild(fb);
+        root.appendChild(box);
+      });
+    }
+
+    function renderDrag(){
+      const deck = document.getElementById('deck');
+      deck.innerHTML = '';
+      shuffle(dragCards).forEach((card, i)=>{
+        const el = document.createElement('div');
+        el.className = 'card-drag';
+        el.draggable = true;
+        el.textContent = card.text;
+        el.dataset.zone = card.zone;
+        el.id = `card${i}_${Math.random().toString(36).slice(2,7)}`;
+        deck.appendChild(el);
+      });
+      addDragEvents();
+    }
+
+    function renderMatching(){
+      const root = document.getElementById('matching');
+      root.innerHTML = '';
+      matches.forEach((m, i)=>{
+        const row = document.createElement('div');
+        row.className = 'match-row';
+        row.dataset.index = i;
+        const term = document.createElement('div');
+        term.className = 'term';
+        term.textContent = `${i+1}. ${m.term}`;
+        const select = document.createElement('select');
+        select.name = `m${i}`;
+        select.innerHTML = `<option value="">— Διάλεξε περιγραφή —</option>` +
+          shuffle(allMatchOptions).map(o=>`<option value="${escapeHtml(o)}">${o}</option>`).join('');
+        row.appendChild(term);
+        row.appendChild(select);
+        root.appendChild(row);
+      });
+    }
+
+    let selectedCard = null;
+    function addDragEvents(){
+      document.querySelectorAll('.card-drag').forEach(card=>{
+        card.addEventListener('dragstart', e=>{
+          e.dataTransfer.setData('text/plain', card.id);
+        });
+        card.addEventListener('click', ()=>{
+          document.querySelectorAll('.card-drag').forEach(c=>c.classList.remove('selected'));
+          if(selectedCard === card){
+            selectedCard = null;
+          } else {
+            selectedCard = card;
+            card.classList.add('selected');
+          }
+        });
+      });
+      document.querySelectorAll('.dropzone, #deck').forEach(zone=>{
+        zone.addEventListener('dragover', e=>{
+          e.preventDefault();
+          zone.classList.add('over');
+        });
+        zone.addEventListener('dragleave', ()=>zone.classList.remove('over'));
+        zone.addEventListener('drop', e=>{
+          e.preventDefault();
+          zone.classList.remove('over');
+          const id = e.dataTransfer.getData('text/plain');
+          const card = document.getElementById(id);
+          if(card) zone.appendChild(card);
+        });
+        zone.addEventListener('click', e=>{
+          if(selectedCard && (zone.classList.contains('dropzone') || zone.id === 'deck')){
+            zone.appendChild(selectedCard);
+            selectedCard.classList.remove('selected');
+            selectedCard = null;
+          }
+        });
+      });
+    }
+
+    function checkAll(){
+      let scoreA=0, scoreB=0, scoreC=0;
+      const totalA = questions.length;
+      const totalB = dragCards.length;
+      const totalC = matches.length;
+
+      questions.forEach((item, i)=>{
+        const qbox = document.querySelector(`.q[data-index="${i}"]`);
+        const checked = document.querySelector(`input[name="q${i}"]:checked`);
+        const fb = document.getElementById(`qfb${i}`);
+        qbox.classList.remove('correct','wrong');
+        if(checked && checked.value === item.answer){
+          scoreA++;
+          qbox.classList.add('correct');
+          fb.textContent = 'Σωστό.';
+          fb.className = 'feedback ok';
+        } else {
+          qbox.classList.add('wrong');
+          fb.textContent = checked ? 'Λάθος ή χρειάζεται ξανά σκέψη.' : 'Δεν απαντήθηκε.';
+          fb.className = 'feedback bad';
+        }
+      });
+
+      document.querySelectorAll('.dropzone').forEach(zone=>{
+        let zoneCorrect = 0;
+        let zoneWrong = 0;
+        zone.querySelectorAll('.card-drag').forEach(card=>{
+          card.classList.remove('correct','wrong');
+          if(card.dataset.zone === zone.dataset.zone){
+            scoreB++;
+            zoneCorrect++;
+            card.classList.add('correct');
+          } else {
+            zoneWrong++;
+            card.classList.add('wrong');
+          }
+        });
+        zone.classList.remove('correct-zone','wrong-zone');
+        if(zoneWrong>0){zone.classList.add('wrong-zone')}
+        else if(zoneCorrect>0){zone.classList.add('correct-zone')}
+      });
+      const missing = document.getElementById('deck').querySelectorAll('.card-drag').length;
+      const dragFb = document.getElementById('dragFeedback');
+      if(missing>0){
+        dragFb.textContent = `Υπάρχουν ${missing} κάρτες που δεν έχουν ταξινομηθεί.`;
+        dragFb.className = 'feedback bad';
+      } else if(scoreB === totalB){
+        dragFb.textContent = 'Άψογη ταξινόμηση.';
+        dragFb.className = 'feedback ok';
+      } else {
+        dragFb.textContent = 'Υπάρχουν κάρτες σε λάθος στήλη.';
+        dragFb.className = 'feedback bad';
+      }
+
+      matches.forEach((m, i)=>{
+        const row = document.querySelector(`.match-row[data-index="${i}"]`);
+        const sel = row.querySelector('select');
+        row.classList.remove('correct','wrong');
+        if(sel.value === m.answer){
+          scoreC++;
+          row.classList.add('correct');
+        } else {
+          row.classList.add('wrong');
+        }
+      });
+
+      const total = totalA + totalB + totalC;
+      const score = scoreA + scoreB + scoreC;
+      const pct = Math.round((score/total)*100);
+      document.getElementById('scoreText').textContent = `Σκορ: ${score}/${total} (${pct}%)`;
+      document.getElementById('bar').style.width = `${pct}%`;
+      document.getElementById('detailScore').innerHTML = `<span class="pill">Μέρος Α: ${scoreA}/${totalA}</span><span class="pill">Μέρος Β: ${scoreB}/${totalB}</span><span class="pill">Μέρος Γ: ${scoreC}/${totalC}</span>`;
+      window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+    }
+
+    function resetAll(){
+      renderQuestions();
+      renderDrag();
+      renderMatching();
+      document.getElementById('scoreText').textContent = 'Σκορ: Δεν έχει γίνει έλεγχος ακόμα.';
+      document.getElementById('bar').style.width = '0%';
+      document.getElementById('detailScore').textContent = '';
+      document.getElementById('dragFeedback').textContent = '';
+      document.getElementById('dragFeedback').className = 'feedback';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function escapeHtml(str){
+      return String(str).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', checkAll);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+    resetAll();
+  </script>
+</body>
+</html>

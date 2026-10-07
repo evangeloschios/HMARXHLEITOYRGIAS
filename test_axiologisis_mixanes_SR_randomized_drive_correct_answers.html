@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Τεστ Αξιολόγησης — Μηχανές Σ.Ρ.</title>
+<style>
+:root{--bg:#eef4fb;--card:#fff;--ink:#172033;--muted:#64748b;--brand:#155e9f;--brand2:#0b7d73;--line:#d9e3ef;--ok:#15803d;--bad:#b91c1c;--warn:#a16207}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#e9f3ff,#f7fafc 35%,#eef7f4);color:var(--ink);line-height:1.45}
+.wrap{max-width:1180px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,#174f85,#0b7d73);color:#fff;border-radius:22px;padding:24px;box-shadow:0 14px 36px rgba(15,23,42,.16)}
+h1{margin:0 0 8px;font-size:clamp(1.55rem,3vw,2.35rem)} header p{margin:5px 0;opacity:.95}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px} .chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:6px 10px;border-radius:999px;font-weight:700;font-size:.88rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.meta{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px} label.meta-label{font-weight:800;font-size:.9rem;color:#334155}
+input,select{width:100%;padding:10px 11px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;font-size:.97rem;color:#111827}
+.section-title{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.badge{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-weight:900}
+h2{margin:0;font-size:1.2rem} .sub{color:var(--muted);font-size:.91rem;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.item{border:1px solid #e2e8f0;border-radius:14px;padding:11px;background:#fbfdff}
+.item-title{font-weight:800;margin-bottom:7px}
+.feedback-answer{margin-top:8px;padding:8px 10px;border-radius:10px;font-size:.9rem;font-weight:800}
+.feedback-answer.correct-note{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+.feedback-answer.wrong-note{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa} .item.correct{border-color:#86efac;background:#f0fdf4} .item.wrong{border-color:#fca5a5;background:#fff1f2}
+.mcq{border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin:10px 0;background:#fff}
+.mcq .q{font-weight:800;margin-bottom:8px} .option{display:block;padding:7px 9px;border-radius:9px;margin:4px 0;background:#f8fafc;border:1px solid #eef2f7;cursor:pointer}
+.option input{width:auto;margin-right:7px} .mcq.correct{border-color:#86efac;background:#f0fdf4} .mcq.wrong{border-color:#fca5a5;background:#fff1f2}
+.progressbox{position:sticky;bottom:8px;z-index:5;background:#fff;border:1px solid #bfdbfe;border-radius:16px;padding:12px 14px;box-shadow:0 8px 28px rgba(15,23,42,.16);margin:18px 0}
+.progressline{height:12px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0} #progressFill{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#16a34a);transition:.2s}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{border:0;border-radius:12px;padding:11px 15px;font-weight:900;font-size:.95rem;cursor:pointer}
+.primary{background:#155e9f;color:#fff} .drive{background:#0b7d73;color:#fff} .secondary{background:#e2e8f0;color:#0f172a}
+button:disabled{opacity:.45;cursor:not-allowed}
+.result{font-weight:900;margin-left:auto} .result.good{color:var(--ok)} .result.bad{color:var(--bad)}
+.notice{background:#fff8e6;border:1px solid #f4d38a;border-radius:12px;padding:11px;color:#7c4a03;margin-top:10px}
+.scorecards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px} .scorecard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;text-align:center} .scorecard b{display:block;font-size:1.2rem;color:#0f4f80}
+.hidden{display:none!important}
+footer{text-align:center;color:#64748b;padding:20px 0 30px}
+@media(max-width:800px){.meta,.grid,.scorecards{grid-template-columns:1fr}.result{margin-left:0;width:100%}header{padding:18px}.wrap{padding:10px}}
+@media print{body{background:#fff}.progressbox,.notice{display:none}.panel,header{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Τεστ Αξιολόγησης — Μηχανές Συνεχούς Ρεύματος</h1>
+  <p>Γ΄ ΕΠΑ.Λ. • Ηλεκτρικές Μηχανές • Μέρη μηχανής, λειτουργίες, ακροδέκτες, τυλίγματα και βοηθητικοί πόλοι</p>
+  <div class="chips">
+    <span class="chip">67 βαθμολογούμενα στοιχεία</span>
+    <span class="chip">Αυτόματη βαθμολόγηση</span>
+    <span class="chip">Βαθμός /20</span>
+    <span class="chip">Τυχαία σειρά ανά μαθητή</span>
+    <span class="chip">Μία οριστική υποβολή</span>
+    <span class="chip">Αποθήκευση στο Drive</span>
+  </div>
+</header>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">✓</span><h2>Στοιχεία μαθητή και οδηγίες</h2></div>
+  <div class="meta">
+    <label class="meta-label">Ονοματεπώνυμο<input id="studentName" type="text" autocomplete="name" required></label>
+    <label class="meta-label">Τμήμα<input id="classSection" type="text" value="Γ΄ Ηλεκτρολόγων" required></label>
+    <label class="meta-label">Ημερομηνία<input id="testDate" type="date" required></label>
+  </div>
+  <div class="notice"><strong>Οδηγίες:</strong> Οι ερωτήσεις και οι επιλογές εμφανίζονται με διαφορετική τυχαία σειρά σε κάθε υπολογιστή. Αν γίνει απλή ανανέωση της σελίδας, η σειρά παραμένει ίδια. Απάντησε σε όλα τα στοιχεία. Με τον <strong>«Οριστικό έλεγχο»</strong> οι απαντήσεις κλειδώνουν και δεν μπορούν να αλλάξουν. Μετά ενεργοποιείται η <strong>«Υποβολή στο Drive»</strong>. Μετά τον Οριστικό έλεγχο, σε κάθε λανθασμένη απάντηση εμφανίζεται η σωστή απάντηση.</div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Α</span><h2>Στάτης ή Δρομέας</h2></div>
+  <p class="sub">14 στοιχεία • Διάλεξε σε ποιο μέρος της μηχανής ανήκει κάθε εξάρτημα.</p>
+  <div id="statorRotorHost" class="grid"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Β</span><h2>Μέρος και λειτουργία</h2></div>
+  <p class="sub">14 στοιχεία • Αντιστοίχισε κάθε μέρος με τη βασική λειτουργία του.</p>
+  <div id="functionsHost" class="grid"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Γ</span><h2>Ακροδέκτες μηχανής Σ.Ρ.</h2></div>
+  <p class="sub">8 στοιχεία • Διάλεξε τον σωστό ακροδέκτη για κάθε θέση.</p>
+  <div id="terminalsHost" class="grid"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Δ1</span><h2>Τυλίγματα και βοηθητικοί πόλοι — ερωτήσεις</h2></div>
+  <p class="sub">10 στοιχεία • Σωστό/Λάθος και πολλαπλής επιλογής.</p>
+  <div id="questionsHost"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Δ2</span><h2>Βροχοτύλιγμα — Κυματοτύλιγμα — Βοηθητικοί πόλοι</h2></div>
+  <p class="sub">15 στοιχεία • Κατάταξε σωστά κάθε χαρακτηριστικό.</p>
+  <div id="windingSortHost" class="grid"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title"><span class="badge">Δ3</span><h2>Είδη διέγερσης και βασικοί όροι</h2></div>
+  <p class="sub">6 στοιχεία • Αντιστοίχισε τον όρο με τη σωστή περιγραφή.</p>
+  <div id="excitationHost" class="grid"></div>
+</section>
+
+<div class="progressbox">
+  <div id="progressText"><strong>0 / 67</strong> απαντημένα</div>
+  <div class="progressline"><div id="progressFill"></div></div>
+  <div class="actions">
+    <button class="primary" id="gradeBtn" type="button">✓ Οριστικός έλεγχος</button>
+    <button class="drive" id="submitBtn" type="button" disabled>Υποβολή στο Drive</button>
+    <button class="secondary" id="printBtn" type="button">Εκτύπωση</button>
+    <div id="resultText" class="result">Το τεστ δεν έχει ελεγχθεί ακόμη.</div>
+  </div>
+  <div id="sectionScores" class="scorecards hidden"></div>
+  <div id="submitStatus" class="sub" style="margin-top:8px"></div>
+</div>
+
+<footer>Ε. Κοκκώδης • Γ΄ ΕΠΑ.Λ. — Ηλεκτρικές Μηχανές</footer>
+</div>
+
+<script>
+(() => {
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwLxjjxI9PWRlpNiBRtG_8Qd4k1Arv0u0g5FZYYXGyEfacnCPnWGY1HiJcjAphA9-YU/exec";
+const QUIZ_CODE = "HM_G_MERI_AKRODEKTES_TYLIGMATA_2026";
+const QUIZ_TITLE = "Τεστ Αξιολόγησης – Μηχανές Σ.Ρ.: Μέρη, Ακροδέκτες, Τυλίγματα και Βοηθητικοί Πόλοι";
+const DATA = {"statorRotor": [{"text": "Ζύγωμα", "answer": "Στάτης"}, {"text": "Κύριοι πόλοι", "answer": "Στάτης"}, {"text": "Τυλίγματα κύριων πόλων", "answer": "Στάτης"}, {"text": "Βοηθητικοί πόλοι", "answer": "Στάτης"}, {"text": "Τυλίγματα βοηθητικών πόλων", "answer": "Στάτης"}, {"text": "Ψήκτρες", "answer": "Στάτης"}, {"text": "Ψηκτροθήκες", "answer": "Στάτης"}, {"text": "Κιβώτιο ακροδεκτών", "answer": "Στάτης"}, {"text": "Άξονας", "answer": "Δρομέας"}, {"text": "Πυρήνας επαγωγικού τυμπάνου", "answer": "Δρομέας"}, {"text": "Τύλιγμα επαγωγικού τυμπάνου", "answer": "Δρομέας"}, {"text": "Συλλέκτης", "answer": "Δρομέας"}, {"text": "Ανεμιστήρας", "answer": "Δρομέας"}, {"text": "Πλήμνη", "answer": "Δρομέας"}], "functions": [{"text": "Ζύγωμα", "answer": "Στηρίζει τους πόλους και κλείνει το μαγνητικό κύκλωμα της μηχανής."}, {"text": "Κύριοι πόλοι", "answer": "Δημιουργούν το κύριο μαγνητικό πεδίο μέσα στη μηχανή."}, {"text": "Τυλίγματα κύριων πόλων", "answer": "Όταν διαρρέονται από ρεύμα διέγερσης, μαγνητίζουν τους κύριους πόλους."}, {"text": "Βοηθητικοί πόλοι", "answer": "Βοηθούν στη βελτίωση της μεταγωγής και στη μείωση των σπινθηρισμών."}, {"text": "Ψήκτρες", "answer": "Έρχονται σε επαφή με τον συλλέκτη και επιτρέπουν τη μεταφορά ρεύματος από ή προς το εξωτερικό κύκλωμα."}, {"text": "Ψηκτροθήκες", "answer": "Συγκρατούν τις ψήκτρες στη σωστή θέση και βοηθούν να υπάρχει κατάλληλη πίεση στον συλλέκτη."}, {"text": "Κιβώτιο ακροδεκτών", "answer": "Συγκεντρώνει τους ακροδέκτες των τυλιγμάτων για να γίνονται οι εξωτερικές συνδέσεις."}, {"text": "Άξονας", "answer": "Στηρίζει τον δρομέα και μεταδίδει τη μηχανική κίνηση ή τη ροπή."}, {"text": "Πυρήνας επαγωγικού τυμπάνου", "answer": "Φέρει τα αυλάκια για το τύλιγμα και αποτελεί τμήμα του μαγνητικού κυκλώματος του δρομέα."}, {"text": "Τύλιγμα επαγωγικού τυμπάνου", "answer": "Εκεί αναπτύσσεται ΗΕΔ στη γεννήτρια ή ασκούνται δυνάμεις στον κινητήρα."}, {"text": "Συλλέκτης", "answer": "Συνδέεται με το τύλιγμα του επαγωγικού τυμπάνου και συνεργάζεται με τις ψήκτρες για τη μεταγωγή."}, {"text": "Ανεμιστήρας", "answer": "Βοηθά στην ψύξη της μηχανής κατά τη λειτουργία."}, {"text": "Πλήμνη", "answer": "Συνδέει και συγκρατεί μηχανικά μέρη του δρομέα επάνω στον άξονα."}, {"text": "Πέδιλα πόλων", "answer": "Κατανέμουν καλύτερα το μαγνητικό πεδίο στο διάκενο της μηχανής."}], "terminals": [{"text": "(+) του επαγωγικού τυμπάνου", "answer": "A1"}, {"text": "(-) του επαγωγικού τυμπάνου", "answer": "A2"}, {"text": "(C1) του τυλίγματος βοηθητικών πόλων", "answer": "S3"}, {"text": "(C2) του τυλίγματος βοηθητικών πόλων", "answer": "S4"}, {"text": "(E) του τυλίγματος σειράς", "answer": "S1"}, {"text": "(F) του τυλίγματος σειράς", "answer": "S2"}, {"text": "(C) του παράλληλου τυλίγματος", "answer": "F1"}, {"text": "(D) του παράλληλου τυλίγματος", "answer": "F2"}], "questions": [{"q": "Το τύλιγμα του επαγωγικού τυμπάνου είναι σημαντικό, γιατί μέσα σε αυτό αναπτύσσονται ΗΕΔ στις γεννήτριες ή ζεύγη δυνάμεων στους κινητήρες.", "options": ["Σωστό", "Λάθος"], "answer": "Σωστό"}, {"q": "Τα βροχοτυλίγματα χρησιμοποιούνται κυρίως σε μηχανές:", "options": ["υψηλής τάσης και χαμηλής έντασης", "χαμηλής τάσης και υψηλής έντασης", "μεσαίας τάσης και μηδενικής έντασης", "μόνο σε μονοφασικούς κινητήρες"], "answer": "χαμηλής τάσης και υψηλής έντασης"}, {"q": "Στα απλά βροχοτυλίγματα συνήθως δημιουργούνται τόσοι παράλληλοι κλάδοι όσοι είναι οι πόλοι της μηχανής.", "options": ["Σωστό", "Λάθος"], "answer": "Σωστό"}, {"q": "Τα κυματοτυλίγματα χρησιμοποιούνται κυρίως σε μηχανές:", "options": ["χαμηλής τάσης και υψηλής έντασης", "υψηλής τάσης και χαμηλής έντασης", "μόνο πολύ μεγάλης έντασης", "μόνο με μόνιμους μαγνήτες"], "answer": "υψηλής τάσης και χαμηλής έντασης"}, {"q": "Στα απλά κυματοτυλίγματα δημιουργούνται πάντοτε:", "options": ["δύο παράλληλοι κλάδοι", "τόσοι κλάδοι όσες είναι οι ψήκτρες", "κανένας παράλληλος κλάδος", "τέσσερις κλάδοι ανεξάρτητα από τη μηχανή"], "answer": "δύο παράλληλοι κλάδοι"}, {"q": "Στα κυματοτυλίγματα οι περιελίξεις συνδέονται σε σειρά.", "options": ["Σωστό", "Λάθος"], "answer": "Σωστό"}, {"q": "Το ρεύμα που διαρρέει το πηνίο κάθε πόλου ονομάζεται:", "options": ["ρεύμα τυμπάνου", "ρεύμα συλλέκτη", "ρεύμα διέγερσης", "ρεύμα σπινθηρισμού"], "answer": "ρεύμα διέγερσης"}, {"q": "Όταν το τύλιγμα διέγερσης τροφοδοτείται από συστοιχία ή άλλη μικρή γεννήτρια Σ.Ρ., η γεννήτρια χαρακτηρίζεται ως:", "options": ["γεννήτρια παράλληλης διέγερσης", "γεννήτρια διέγερσης σειράς", "γεννήτρια ανεξάρτητης ή ξένης διέγερσης", "γεννήτρια σύνθετης διέγερσης"], "answer": "γεννήτρια ανεξάρτητης ή ξένης διέγερσης"}, {"q": "Το τύλιγμα σειράς αποτελείται από λίγες σπείρες, σύρμα μεγάλης διατομής και παρουσιάζει μικρή ωμική αντίσταση.", "options": ["Σωστό", "Λάθος"], "answer": "Σωστό"}, {"q": "Ο βασικός σκοπός των βοηθητικών πόλων είναι:", "options": ["να αυξάνουν μόνο τις στροφές της μηχανής", "να μειώνουν τη μάζα του δρομέα", "να δημιουργούν πεδίο αντιστάθμισης ώστε να αποφεύγονται σπινθηρισμοί", "να αντικαθιστούν τελείως τους κύριους πόλους"], "answer": "να δημιουργούν πεδίο αντιστάθμισης ώστε να αποφεύγονται σπινθηρισμοί"}], "windingSort": [{"text": "Χαμηλή τάση", "answer": "Βροχοτύλιγμα"}, {"text": "Υψηλή ένταση ρεύματος", "answer": "Βροχοτύλιγμα"}, {"text": "Αγωγοί μεγάλης διατομής", "answer": "Βροχοτύλιγμα"}, {"text": "Περιελίξεις σε παράλληλη σύνδεση", "answer": "Βροχοτύλιγμα"}, {"text": "Παράδειγμα: μίζες αυτοκινήτων", "answer": "Βροχοτύλιγμα"}, {"text": "Υψηλή τάση", "answer": "Κυματοτύλιγμα"}, {"text": "Χαμηλή ένταση ρεύματος", "answer": "Κυματοτύλιγμα"}, {"text": "Δύο παράλληλοι κλάδοι", "answer": "Κυματοτύλιγμα"}, {"text": "Περιελίξεις σε σειρά", "answer": "Κυματοτύλιγμα"}, {"text": "Παράδειγμα: μικρές χειροκίνητες γεννήτριες MEGGER", "answer": "Κυματοτύλιγμα"}, {"text": "Τοποθέτηση στις ουδέτερες ζώνες", "answer": "Βοηθητικοί πόλοι"}, {"text": "Σύνδεση σε σειρά με το τύλιγμα τυμπάνου", "answer": "Βοηθητικοί πόλοι"}, {"text": "Λίγες σπείρες χοντρού μονωμένου σύρματος", "answer": "Βοηθητικοί πόλοι"}, {"text": "Μαγνητικό πεδίο αντιστάθμισης", "answer": "Βοηθητικοί πόλοι"}, {"text": "Αποφυγή σπινθηρισμών σε ψήκτρες και συλλέκτη", "answer": "Βοηθητικοί πόλοι"}], "excitationMatches": [{"text": "Ρεύμα διέγερσης", "answer": "Ρεύμα που διαρρέει το πηνίο κάθε πόλου"}, {"text": "Ξένη / ανεξάρτητη διέγερση", "answer": "Τροφοδότηση τυλίγματος πόλων από εξωτερική πηγή ή διεγέρτρια"}, {"text": "Παράλληλη διέγερση", "answer": "Τα πηνία των πόλων τροφοδοτούνται παράλληλα με το τύμπανο και το εξωτερικό κύκλωμα"}, {"text": "Διέγερση σειράς", "answer": "Τα πηνία των πόλων τροφοδοτούνται σε σειρά με το τύμπανο και το φορτίο"}, {"text": "Σύνθετη διέγερση", "answer": "Υπάρχει ένα τύλιγμα σειράς και ένα παράλληλο τύλιγμα"}, {"text": "Μαγνητογεννήτρια", "answer": "Το μαγνητικό πεδίο δημιουργείται από μόνιμους μαγνήτες"}]};
+const TOTAL = DATA.statorRotor.length + DATA.functions.length + DATA.terminals.length + DATA.questions.length + DATA.windingSort.length + DATA.excitationMatches.length;
+
+let graded = false;
+let submitted = false;
+let finalCorrect = 0;
+let finalPercent = 0;
+let finalGrade20 = 0;
+let resultDetails = [];
+
+const SESSION_SEED_KEY = QUIZ_CODE + "_SESSION_SEED_V2";
+
+function createSessionSeed(){
+  if (window.crypto && window.crypto.getRandomValues) {
+    const a = new Uint32Array(4);
+    window.crypto.getRandomValues(a);
+    return Array.from(a).map(n => n.toString(16).padStart(8,"0")).join("");
+  }
+  return String(Date.now()) + "_" + Math.random().toString(36).slice(2);
+}
+
+let SESSION_SEED = sessionStorage.getItem(SESSION_SEED_KEY);
+if (!SESSION_SEED) {
+  SESSION_SEED = createSessionSeed();
+  sessionStorage.setItem(SESSION_SEED_KEY, SESSION_SEED);
+}
+
+function hashString(str){
+  let h = 2166136261 >>> 0;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function seededRandom(seed){
+  let t = seed >>> 0;
+  return function(){
+    t += 0x6D2B79F5;
+    let r = t;
+    r = Math.imul(r ^ (r >>> 15), r | 1);
+    r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function stableShuffle(array, salt){
+  const out = [...array];
+  const rnd = seededRandom(hashString(SESSION_SEED + "|" + salt));
+  for(let i=out.length-1;i>0;i--){
+    const j = Math.floor(rnd() * (i+1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+const escapeHtml = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+document.getElementById("testDate").value = new Date().toISOString().slice(0,10);
+
+function makeSelect(options, key, placeholder="— Επίλεξε —") {
+  const s = document.createElement("select");
+  s.dataset.key = key;
+  const orderedOptions = stableShuffle(options, "options-" + key);
+  s.innerHTML = `<option value="">${placeholder}</option>` + orderedOptions.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join("");
+  s.addEventListener("change", updateProgress);
+  return s;
+}
+
+function addSelectItems(hostId, items, options, prefix) {
+  const host = document.getElementById(hostId);
+  stableShuffle(items.map((x,i)=>({...x,_id:i})), "items-" + prefix).forEach((item, n) => {
+    const box = document.createElement("div");
+    box.className = "item";
+    box.dataset.correct = item.answer;
+    box.dataset.section = prefix;
+    const title = document.createElement("div");
+    title.className = "item-title";
+    title.textContent = `${n+1}. ${item.text}`;
+    box.appendChild(title);
+    const opts = typeof options === "function" ? options(item) : options;
+    box.appendChild(makeSelect(opts, `${prefix}-${item._id}`));
+    host.appendChild(box);
+  });
+}
+
+function render() {
+  addSelectItems("statorRotorHost", DATA.statorRotor, ["Στάτης","Δρομέας"], "A");
+
+  const funcs = DATA.functions.map(x=>x.answer);
+  addSelectItems("functionsHost", DATA.functions, funcs, "B");
+
+  addSelectItems(
+    "terminalsHost",
+    DATA.terminals,
+    ["A1","A2","S1","S2","S3","S4","F1","F2"],
+    "C"
+  );
+
+  addSelectItems(
+    "windingSortHost",
+    DATA.windingSort,
+    ["Βροχοτύλιγμα","Κυματοτύλιγμα","Βοηθητικοί πόλοι"],
+    "D2"
+  );
+
+  const matchOpts = DATA.excitationMatches.map(x=>x.answer);
+  addSelectItems("excitationHost", DATA.excitationMatches, matchOpts, "D3");
+
+  const qhost = document.getElementById("questionsHost");
+  const shuffledQuestions = stableShuffle(
+    DATA.questions.map((x,i)=>({...x,_id:i})),
+    "items-D1"
+  );
+
+  shuffledQuestions.forEach((item,displayIndex)=>{
+    const originalIndex = item._id;
+    const box=document.createElement("div");
+    box.className="mcq";
+    box.dataset.correct=item.answer;
+    box.dataset.section="D1";
+    box.dataset.qindex=originalIndex;
+
+    const q=document.createElement("div");
+    q.className="q";
+    q.textContent=`${displayIndex+1}. ${item.q}`;
+    box.appendChild(q);
+
+    stableShuffle(item.options, "options-D1-" + originalIndex).forEach(opt=>{
+      const lab=document.createElement("label");
+      lab.className="option";
+
+      const inp=document.createElement("input");
+      inp.type="radio";
+      inp.name=`q${originalIndex}`;
+      inp.value=opt;
+      inp.addEventListener("change",updateProgress);
+
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(opt));
+      box.appendChild(lab);
+    });
+
+    qhost.appendChild(box);
+  });
+
+  updateProgress();
+}
+
+function getAnsweredCount() {
+  let c=0;
+  document.querySelectorAll("select[data-key]").forEach(s=>{if(s.value)c++;});
+  DATA.questions.forEach((_,i)=>{if(document.querySelector(`input[name="q${i}"]:checked`))c++;});
+  return c;
+}
+
+function updateProgress() {
+  const n=getAnsweredCount();
+  document.getElementById("progressText").innerHTML=`<strong>${n} / ${TOTAL}</strong> απαντημένα`;
+  document.getElementById("progressFill").style.width=`${Math.round(n/TOTAL*100)}%`;
+}
+
+function validateStudent() {
+  const name=document.getElementById("studentName").value.trim();
+  const cls=document.getElementById("classSection").value.trim();
+  const date=document.getElementById("testDate").value;
+  if(!name || !cls || !date){ alert("Συμπλήρωσε Ονοματεπώνυμο, Τμήμα και Ημερομηνία."); return false; }
+  return true;
+}
+
+
+function addAnswerFeedback(box, ok, correctAnswer){
+  const old = box.querySelector(".feedback-answer");
+  if(old) old.remove();
+
+  const fb = document.createElement("div");
+  fb.className = "feedback-answer " + (ok ? "correct-note" : "wrong-note");
+  fb.textContent = ok ? "✓ Σωστή απάντηση" : "Σωστή απάντηση: " + correctAnswer;
+  box.appendChild(fb);
+}
+
+function grade() {
+  if(graded) return;
+  if(!validateStudent()) return;
+  const answered=getAnsweredCount();
+  if(answered<TOTAL){ alert(`Πρέπει να απαντήσεις σε όλα τα στοιχεία. Έχουν απαντηθεί ${answered} από ${TOTAL}.`); return; }
+
+  let correct=0;
+  resultDetails=[];
+  const section={A:[0,DATA.statorRotor.length],B:[0,DATA.functions.length],C:[0,DATA.terminals.length],D1:[0,DATA.questions.length],D2:[0,DATA.windingSort.length],D3:[0,DATA.excitationMatches.length]};
+
+  document.querySelectorAll(".item").forEach((box,idx)=>{
+    const s=box.querySelector("select");
+    const ans=s.value, ok=ans===box.dataset.correct;
+    if(ok)correct++;
+    section[box.dataset.section][0]+=ok?1:0;
+    box.classList.add(ok?"correct":"wrong");
+    addAnswerFeedback(box, ok, box.dataset.correct);
+    resultDetails.push({section:box.dataset.section,question:box.querySelector(".item-title").textContent.replace(/^\d+\.\s*/,''),student:ans,correct:box.dataset.correct,ok});
+  });
+
+  document.querySelectorAll(".mcq").forEach(box=>{
+    const i=box.dataset.qindex;
+    const checked=box.querySelector(`input[name="q${i}"]:checked`);
+    const ans=checked?checked.value:"";
+    const ok=ans===box.dataset.correct;
+    if(ok)correct++;
+    section.D1[0]+=ok?1:0;
+    box.classList.add(ok?"correct":"wrong");
+    addAnswerFeedback(box, ok, box.dataset.correct);
+    resultDetails.push({section:"D1",question:box.querySelector(".q").textContent.replace(/^\d+\.\s*/,''),student:ans,correct:box.dataset.correct,ok});
+  });
+
+  finalCorrect=correct;
+  finalPercent=Math.round(correct/TOTAL*100);
+  finalGrade20=Math.round((correct/TOTAL*20)*10)/10;
+  graded=true;
+
+  document.querySelectorAll("select,input[type=radio],#studentName,#classSection,#testDate").forEach(el=>el.disabled=true);
+  document.getElementById("gradeBtn").disabled=true;
+  document.getElementById("submitBtn").disabled=false;
+
+  const rt=document.getElementById("resultText");
+  rt.className="result "+(finalGrade20>=10?"good":"bad");
+  rt.textContent=`Βαθμός: ${finalGrade20}/20 — ${finalCorrect}/${TOTAL} (${finalPercent}%)`;
+
+  const labels={A:"Στάτης/Δρομέας",B:"Μέρη/λειτουργίες",C:"Ακροδέκτες",D1:"Ερωτήσεις τυλιγμάτων",D2:"Κατάταξη τυλιγμάτων",D3:"Είδη διέγερσης"};
+  const sc=document.getElementById("sectionScores");
+  sc.innerHTML=Object.entries(section).map(([k,v])=>`<div class="scorecard"><span>${labels[k]}</span><b>${v[0]}/${v[1]}</b></div>`).join("");
+  sc.classList.remove("hidden");
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+function buildResultsHtml() {
+  const name=document.getElementById("studentName").value.trim();
+  const cls=document.getElementById("classSection").value.trim();
+  const date=document.getElementById("testDate").value;
+  const rows=resultDetails.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.section)}</td><td>${escapeHtml(r.question)}</td><td>${escapeHtml(r.student)}</td><td>${escapeHtml(r.correct)}</td><td>${r.ok?"Σωστό":"Λάθος"}</td></tr>`).join("");
+  return `<!DOCTYPE html><html lang="el"><head><meta charset="UTF-8"><title>${escapeHtml(QUIZ_TITLE)}</title>
+<style>body{font-family:Arial,sans-serif;padding:22px;color:#1f2937}h1{font-size:22px}.score{font-size:21px;font-weight:bold;color:#155e9f;margin:14px 0}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #cbd5e1;padding:6px;vertical-align:top}th{background:#eef4fb}.meta{line-height:1.7}</style></head><body>
+<h1>${escapeHtml(QUIZ_TITLE)}</h1>
+<div class="meta"><b>Ονοματεπώνυμο:</b> ${escapeHtml(name)}<br><b>Τμήμα:</b> ${escapeHtml(cls)}<br><b>Ημερομηνία:</b> ${escapeHtml(date)}</div>
+<div class="score">Βαθμός: ${finalGrade20}/20 — ${finalCorrect}/${TOTAL} (${finalPercent}%)</div>
+<table><thead><tr><th>#</th><th>Μέρος</th><th>Ερώτηση / στοιχείο</th><th>Απάντηση μαθητή</th><th>Σωστή απάντηση</th><th>Αποτέλεσμα</th></tr></thead><tbody>${rows}</tbody></table>
+<p style="margin-top:18px;font-weight:bold">Ε. Κοκκώδης</p></body></html>`;
+}
+
+function addHidden(form,name,value) {
+  const inp=document.createElement("input"); inp.type="hidden"; inp.name=name; inp.value=value; form.appendChild(inp);
+}
+
+function submitToDrive() {
+  if(!graded || submitted) return;
+  const name=document.getElementById("studentName").value.trim();
+  const cls=document.getElementById("classSection").value.trim();
+  const date=document.getElementById("testDate").value;
+  const resultsHtml=buildResultsHtml();
+
+  const popup=window.open("","submissionWindow");
+  if(popup){popup.document.write("<p style='font-family:Arial;padding:20px'>Γίνεται υποβολή στο Google Drive...</p>");popup.document.close();}
+
+  const form=document.createElement("form");
+  form.method="POST"; form.action=WEB_APP_URL; form.target="submissionWindow"; form.style.display="none";
+
+  const fields={
+    quizCode:QUIZ_CODE, quizTitle:QUIZ_TITLE,
+    name, studentName:name,
+    class:cls, section:cls, classSection:cls,
+    date, testDate:date,
+    score:String(finalCorrect), total:String(TOTAL),
+    score20:String(finalGrade20), grade20:String(finalGrade20),
+    percentage:String(finalPercent), percent:String(finalPercent),
+    answers:JSON.stringify(resultDetails),
+    html:resultsHtml, htmlContent:resultsHtml,
+    userAgent:navigator.userAgent
+  };
+  Object.entries(fields).forEach(([k,v])=>addHidden(form,k,v));
+
+  document.body.appendChild(form); form.submit(); form.remove();
+  submitted=true;
+  document.getElementById("submitBtn").disabled=true;
+  document.getElementById("submitStatus").innerHTML="Η υποβολή στάλθηκε. <strong>Θεώρησέ την επιτυχή μόνο αν η νέα καρτέλα εμφανίσει μήνυμα OK ότι αποθηκεύτηκε στο Google Drive.</strong>";
+}
+
+document.getElementById("gradeBtn").addEventListener("click",grade);
+document.getElementById("submitBtn").addEventListener("click",submitToDrive);
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+render();
+})();
+</script>
+</body>
+</html>

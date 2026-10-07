@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop: Μέρος και λειτουργία μηχανής Σ.Ρ.</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --soft:#eef4ff;
+      --line:#dbe3ef;
+      --good:#15803d;
+      --bad:#b91c1c;
+      --warn:#b45309;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:linear-gradient(180deg,#eaf2ff 0%, var(--bg) 45%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.38;
+    }
+    header, main, footer{
+      max-width:1380px;
+      margin:0 auto;
+      padding-left:18px;
+      padding-right:18px;
+    }
+    header{padding-top:12px}
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px 16px;
+      box-shadow:0 12px 34px rgba(15,23,42,.08);
+    }
+    h1{
+      margin:0 0 4px;
+      font-size:clamp(1.25rem,2.2vw,1.75rem);
+      color:#0f172a;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:8px;
+    }
+    .chip{
+      background:var(--soft);
+      border:1px solid #cfe0ff;
+      color:#1e3a8a;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:800;
+    }
+    main{
+      padding-top:6px;
+      padding-bottom:24px;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+      margin:10px 0;
+      box-shadow:0 8px 24px rgba(15,23,42,.05);
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:2px 0 8px;
+      padding-bottom:6px;
+      border-bottom:1px solid var(--line);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:28px;
+      height:28px;
+      border-radius:999px;
+      background:#dbeafe;
+      color:#1d4ed8;
+      font-weight:900;
+    }
+    h2{margin:0;font-size:1.05rem}
+    .hint{
+      color:var(--muted);
+      margin:0 0 8px;
+      font-size:.86rem;
+    }
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(220px,.48fr) minmax(620px,1.52fr);
+      gap:10px;
+      align-items:start;
+    }
+    .bank,.zones{
+      border:1px dashed #b9c5d6;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:10px;
+      min-height:80px;
+    }
+    .bank-title,.zones-title{
+      font-weight:900;
+      color:#334155;
+      margin:0 0 6px;
+    }
+    .cards{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .card{
+      user-select:none;
+      border:1px solid #cbd5e1;
+      background:#fff;
+      border-radius:12px;
+      padding:7px 9px;
+      cursor:grab;
+      font-size:.86rem;
+      line-height:1.15;
+      font-weight:850;
+      box-shadow:0 4px 12px rgba(15,23,42,.06);
+      touch-action:manipulation;
+    }
+    .card:active{cursor:grabbing}
+    .card.selected{
+      outline:3px solid rgba(37,99,235,.22);
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+    .drop-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(280px,1fr));
+      gap:8px;
+    }
+    .drop-row{
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      align-items:stretch;
+      border:1px solid #e8eef7;
+      background:#ffffff;
+      border-radius:12px;
+      padding:6px;
+    }
+    .definition{
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+      border-radius:12px;
+      padding:7px 8px;
+      font-size:.84rem;
+      line-height:1.22;
+      font-weight:750;
+    }
+    .definition .type{
+      display:inline-block;
+      margin-top:4px;
+      font-size:.68rem;
+      font-weight:900;
+      border-radius:999px;
+      padding:3px 8px;
+      background:#e0f2fe;
+      color:#075985;
+      border:1px solid #bae6fd;
+    }
+    .dropzone{
+      min-height:38px;
+      border:2px dashed #cbd5e1;
+      background:#fff;
+      border-radius:10px;
+      padding:5px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .dropzone.over{
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+    .dropzone.correct{
+      border-color:#22c55e;
+      background:#f0fdf4;
+    }
+    .dropzone.wrong{
+      border-color:#ef4444;
+      background:#fef2f2;
+    }
+    .buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:9px 12px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.88rem;
+      transition:.15s ease;
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#e2e8f0;color:#0f172a}
+    .btn-secondary:hover{background:#cbd5e1}
+    .result{
+      display:none;
+      margin-top:10px;
+      padding:12px;
+      border-radius:18px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+    }
+    .score-big{
+      font-size:1.45rem;
+      font-weight:900;
+      color:#1d4ed8;
+      margin:2px 0 8px;
+    }
+    .progress{
+      height:10px;
+      background:#dbeafe;
+      border-radius:999px;
+      overflow:hidden;
+      margin:12px 0 4px;
+    }
+    .bar{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#2563eb,#16a34a);
+      transition:width .35s ease;
+    }
+    .answer-list{
+      margin:12px 0 0;
+      padding-left:20px;
+    }
+    .answer-list li{margin:6px 0}
+    .ok{color:var(--good);font-weight:900}
+    .no{color:var(--bad);font-weight:900}
+    @media(min-width:921px){
+      .bank{position:sticky; top:8px;}
+    }
+    footer{
+      color:var(--muted);
+      font-size:.9rem;
+      padding-bottom:26px;
+    }
+    @media(max-width:920px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+      .drop-grid{
+        grid-template-columns:1fr;
+      }
+      .hero,.panel{padding:16px}
+      button{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1>Drag & Drop: Μέρος και λειτουργία</h1>
+      <p class="subtitle">Σύρε κάθε μέρος της μηχανής Σ.Ρ. στη σωστή λειτουργία. Η διάταξη είναι πιο συμπαγής για να φαίνονται περισσότερα στην οθόνη. Σε κινητό μπορείς και με κλικ: πάτησε πρώτα την κάρτα και μετά το πλαίσιο.</p>
+      <div class="chips">
+        <span class="chip">Κεφάλαια 2.2.1 – 2.2.3</span>
+        <span class="chip">Μηχανές Σ.Ρ.</span>
+        <span class="chip">Μέρη και ρόλοι</span>
+        <span class="chip">14 αντιστοιχίσεις</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="section-title">
+        <span class="badge">Α</span>
+        <h2>Δραστηριότητα αντιστοίχισης</h2>
+      </div>
+      <p class="hint">Στόχος: να συνδέσεις κάθε εξάρτημα με τη βασική του λειτουργία μέσα στη μηχανή συνεχούς ρεύματος.</p>
+
+      <div class="layout">
+        <div class="bank">
+          <p class="bank-title">Κάρτες με μέρη μηχανής</p>
+          <div id="bank" class="cards dropzone" data-bank="true" data-activity="match"></div>
+
+          <div class="buttons">
+            <button class="btn-primary" onclick="checkAnswers()">Έλεγχος</button>
+            <button class="btn-secondary" onclick="resetGame()">Καθαρισμός</button>
+          </div>
+
+          <div id="result" class="result">
+            <h2>Αποτέλεσμα</h2>
+            <div id="scoreText" class="score-big"></div>
+            <div class="progress"><div id="scoreBar" class="bar"></div></div>
+            <p id="message"></p>
+            <ul id="details" class="answer-list"></ul>
+          </div>
+        </div>
+
+        <div class="zones">
+          <p class="zones-title">Λειτουργίες</p>
+          <div id="zones" class="drop-grid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Εκπαιδευτικό αρχείο HTML για Γ΄ ΕΠΑ.Λ. — Ηλεκτρικές Μηχανές Σ.Ρ.
+  </footer>
+
+<script>
+  const items = [
+    {
+      id:"part-1",
+      text:"Ζύγωμα",
+      target:"func-1",
+      type:"Στάτης",
+      function:"Στηρίζει τους πόλους και κλείνει το μαγνητικό κύκλωμα της μηχανής."
+    },
+    {
+      id:"part-2",
+      text:"Κύριοι πόλοι",
+      target:"func-2",
+      type:"Στάτης",
+      function:"Δημιουργούν το κύριο μαγνητικό πεδίο μέσα στη μηχανή."
+    },
+    {
+      id:"part-3",
+      text:"Τυλίγματα κύριων πόλων",
+      target:"func-3",
+      type:"Στάτης",
+      function:"Όταν διαρρέονται από ρεύμα διέγερσης, μαγνητίζουν τους κύριους πόλους."
+    },
+    {
+      id:"part-4",
+      text:"Βοηθητικοί πόλοι",
+      target:"func-4",
+      type:"Στάτης",
+      function:"Βοηθούν στη βελτίωση της μεταγωγής και στη μείωση των σπινθηρισμών."
+    },
+    {
+      id:"part-5",
+      text:"Ψήκτρες",
+      target:"func-5",
+      type:"Στάτης",
+      function:"Έρχονται σε επαφή με τον συλλέκτη και επιτρέπουν τη μεταφορά ρεύματος από ή προς το εξωτερικό κύκλωμα."
+    },
+    {
+      id:"part-6",
+      text:"Ψηκτροθήκες",
+      target:"func-6",
+      type:"Στάτης",
+      function:"Συγκρατούν τις ψήκτρες στη σωστή θέση και βοηθούν να υπάρχει κατάλληλη πίεση στον συλλέκτη."
+    },
+    {
+      id:"part-7",
+      text:"Κιβώτιο ακροδεκτών",
+      target:"func-7",
+      type:"Στάτης",
+      function:"Συγκεντρώνει τους ακροδέκτες των τυλιγμάτων για να γίνονται οι εξωτερικές συνδέσεις."
+    },
+    {
+      id:"part-8",
+      text:"Άξονας",
+      target:"func-8",
+      type:"Δρομέας",
+      function:"Στηρίζει τον δρομέα και μεταδίδει τη μηχανική κίνηση ή τη ροπή."
+    },
+    {
+      id:"part-9",
+      text:"Πυρήνας επαγωγικού τυμπάνου",
+      target:"func-9",
+      type:"Δρομέας",
+      function:"Φέρει τα αυλάκια για το τύλιγμα και αποτελεί τμήμα του μαγνητικού κυκλώματος του δρομέα."
+    },
+    {
+      id:"part-10",
+      text:"Τύλιγμα επαγωγικού τυμπάνου",
+      target:"func-10",
+      type:"Δρομέας",
+      function:"Εκεί αναπτύσσεται ΗΕΔ στη γεννήτρια ή ασκούνται δυνάμεις στον κινητήρα."
+    },
+    {
+      id:"part-11",
+      text:"Συλλέκτης",
+      target:"func-11",
+      type:"Δρομέας",
+      function:"Συνδέεται με το τύλιγμα του επαγωγικού τυμπάνου και συνεργάζεται με τις ψήκτρες για τη μεταγωγή."
+    },
+    {
+      id:"part-12",
+      text:"Ανεμιστήρας",
+      target:"func-12",
+      type:"Δρομέας",
+      function:"Βοηθά στην ψύξη της μηχανής κατά τη λειτουργία."
+    },
+    {
+      id:"part-13",
+      text:"Πλήμνη",
+      target:"func-13",
+      type:"Δρομέας",
+      function:"Συνδέει και συγκρατεί μηχανικά μέρη του δρομέα επάνω στον άξονα."
+    },
+    {
+      id:"part-14",
+      text:"Πέδιλα πόλων",
+      target:"func-14",
+      type:"Στάτης",
+      function:"Κατανέμουν καλύτερα το μαγνητικό πεδίο στο διάκενο της μηχανής."
+    }
+  ];
+
+  let draggedId = null;
+  let selectedCard = null;
+
+  function shuffle(array){
+    return [...array].sort(() => Math.random() - 0.5);
+  }
+
+  function makeCard(item){
+    const div = document.createElement("div");
+    div.className = "card";
+    div.draggable = true;
+    div.id = item.id;
+    div.dataset.activity = "match";
+    div.dataset.target = item.target;
+    div.textContent = item.text;
+
+    div.addEventListener("dragstart", e => {
+      draggedId = div.id;
+      e.dataTransfer.setData("text/plain", div.id);
+    });
+
+    div.addEventListener("click", () => {
+      document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+      if(selectedCard === div.id){
+        selectedCard = null;
+        return;
+      }
+      selectedCard = div.id;
+      div.classList.add("selected");
+    });
+
+    return div;
+  }
+
+  function setupDropZone(zone){
+    zone.addEventListener("dragover", e => {
+      e.preventDefault();
+      zone.classList.add("over");
+    });
+
+    zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.classList.remove("over");
+      const id = e.dataTransfer.getData("text/plain") || draggedId;
+      if(id) moveCardToZone(id, zone);
+    });
+
+    zone.addEventListener("click", () => {
+      if(selectedCard){
+        moveCardToZone(selectedCard, zone);
+        document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+        selectedCard = null;
+      }
+    });
+  }
+
+  function moveCardToZone(cardId, zone){
+    const card = document.getElementById(cardId);
+    if(!card) return;
+    if(card.dataset.activity !== zone.dataset.activity) return;
+
+    if(zone.dataset.bank !== "true"){
+      const existing = zone.querySelector(".card");
+      if(existing){
+        document.getElementById("bank").appendChild(existing);
+      }
+    }
+
+    zone.appendChild(card);
+  }
+
+  function renderGame(){
+    const bank = document.getElementById("bank");
+    const zones = document.getElementById("zones");
+
+    bank.innerHTML = "";
+    zones.innerHTML = "";
+
+    shuffle(items).forEach(item => bank.appendChild(makeCard(item)));
+    setupDropZone(bank);
+
+    shuffle(items).forEach(item => {
+      const row = document.createElement("div");
+      row.className = "drop-row";
+
+      const def = document.createElement("div");
+      def.className = "definition";
+      def.innerHTML = `${item.function}<br><span class="type">${item.type}</span>`;
+
+      const dz = document.createElement("div");
+      dz.className = "dropzone";
+      dz.dataset.activity = "match";
+      dz.dataset.accept = item.target;
+
+      setupDropZone(dz);
+
+      row.appendChild(def);
+      row.appendChild(dz);
+      zones.appendChild(row);
+    });
+  }
+
+  function checkAnswers(){
+    let correct = 0;
+    const total = items.length;
+    const wrongItems = [];
+    const missingItems = [];
+
+    document.querySelectorAll("#zones .dropzone").forEach(zone => {
+      zone.classList.remove("correct","wrong");
+      const card = zone.querySelector(".card");
+
+      if(card && card.dataset.target === zone.dataset.accept){
+        correct++;
+        zone.classList.add("correct");
+      } else {
+        zone.classList.add("wrong");
+        if(card){
+          wrongItems.push(card.textContent);
+        }
+      }
+    });
+
+    const bankCards = [...document.querySelectorAll("#bank .card")];
+    bankCards.forEach(card => missingItems.push(card.textContent));
+
+    const percent = Math.round(correct / total * 100);
+    const result = document.getElementById("result");
+    result.style.display = "block";
+    document.getElementById("scoreText").textContent = `${correct}/${total} (${percent}%)`;
+    document.getElementById("scoreBar").style.width = `${percent}%`;
+
+    let message = "";
+    if(percent >= 85){
+      message = "Πολύ καλή επίδοση. Έχεις συνδέσει πολύ καλά τα μέρη της μηχανής με τη λειτουργία τους.";
+    }else if(percent >= 60){
+      message = "Καλή προσπάθεια. Δες ξανά κυρίως τον ρόλο του συλλέκτη, των ψηκτρών και των πόλων.";
+    }else{
+      message = "Χρειάζεται επανάληψη. Ξεκίνα από τα βασικά μέρη: ζύγωμα, πόλοι, επαγωγικό τύμπανο, συλλέκτης και ψήκτρες.";
+    }
+    document.getElementById("message").textContent = message;
+
+    const details = [];
+    details.push(`<span class="${percent >= 60 ? 'ok' : 'no'}">Σωστές αντιστοιχίσεις:</span> ${correct} από ${total}`);
+
+    if(wrongItems.length){
+      details.push(`<span class="no">Κάρτες σε λάθος θέση:</span> ${wrongItems.join(", ")}`);
+    }
+
+    if(missingItems.length){
+      details.push(`<span class="no">Κάρτες που δεν τοποθετήθηκαν:</span> ${missingItems.join(", ")}`);
+    }
+
+    if(!wrongItems.length && !missingItems.length){
+      details.push(`<span class="ok">Μπράβο!</span> Όλες οι αντιστοιχίσεις είναι σωστές.`);
+    }
+
+    document.getElementById("details").innerHTML = details.map(d => `<li>${d}</li>`).join("");
+    result.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  function resetGame(){
+    selectedCard = null;
+    draggedId = null;
+    document.getElementById("result").style.display = "none";
+    document.getElementById("scoreBar").style.width = "0%";
+    renderGame();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  renderGame();
+</script>
+</body>
+</html>
