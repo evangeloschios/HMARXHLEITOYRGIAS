@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Γεννήτρια Σ.Ρ. Διέγερσης Σειράς — Γ΄ ΕΠΑΛ</title><style>
+:root{--bg:#0b1428;--panel:#142440;--line:#32496d;--text:#f5f7ff;--muted:#bed0ec;--a:#69ddf7;--gold:#ffcf70;--green:#72e6a3;--red:#ff929e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,'Segoe UI',sans-serif}.deck{height:calc(100dvh - 66px);overflow:hidden}
+.slide{display:none;height:100%;padding:clamp(18px,3.8vw,58px);overflow-y:auto;scrollbar-color:#3c6689 transparent}
+.slide.active{display:flex;flex-direction:column;justify-content:safe center;gap:clamp(12px,2vh,22px)}
+.eyebrow{color:var(--a);font-size:clamp(13px,1.45vw,19px);font-weight:bold;letter-spacing:.075em;text-transform:uppercase}
+h1{font-size:clamp(35px,5.2vw,72px);margin:6px 0 12px;line-height:1.11}h2{font-size:clamp(25px,3.3vw,47px);margin:0 0 8px;line-height:1.13}h3{margin:0 0 12px;font-size:clamp(19px,1.9vw,27px);color:var(--gold)}
+p,li{font-size:clamp(17px,1.68vw,24px);line-height:1.48}p{margin:2px 0}ul,ol{margin:5px 0;padding-left:29px}li{margin:7px 0}
+.lead{font-size:clamp(21px,2.25vw,31px);color:var(--muted)}.small{font-size:clamp(13px,1.2vw,17px);color:var(--muted);line-height:1.55}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}.tri-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:clamp(15px,1.85vw,23px);min-width:0}
+.highlight{color:var(--a);font-weight:bold}.gold{color:var(--gold);font-weight:bold}.green{color:var(--green);font-weight:bold}.red{color:var(--red);font-weight:bold}
+.note{background:#1a3046;border-left:5px solid var(--gold);border-radius:10px;padding:13px 18px;font-size:clamp(15px,1.45vw,20px);line-height:1.45}
+.formula{text-align:center;font-size:clamp(28px,3vw,43px);font-weight:bold;background:#0b203a;padding:22px;border:1px solid #2d597a;border-radius:18px}
+.tags{display:flex;gap:12px;flex-wrap:wrap}.tag{background:#1d4056;border-radius:12px;padding:10px 14px;font-size:clamp(15px,1.55vw,20px)}
+.center{text-align:center}.value{font-size:clamp(25px,3.6vw,51px);color:var(--green);font-weight:900}
+.controls{height:66px;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:9px 20px;background:#101e35;border-top:1px solid var(--line)}
+button{background:#204261;color:#fff;border:1px solid #4b769d;border-radius:10px;padding:9px 16px;font:inherit;font-size:clamp(14px,1.2vw,17px);cursor:pointer}button:hover{background:#326083}button:disabled{opacity:.34;cursor:default}
+button.action{background:#126f77;border-color:#3fa2ae;font-weight:700}.count{color:var(--muted);white-space:nowrap;font-size:15px}
+svg{max-width:100%;height:auto}.diagram{width:100%;height:auto;max-height:385px;display:block}.diagram text{font-family:Arial,'Segoe UI',sans-serif}
+.process{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.process .step{background:#152741;border:1px solid var(--line);border-radius:15px;padding:15px 12px;min-height:120px;display:flex;flex-direction:column;gap:9px}.step strong{font-size:clamp(15px,1.6vw,21px);color:var(--a)}.step span{font-size:clamp(13px,1.15vw,17px);line-height:1.42;color:var(--muted)}
+.bars{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;height:165px;padding:10px 8px 0}.bar{flex:1;max-width:100px;min-width:30px;border-radius:8px 8px 0 0;background:linear-gradient(#69ddf7,#317fac);transition:height .25s;display:flex;justify-content:center;align-items:flex-start;color:#061a24;font-weight:bold;padding-top:8px}
+.step-highlight{border-color:#6adcf0!important;box-shadow:inset 0 0 0 1px #6adcf0,0 0 18px rgba(105,221,247,.11)}
+.stage-box{background:#0d2a40;border:1px solid #2f6e8c;border-radius:16px;padding:16px 18px;min-height:106px}
+input[type=range]{width:100%;accent-color:#69ddf7;cursor:pointer}.meter{height:24px;background:#2a3d53;border-radius:8px;overflow:hidden;margin-top:8px}.meter-fill{height:100%;background:linear-gradient(90deg,#3485ad,#76e3f6);border-radius:8px;width:45%;transition:width .2s}
+.polar-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pol{border:1px solid var(--line);border-radius:14px;padding:17px;background:#102540}.pol.good{border-color:#3b8b71}.pol.bad{border-color:#9b5668}
+a{color:#95e5fb}.footer{position:absolute;bottom:74px;right:26px;color:#8ca3c8;font-size:12px}
+@media(max-width:800px){.grid,.tri-grid,.polar-grid{grid-template-columns:1fr}.process{grid-template-columns:repeat(2,1fr)}.slide.active{justify-content:flex-start}.diagram{max-height:290px}.controls{padding:7px 11px}button{padding:8px 10px}.card{padding:15px}}
+@media(max-width:480px){.process{grid-template-columns:1fr}.slide{padding:15px}.note{padding:12px}.controls .hint{display:none}}
+@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.deck{height:auto;overflow:visible}.slide{display:flex!important;height:190mm;page-break-after:always;border-bottom:1px solid #ddd;overflow:visible}.controls{display:none!important}}
+
+/* Προσθήκες παρουσίασης γεννήτριας σειράς */
+.diagram-hint{color:var(--muted);font-size:clamp(13px,1.12vw,17px);line-height:1.5}
+.equal-formula{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;padding:18px;background:#0b203a;border:1px solid #2d597a;border-radius:17px;font-size:clamp(25px,3vw,38px);font-weight:bold}
+.equal-formula span{color:var(--a)}
+#interactiveSeriesDiagram .series-current{opacity:.2;transition:opacity .3s,filter .3s}
+#interactiveSeriesDiagram.active-current .series-current{opacity:1;filter:drop-shadow(0 0 3px #69ddf788)}
+#interactiveSeriesDiagram .flow-arrow{opacity:.17;transition:opacity .25s}
+#interactiveSeriesDiagram.active-current .flow-arrow{opacity:1}
+.state-card{min-height:125px;background:#0d2a40;border:1px solid #2f6e8c;border-radius:14px;padding:15px 18px}
+.state-card strong{font-size:clamp(17px,1.65vw,24px);color:var(--gold)}
+.state-card p{font-size:clamp(15px,1.3vw,19px);line-height:1.45;margin-top:9px}
+#loadStep{max-width:100%}
+.status-line{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;font-weight:bold;color:var(--a)}
+.compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.compare-grid .card p,.compare-grid .card li{font-size:clamp(15px,1.35vw,19px)}
+.concept-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.concept-pill{flex:1;min-width:150px;text-align:center;background:#19354f;border:1px solid #437391;padding:13px;border-radius:13px;font-weight:bold;font-size:clamp(15px,1.45vw,20px)}
+.concept-arrow{font-size:25px;color:var(--gold)}
+@media(max-width:800px){.compare-grid{grid-template-columns:1fr}.equal-formula{gap:6px}.state-card{min-height:0}}
+</style></head><body><main class="deck"><section class="slide active">
+ <div class="eyebrow">Γ΄ ΕΠΑΛ · Ηλεκτρικές Μηχανές · §2.3.4</div>
+ <h1>Γεννήτρια Σ.Ρ.<br><span class="highlight">Διέγερσης Σειράς</span></h1>
+ <p class="lead">Πώς αλλάζει η λειτουργία όταν το ίδιο ρεύμα διαρρέει το φορτίο και το τύλιγμα διέγερσης;</p>
+ <div class="tags"><span class="tag">Συνδεσμολογία σειράς</span><span class="tag">Αυτοδιέγερση</span><span class="tag">Σχολικό βιβλίο: σελ. 100–101</span></div>
+ <p class="small">Ε. Κοκκώδης · Παρουσίαση θεωρίας χωρίς κουίζ</p>
+ </section><section class="slide"><div class="eyebrow">1 · Σύνδεση με προηγούμενη γνώση</div><h2>Τι αλλάζει σε σχέση με την παράλληλη διέγερση;</h2>
+ <div class="grid">
+  <div class="card"><h3>Παράλληλη διέγερση</h3><p>Το τύλιγμα διέγερσης συνδέεται <strong>παράλληλα</strong> με το τύμπανο και το φορτίο.</p><p class="small">Το κύκλωμα διέγερσης μπορεί να διαρρέεται από ρεύμα πριν συνδεθεί το φορτίο.</p></div>
+  <div class="card"><h3>Διέγερση σειράς</h3><p>Το τύλιγμα διέγερσης συνδέεται <strong class="highlight">σε σειρά</strong> με το τύμπανο και το φορτίο.</p><p class="small">Για να υπάρχει ρεύμα διέγερσης, πρέπει να είναι κλειστό το κύκλωμα του φορτίου.</p></div>
+ </div><div class="note">Και οι δύο ανήκουν στις <strong>αυτοδιεγειρόμενες γεννήτριες</strong> συνεχούς ρεύματος.</div></section><section class="slide"><div class="eyebrow">2 · Ορισμός</div><h2>Γιατί ονομάζεται «διέγερσης σειράς»;</h2>
+ <p class="lead">Το τύλιγμα των πόλων βρίσκεται στον ίδιο ηλεκτρικό κλάδο με το <strong>επαγωγικό τύμπανο</strong> και το <strong>φορτίο</strong>.</p>
+ <div class="equal-formula"><span>I<sub>δ</sub></span> = <span>I<sub>φορτίου</sub></span> = <span>I<sub>τ</sub></span></div>
+ <div class="grid"><div class="card"><h3>Ρεύμα διέγερσης I<sub>δ</sub></h3><p>Το ρεύμα που περνά από το τύλιγμα των κύριων πόλων.</p></div><div class="card"><h3>Ρεύμα φορτίου</h3><p>Το ίδιο ρεύμα συνεχίζει μέσα από το εξωτερικό φορτίο.</p></div></div>
+ <div class="note">Σε ένα απλό κύκλωμα σειράς, <strong>η ένταση είναι ίδια σε όλα τα στοιχεία</strong>. Δεν υπάρχει ανεξάρτητη πηγή διέγερσης.</div></section><section class="slide"><div class="eyebrow">3 · Συνδεσμολογία — σχ. 2.16</div><h2>Ένας ηλεκτρικός βρόχος: G → διέγερση → φορτίο</h2>
+ <div class="card"><svg class="diagram" viewBox="0 0 1000 380" role="img" aria-label="Γεννήτρια συνεχούς ρεύματος G, τύλιγμα σειράς με ακροδέκτες S1 και S2 και φορτίο R, όλα συνδεδεμένα στον ίδιο κλειστό βρόχο">
+ <rect x="10" y="8" width="976" height="360" rx="20" fill="#0d1c33" stroke="#36516e" stroke-width="2"/>
+ <g font-family="Arial,sans-serif" font-weight="700" text-anchor="middle" font-size="23">
+  <text x="480" y="37" fill="#69ddf7">Τύλιγμα διέγερσης σειράς</text>
+  <text x="160" y="40" fill="#dceaff">Επαγωγικό τύμπανο</text>
+  <text x="835" y="42" fill="#ffcf70">Εξωτερικό φορτίο</text>
+ </g>
+ <g fill="none" stroke="#c6d8e9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M160 110 H335"/><path d="M610 110 H830 V188"/>
+  <path d="M830 246 V323 H160 V264"/><path d="M160 110 V155"/>
+ </g>
+ <g class="series-current" fill="none" stroke="#72e6a3" stroke-width="4.8" stroke-linecap="round">
+  <path d="M160 110 H335"/><path d="M610 110 H830 V188"/><path d="M830 246 V323 H160 V264"/><path d="M160 110 V155"/>
+ </g>
+ <g fill="none" stroke="#69ddf7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M335 110 H354 C361 78 380 78 387 110 C394 142 413 142 420 110 C427 78 446 78 453 110 C460 142 479 142 486 110 C493 78 512 78 519 110 C526 142 545 142 552 110 C559 78 578 78 585 110 H610"/>
+ </g>
+ <circle cx="160" cy="210" r="55" fill="#152c49" stroke="#ffcf70" stroke-width="6"/>
+ <text x="160" y="223" font-family="Arial" font-size="42" font-weight="bold" fill="#fffcf4" text-anchor="middle">G</text>
+ <rect x="804" y="188" width="52" height="58" rx="5" fill="#203e57" stroke="#ffcf70" stroke-width="5"/>
+ <g font-family="Arial" font-size="20" fill="#e8f5ff">
+  <text x="173" y="155">A1</text><text x="171" y="287">A2</text>
+  <text x="333" y="165" fill="#69ddf7">S1</text><text x="585" y="165" fill="#69ddf7">S2</text>
+  <text x="865" y="222" fill="#ffcf70">R</text>
+  <text x="870" y="247" fill="#d0dcec" font-size="17">φορτίου</text>
+ </g>
+ <g class="flow-arrow" fill="#72e6a3" stroke="none">
+   <path d="M250 95 L266 110 L250 125Z"/>
+   <path d="M735 95 L751 110 L735 125Z"/>
+   <path d="M501 308 L482 323 L501 338Z"/>
+ </g>
+ <text x="645" y="74" font-family="Arial" font-size="23" fill="#72e6a3" font-weight="bold" text-anchor="middle">Iδ = Iφορτίου</text>
+ <text x="500" y="359" font-family="Arial" font-size="17" fill="#bdcee5" text-anchor="middle">Ένας κλάδος ρεύματος — τύμπανο, διέγερση και φορτίο σε σειρά</text>
+ </svg></div>
+ <p class="diagram-hint">Διδακτικό απλοποιημένο κύκλωμα, βασισμένο στην αρχή του σχήματος 2.16 (σελ. 100)· δεν αποτελεί πιστή αναπαραγωγή του σχήματος του βιβλίου.</p></section><section class="slide"><div class="eyebrow">4 · Κατασκευή</div><h2>Πώς είναι κατασκευασμένο το τύλιγμα σειράς;</h2>
+ <div class="grid">
+ <div class="card"><h3>Λίγες σπείρες</h3><p>Το τύλιγμα της διέγερσης έχει <strong>μικρό αριθμό σπειρών</strong>.</p><p class="small">Αυτό είναι χαρακτηριστικό των τυλιγμάτων σειράς.</p></div>
+ <div class="card"><h3>Μεγάλη διατομή αγωγού</h3><p>Κατασκευάζεται από σύρμα <strong>μεγάλης διατομής</strong>, επειδή διαρρέεται από το ρεύμα του φορτίου.</p><p class="small">Το τύλιγμα παρουσιάζει μικρή ωμική αντίσταση.</p></div>
+ </div><div class="note">Θυμήσου: διαφορετικό από το παράλληλο τύλιγμα, που έχει <strong>πολλές σπείρες</strong>.</div></section><section class="slide"><div class="eyebrow">5 · Αυτοδιέγερση</div><h2>Πότε μπορεί να αναπτυχθεί η τάση;</h2>
+ <div class="process">
+  <div class="step"><strong>1. Περιστροφή</strong><span>Η κινητήρια μηχανή περιστρέφει το τύμπανο.</span></div>
+  <div class="step"><strong>2. Αρχική ΗΕΔ</strong><span>Ο παραμένων μαγνητισμός δίνει μικρή αρχική ΗΕΔ.</span></div>
+  <div class="step"><strong>3. Κλειστό φορτίο</strong><span>Το εξωτερικό κύκλωμα είναι συνδεδεμένο και κλειστό.</span></div>
+  <div class="step"><strong>4. Ρεύμα σειράς</strong><span>Κυκλοφορεί ρεύμα μέσα από το τύλιγμα διέγερσης.</span></div>
+  <div class="step"><strong>5. Ενίσχυση</strong><span>Με σωστή πολικότητα το πεδίο ενισχύεται και η τάση μπορεί να αυξηθεί.</span></div>
+ </div><div class="note"><strong>Βασική διαφορά:</strong> στη γεννήτρια σειράς το φορτίο πρέπει να είναι συνδεδεμένο για να κυκλοφορεί ρεύμα στο τύλιγμα διέγερσης.</div></section><section class="slide"><div class="eyebrow">6 · Διαδραστική επίδειξη</div><h2>Τι συμβαίνει όταν μεταβάλλουμε το φορτίο;</h2>
+ <div class="grid">
+ <div class="card"><h3>Κατάσταση φορτίου</h3>
+ <input id="loadStep" type="range" min="0" max="3" value="0" step="1" aria-label="Αλλαγή κατάστασης εξωτερικού φορτίου" />
+ <div class="status-line"><span>Ανοικτό κύκλωμα</span><span>Πολύ μεγάλο φορτίο</span></div>
+ <p id="loadStateTitle" class="value" style="font-size:clamp(21px,2.3vw,31px);margin:15px 0">Ανοικτό κύκλωμα</p>
+ <div class="state-card"><strong id="loadStateHeading">Δεν κυκλοφορεί ρεύμα διέγερσης</strong><p id="loadStateText">Χωρίς κλειστό εξωτερικό κύκλωμα δεν διαρρέεται το τύλιγμα σειράς. Παραμένει μόνο η πολύ μικρή αρχική ΗΕΔ λόγω παραμένοντος μαγνητισμού.</p></div>
+ </div>
+ <div class="card"><h3>Διαδρομή ρεύματος</h3><svg id="interactiveSeriesDiagram" class="diagram" viewBox="0 0 1000 380" role="img" aria-label="Γεννήτρια συνεχούς ρεύματος G, τύλιγμα σειράς με ακροδέκτες S1 και S2 και φορτίο R, όλα συνδεδεμένα στον ίδιο κλειστό βρόχο">
+ <rect x="10" y="8" width="976" height="360" rx="20" fill="#0d1c33" stroke="#36516e" stroke-width="2"/>
+ <g font-family="Arial,sans-serif" font-weight="700" text-anchor="middle" font-size="23">
+  <text x="480" y="37" fill="#69ddf7">Τύλιγμα διέγερσης σειράς</text>
+  <text x="160" y="40" fill="#dceaff">Επαγωγικό τύμπανο</text>
+  <text x="835" y="42" fill="#ffcf70">Εξωτερικό φορτίο</text>
+ </g>
+ <g fill="none" stroke="#c6d8e9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M160 110 H335"/><path d="M610 110 H830 V188"/>
+  <path d="M830 246 V323 H160 V264"/><path d="M160 110 V155"/>
+ </g>
+ <g class="series-current" fill="none" stroke="#72e6a3" stroke-width="4.8" stroke-linecap="round">
+  <path d="M160 110 H335"/><path d="M610 110 H830 V188"/><path d="M830 246 V323 H160 V264"/><path d="M160 110 V155"/>
+ </g>
+ <g fill="none" stroke="#69ddf7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M335 110 H354 C361 78 380 78 387 110 C394 142 413 142 420 110 C427 78 446 78 453 110 C460 142 479 142 486 110 C493 78 512 78 519 110 C526 142 545 142 552 110 C559 78 578 78 585 110 H610"/>
+ </g>
+ <circle cx="160" cy="210" r="55" fill="#152c49" stroke="#ffcf70" stroke-width="6"/>
+ <text x="160" y="223" font-family="Arial" font-size="42" font-weight="bold" fill="#fffcf4" text-anchor="middle">G</text>
+ <rect x="804" y="188" width="52" height="58" rx="5" fill="#203e57" stroke="#ffcf70" stroke-width="5"/>
+ <g font-family="Arial" font-size="20" fill="#e8f5ff">
+  <text x="173" y="155">A1</text><text x="171" y="287">A2</text>
+  <text x="333" y="165" fill="#69ddf7">S1</text><text x="585" y="165" fill="#69ddf7">S2</text>
+  <text x="865" y="222" fill="#ffcf70">R</text>
+  <text x="870" y="247" fill="#d0dcec" font-size="17">φορτίου</text>
+ </g>
+ <g class="flow-arrow" fill="#72e6a3" stroke="none">
+   <path d="M250 95 L266 110 L250 125Z"/>
+   <path d="M735 95 L751 110 L735 125Z"/>
+   <path d="M501 308 L482 323 L501 338Z"/>
+ </g>
+ <text x="645" y="74" font-family="Arial" font-size="23" fill="#72e6a3" font-weight="bold" text-anchor="middle">Iδ = Iφορτίου</text>
+ <text x="500" y="359" font-family="Arial" font-size="17" fill="#bdcee5" text-anchor="middle">Ένας κλάδος ρεύματος — τύμπανο, διέγερση και φορτίο σε σειρά</text>
+ </svg><p class="small">Το φωτεινό πράσινο ίχνος δείχνει ποιοτικά την παρουσία ρεύματος.</p></div>
+ </div>
+ <div class="note">Πρόκειται για <strong>ποιοτική διδακτική επίδειξη</strong> και όχι για προσομοίωση πραγματικών τιμών τάσης ή ρεύματος. Δεν δίνεται αριθμητικό αποτέλεσμα.</div></section><section class="slide"><div class="eyebrow">7 · Τάση και φόρτιση</div><h2>Γιατί η τάση εξόδου δεν παραμένει σταθερή;</h2>
+ <div class="grid">
+ <div class="card"><h3>Μεταβολή φορτίου</h3><p>Μεταβάλλεται το <strong>ρεύμα του φορτίου</strong>, άρα και το <strong>ρεύμα διέγερσης</strong>.</p><p>Έτσι μεταβάλλεται το μαγνητικό πεδίο και επηρεάζεται η παραγόμενη τάση.</p></div>
+ <div class="card"><h3>Πτώσεις τάσης</h3><p>Το τύλιγμα σειράς έχει πτώση τάσης, η οποία <strong>μεταβάλλεται</strong> καθώς αλλάζει το ρεύμα.</p><p>Το σχολικό βιβλίο επισημαίνει ότι μεταβάλλεται και η πολική τάση της μηχανής.</p></div>
+ </div><div class="note">Συμπέρασμα βιβλίου: <strong>Οι γεννήτριες σειράς δεν παρουσιάζουν σταθερότητα τάσης</strong>, σε αντίθεση με τις ξένης και παράλληλης διέγερσης.</div></section><section class="slide"><div class="eyebrow">8 · Συνέπεια στη χρήση</div><h2>Γιατί δεν επιλέγουμε γεννήτρια σειράς για συνηθισμένο δίκτυο;</h2>
+ <div class="card"><h3>Δίκτυο με συνεχώς μεταβαλλόμενα φορτία</h3>
+ <div class="concept-row"><div class="concept-pill">Άναμμα / σβήσιμο φορτίων</div><span class="concept-arrow">→</span><div class="concept-pill">Μεταβολή ρεύματος διέγερσης</div><span class="concept-arrow">→</span><div class="concept-pill">Μη σταθερή τάση</div></div>
+ </div>
+ <p class="lead">Δεν ενδείκνυται για <strong>συνήθη δίκτυα φωτισμού ή κίνησης</strong> με μεταβλητό φορτίο.</p>
+ <div class="note">Οι χρήσεις της είναι <strong>ειδικές και περιορισμένες</strong>, όπως παρουσιάζει το σχολικό βιβλίο στη σελίδα 101.</div></section><section class="slide"><div class="eyebrow">9 · Ειδική εφαρμογή 1</div><h2>Γραμμές μεγάλου μήκους — δίκτυα έλξης</h2>
+ <div class="card"><h3>Η λογική της αντιστάθμισης</h3>
+ <div class="concept-row"><div class="concept-pill">Αύξηση φορτίου</div><span class="concept-arrow">→</span><div class="concept-pill">Μεγαλύτερη πτώση τάσης στη γραμμή</div><span class="concept-arrow">→</span><div class="concept-pill">Ενίσχυση τάσης κατά μήκος της γραμμής</div></div>
+ <p style="margin-top:15px">Το σχολικό βιβλίο περιγράφει την τοποθέτηση <strong>γεννήτριας σειράς κατά μήκος της γραμμής</strong> ώστε, όταν αυξάνεται το φορτίο, η αύξηση της παραγόμενης τάσης να <strong>αντισταθμίζει πτώσεις τάσης</strong> των γραμμών μεταφοράς.</p></div>
+ <div class="note">Παράδειγμα που αναφέρει το βιβλίο: <strong>δίκτυα έλξης</strong> μεγάλου μήκους.</div></section><section class="slide"><div class="eyebrow">10 · Ειδική εφαρμογή 2</div><h2>Χρήση στις ηλεκτροσυγκολλήσεις</h2>
+ <div class="grid"><div class="card"><h3>Το ηλεκτρικό τόξο</h3><p>Κατά την ηλεκτροσυγκόλληση, η τάση του τόξου μπορεί να <strong>μεταβάλλεται αισθητά</strong>.</p></div>
+ <div class="card"><h3>Επιθυμητή συμπεριφορά</h3><p>Το βιβλίο αναφέρει τη χρήση της γεννήτριας σειράς σε ηλεκτροσυγκολλήσεις, με στόχο <strong>σχεδόν σταθερό ρεύμα</strong> παρά τις διακυμάνσεις της τάσης.</p></div></div>
+ <div class="note">Πρόκειται για <strong>εφαρμογή που περιγράφεται στο σχολικό βιβλίο</strong>· δεν αποτελεί οδηγία κατασκευής ή σύνδεσης ηλεκτροσυγκόλλησης.</div></section><section class="slide"><div class="eyebrow">11 · Σύγκριση</div><h2>Ξένης, παράλληλης και σειράς: τρεις συνδεσμολογίες</h2>
+ <div class="compare-grid">
+ <div class="card"><h3>Ξένης διέγερσης</h3><p>Ξεχωριστή εξωτερική πηγή διέγερσης.</p><p class="small">Το ρεύμα διέγερσης μπορεί να ρυθμίζεται ανεξάρτητα από το φορτίο.</p></div>
+ <div class="card"><h3>Παράλληλης</h3><p>Τύλιγμα διέγερσης <strong>παράλληλα</strong> στο τύμπανο και το φορτίο.</p><p class="small">Μπορεί να αναπτύξει τάση πριν συνδεθεί το φορτίο.</p></div>
+ <div class="card"><h3>Σειράς</h3><p>Τύλιγμα διέγερσης <strong>σε σειρά</strong> με το φορτίο.</p><p class="small">Χρειάζεται κλειστό κύκλωμα φορτίου για αυτοδιέγερση και δεν δίνει σταθερή τάση.</p></div>
+ </div><div class="note">Η <strong>θέση του τυλίγματος διέγερσης</strong> αλλάζει ουσιαστικά τη συμπεριφορά της γεννήτριας.</div></section><section class="slide"><div class="eyebrow">12 · Ανακεφαλαίωση</div><h2>Τα 5 σημεία που πρέπει να θυμάμαι</h2>
+ <div class="card"><ol>
+ <li>Η γεννήτρια σειράς είναι <strong>αυτοδιεγειρόμενη</strong>.</li>
+ <li>Το τύλιγμα διέγερσης συνδέεται <strong>σε σειρά</strong> με το φορτίο.</li>
+ <li>Το <strong>ρεύμα φορτίου είναι και ρεύμα διέγερσης</strong>.</li>
+ <li>Για αυτοδιέγερση πρέπει να είναι <strong>συνδεδεμένο το φορτίο</strong>, ώστε να υπάρχει κλειστό κύκλωμα.</li>
+ <li>Δεν προσφέρει <strong>σταθερή τάση</strong> και χρησιμοποιείται σε <strong>ειδικές εφαρμογές</strong>.</li>
+ </ol></div><p class="lead center">Σειρά → ίδιο ρεύμα → μεταβολή διέγερσης με το φορτίο</p></section><section class="slide"><div class="eyebrow">13 · Αναφορά</div><h2>Σχολικό βιβλίο και διδακτικές σημειώσεις</h2>
+ <p>Σχολικό βιβλίο <strong>Ηλεκτρικές Μηχανές — Γ΄ ΕΠΑΛ</strong>, §2.3.4 «Είδη γεννητριών Σ.Ρ. και χαρακτηριστικά τους», υποενότητα <strong>«Γεννήτριες διέγερσης σειράς»</strong>, σελίδες <strong>100–101</strong>, σχήμα <strong>2.16</strong>.</p>
+ <p><a target="_blank" rel="noopener" href="https://ebooks.edu.gr/ebooks/d/8547/4442/24-0345-02_Ilektrikes-Michanes_G-EPAL_Vivlio-Mathiti.pdf">Επίσημο σχολικό βιβλίο (ebooks.edu.gr)</a></p>
+ <div class="note">Η παρουσίαση αναδιατυπώνει τη σχολική ύλη για διδακτική χρήση. Τα κυκλώματα είναι <strong>απλοποιημένα</strong> και η διαδραστική επίδειξη δείχνει μόνο <strong>ποιοτικές μεταβολές</strong>, όχι μετρημένες χαρακτηριστικές μηχανής.</div>
+ <p class="small">Πλοήγηση: κουμπιά κάτω δεξιά, πλήκτρα ← → / Page Up–Page Down · F11 για πλήρη οθόνη · Ctrl+P για εκτύπωση.</p>
+ <p class="small">Ε. Κοκκώδης</p></section></main><nav class="controls" aria-label="Πλοήγηση παρουσίασης"><span class="count" id="count">1 / 14</span><span class="count hint">Ηλεκτρικές Μηχανές · Γ΄ ΕΠΑΛ</span><div style="display:flex;gap:7px"><button id="prev" type="button" aria-label="Προηγούμενη διαφάνεια">← Προηγούμενη</button><button id="next" type="button" aria-label="Επόμενη διαφάνεια">Επόμενη →</button></div></nav><script>
+(()=>{
+const slides=[...document.querySelectorAll('.slide')],count=document.getElementById('count'),prev=document.getElementById('prev'),next=document.getElementById('next');let current=0;
+function show(n){current=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('active',i===current));count.textContent=`${current+1} / ${slides.length}`;prev.disabled=current===0;next.disabled=current===slides.length-1;slides[current].scrollTop=0;}
+prev.addEventListener('click',()=>show(current-1));next.addEventListener('click',()=>show(current+1));
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(document.activeElement?.tagName) && !['Escape'].includes(e.key))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(current+1);}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(current-1);}});
+let touchStart=null;document.querySelector('.deck').addEventListener('touchstart',e=>{touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});document.querySelector('.deck').addEventListener('touchend',e=>{if(!touchStart)return;let dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;if(Math.abs(dx)>90&&Math.abs(dx)>Math.abs(dy)*1.7)show(current+(dx<0?1:-1));touchStart=null;},{passive:true});
+const model=[
+ {title:'Ανοικτό κύκλωμα',heading:'Δεν κυκλοφορεί ρεύμα διέγερσης',body:'Χωρίς κλειστό εξωτερικό κύκλωμα δεν διαρρέεται το τύλιγμα σειράς. Παραμένει μόνο η πολύ μικρή αρχική ΗΕΔ λόγω παραμένοντος μαγνητισμού.',current:false},
+ {title:'Μικρό φορτίο',heading:'Το κύκλωμα κλείνει',body:'Με συνδεδεμένο φορτίο μπορεί να κυκλοφορήσει ρεύμα μέσω του τυλίγματος σειράς. Με σωστή πολικότητα και κατάλληλες συνθήκες, αρχίζει να ενισχύεται το μαγνητικό πεδίο.',current:true},
+ {title:'Μεγαλύτερο φορτίο',heading:'Μεταβάλλεται η διέγερση',body:'Η αύξηση του ρεύματος φορτίου αυξάνει και το ρεύμα στο τύλιγμα σειράς. Η τάση εξόδου μεταβάλλεται — δεν είναι σταθερή.',current:true},
+ {title:'Πολύ μεγάλο φορτίο',heading:'Δεν εξασφαλίζεται σταθερή τάση',body:'Παρά την αύξηση του ρεύματος διέγερσης, οι πτώσεις τάσης και άλλοι περιορισμοί μπορούν να κάνουν την τάση εξόδου να υποχωρήσει. Η συμπεριφορά εξαρτάται από τη μηχανή.',current:true}
+];
+function updateLoad(){let index=Number(document.getElementById('loadStep').value),s=model[index];document.getElementById('loadStateTitle').textContent=s.title;document.getElementById('loadStateHeading').textContent=s.heading;document.getElementById('loadStateText').textContent=s.body;document.getElementById('interactiveSeriesDiagram').classList.toggle('active-current',s.current);}
+document.getElementById('loadStep').addEventListener('input',updateLoad);updateLoad();show(0);
+})();</script></body></html>

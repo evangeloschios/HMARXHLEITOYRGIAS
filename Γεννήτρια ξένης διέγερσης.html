@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 2.3.4 - Γεννήτριες Σ.Ρ. Ξένης Διέγερσης</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --primary:#1f6feb;
+      --primary-dark:#174ea6;
+      --accent:#ff8a00;
+      --ok:#16833a;
+      --bad:#c62828;
+      --line:#d9e2ef;
+      --soft:#eef5ff;
+      --warn:#fff7e6;
+      --radius:18px;
+      --shadow:0 10px 28px rgba(18,38,63,.09);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef5ff 0%, var(--bg) 35%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.5;
+    }
+    header{
+      background:linear-gradient(135deg,#1f6feb,#0f4c81);
+      color:white;
+      padding:34px 18px 30px;
+      text-align:center;
+      border-bottom:6px solid var(--accent);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.45rem,3vw,2.25rem)}
+    header p{margin:4px auto 0;max-width:920px;font-size:1.02rem;opacity:.95}
+    main{max-width:1180px;margin:24px auto 80px;padding:0 16px}
+    .toolbar{
+      position:sticky;top:0;z-index:5;
+      background:rgba(244,247,251,.93);backdrop-filter: blur(8px);
+      border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .toolbar .left{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:.95rem}
+    button{
+      border:0;border-radius:13px;padding:10px 14px;font-weight:700;cursor:pointer;
+      transition:transform .08s ease, background .18s ease, opacity .18s ease;
+      font-size:.96rem;
+    }
+    button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
+    .btn-soft{background:var(--soft);color:var(--primary-dark);border:1px solid #cfe0ff}
+    .section{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:22px;margin:18px 0;
+    }
+    .section h2{margin:0 0 6px;font-size:1.35rem}
+    .section-intro{margin:0 0 18px;color:var(--muted)}
+    .note{
+      background:var(--warn);border:1px solid #ffe0a8;border-radius:14px;padding:12px 14px;color:#5a3a00;
+      margin:12px 0 18px;
+    }
+    .question{
+      border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;background:#fbfdff;
+    }
+    .q-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .q-num{background:var(--primary);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;min-width:34px;text-align:center}
+    .q-title{font-weight:700;flex:1}
+    .options{display:grid;gap:8px;margin-top:10px}
+    .option{
+      display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--line);border-radius:12px;padding:10px;
+    }
+    .option input{margin-top:3px;transform:scale(1.1)}
+    .feedback{margin-top:10px;font-weight:700;display:none}
+    .correct{border-color:rgba(22,131,58,.55)!important;background:#f0fff5!important}
+    .wrong{border-color:rgba(198,40,40,.55)!important;background:#fff5f5!important}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--bad)}
+    .drag-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+    .bank,.zones{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}
+    .bank h3,.zones h3{margin:0 0 10px;font-size:1.05rem}
+    .cards{display:flex;flex-direction:column;gap:10px;min-height:54px}
+    .drag-card{
+      background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px;box-shadow:0 3px 10px rgba(18,38,63,.06);
+      cursor:grab;user-select:none;
+    }
+    .drag-card:active{cursor:grabbing}
+    .drag-card.selected{outline:3px solid rgba(31,111,235,.35);border-color:var(--primary)}
+    .drop-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px}
+    .drop-zone{
+      border:2px dashed #b9c7da;border-radius:16px;padding:12px;background:white;min-height:165px;
+    }
+    .drop-zone.dragover{border-color:var(--primary);background:#eef5ff}
+    .zone-title{font-weight:800;margin-bottom:9px;color:var(--primary-dark)}
+    .drag-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;color:var(--muted);font-size:.95rem}
+    .select-help{display:none;background:#eef5ff;border:1px solid #cfe0ff;border-radius:12px;padding:10px;margin-bottom:12px;color:#26466f}
+    .scenario-grid{display:grid;gap:14px}
+    .scorebox{
+      display:none;background:#0b1f3a;color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;margin-top:18px;
+    }
+    .scorebox h2{margin:0 0 8px}
+    .score-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .score-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 12px}
+    .small{font-size:.92rem;color:var(--muted)}
+    .hidden{display:none!important}
+    @media(max-width:880px){
+      .drag-wrap{grid-template-columns:1fr}
+      .drop-grid{grid-template-columns:1fr}
+      .toolbar{position:static}
+    }
+    @media print{
+      .toolbar, .scorebox, button{display:none!important}
+      body{background:white}
+      .section{box-shadow:none;break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Κουίζ Κεφ. 2.3.4: Γεννήτριες Σ.Ρ. Ξένης Διέγερσης</h1>
+    <p>Εστίαση αποκλειστικά στη γεννήτρια ξένης διέγερσης: τροφοδότηση διέγερσης, ρύθμιση τάσης, χρήσεις και βασική αναγνώριση.</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="left">
+        <span class="pill">Μέρος Α: Θεωρία</span>
+        <span class="pill">Μέρος Β: Drag & Drop</span>
+        <span class="pill">Μέρος Γ: Σενάρια</span>
+      </div>
+      <div>
+        <button class="btn-primary" onclick="checkAll()">Έλεγχος απαντήσεων</button>
+        <button class="btn-secondary" onclick="resetQuiz()">Επαναφορά</button>
+        <button class="btn-soft" onclick="window.print()">Εκτύπωση</button>
+      </div>
+    </div>
+
+    <section class="section" id="partA">
+      <h2>Μέρος Α — Σωστό/Λάθος & Πολλαπλής Επιλογής</h2>
+      <p class="section-intro">Απάντησε στις ερωτήσεις. Οι λύσεις εμφανίζονται μόνο μετά τον έλεγχο.</p>
+      <div class="note">Κεντρική ιδέα: στη γεννήτρια ξένης διέγερσης το τύλιγμα διέγερσης δεν παίρνει ρεύμα από την ίδια τη γεννήτρια, αλλά από ανεξάρτητη πηγή.</div>
+      <div id="questionsA"></div>
+    </section>
+
+    <section class="section" id="partB">
+      <h2>Μέρος Β — Drag & Drop ταξινόμησης</h2>
+      <p class="section-intro">Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε οθόνη αφής μπορείς να πατήσεις μια καρτέλα και μετά την κατηγορία.</p>
+      <div class="select-help" id="tapHelp">Επιλέχθηκε καρτέλα. Πάτησε τώρα την κατηγορία όπου θέλεις να τοποθετηθεί.</div>
+      <div class="drag-wrap">
+        <div class="bank">
+          <h3>Καρτέλες</h3>
+          <div class="cards" id="cardBank"></div>
+        </div>
+        <div class="zones">
+          <h3>Κατηγορίες</h3>
+          <div class="drop-grid" id="dropGrid"></div>
+        </div>
+      </div>
+      <div class="drag-actions">
+        <span>Στόχος: να ξεχωρίσεις τι αφορά τη σύνδεση, τη ρύθμιση, τις χρήσεις και τη διακύμανση τάσης.</span>
+      </div>
+      <div class="feedback" id="feedbackB"></div>
+    </section>
+
+    <section class="section" id="partC">
+      <h2>Μέρος Γ — Πρακτικά σενάρια</h2>
+      <p class="section-intro">Διάβασε το σενάριο και διάλεξε την καταλληλότερη απάντηση.</p>
+      <div id="questionsC" class="scenario-grid"></div>
+    </section>
+
+    <div class="scorebox" id="scorebox">
+      <h2>Αποτελέσματα</h2>
+      <div id="scoreText"></div>
+      <div class="score-line" id="scoreLine"></div>
+    </div>
+  </main>
+
+  <script>
+    const partA = [
+      {
+        type:'tf',
+        text:'Στη γεννήτρια ξένης διέγερσης, το τύλιγμα διέγερσης τροφοδοτείται από ξεχωριστή, ανεξάρτητη πηγή.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Αυτό είναι το κύριο γνώρισμα της ξένης διέγερσης.'
+      },
+      {
+        type:'tf',
+        text:'Στη γεννήτρια ξένης διέγερσης, η διέγερση εξαρτάται υποχρεωτικά από την τάση που παράγει η ίδια η γεννήτρια.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Λάθος',
+        feedback:'Λάθος. Αυτό θα ταίριαζε περισσότερο σε αυτοδιεγειρόμενη γεννήτρια, όχι σε ξένης διέγερσης.'
+      },
+      {
+        type:'mc',
+        text:'Ποιο είναι το βασικό στοιχείο που χαρακτηρίζει τη γεννήτρια ξένης διέγερσης;',
+        choices:['Έχει βοηθητικούς πόλους μόνο στον στάτη','Το τύλιγμα διέγερσης τροφοδοτείται από ξένη πηγή','Δεν διαθέτει επαγωγικό τύμπανο','Λειτουργεί μόνο χωρίς φορτίο'],
+        answer:'Το τύλιγμα διέγερσης τροφοδοτείται από ξένη πηγή',
+        feedback:'Σωστό. Η τροφοδότηση της διέγερσης γίνεται από ανεξάρτητη πηγή.'
+      },
+      {
+        type:'mc',
+        text:'Πώς μπορούμε να μεταβάλουμε την τάση εξόδου σε μεγάλα όρια σε μια γεννήτρια ξένης διέγερσης;',
+        choices:['Με μεταβολή του ρεύματος διέγερσης','Με αποσύνδεση των ψηκτρών','Με κατάργηση του φορτίου','Με αντιστροφή μόνο των ακροδεκτών του φορτίου'],
+        answer:'Με μεταβολή του ρεύματος διέγερσης',
+        feedback:'Σωστό. Η τάση εξόδου μπορεί να ρυθμιστεί με τη μεταβολή του ρεύματος διέγερσης.'
+      },
+      {
+        type:'tf',
+        text:'Οι γεννήτριες ξένης διέγερσης χρησιμοποιούνται όπου απαιτείται τάση εξόδου που μεταβάλλεται σε μεγάλα όρια.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Είναι βασική χρήση τους, επειδή η διέγερση ελέγχεται ξεχωριστά.'
+      },
+      {
+        type:'mc',
+        text:'Μια χρήση των γεννητριών ξένης διέγερσης είναι:',
+        choices:['Η τροφοδότηση της διέγερσης πολύ μεγάλων γεννητριών εναλλασσόμενου ρεύματος','Η αποκλειστική χρήση ως μικρός μονοφασικός κινητήρας','Η προστασία μόνο από υπερφόρτιση','Η μετατροπή του συνεχούς ρεύματος σε τριφασικό χωρίς άλλη διάταξη'],
+        answer:'Η τροφοδότηση της διέγερσης πολύ μεγάλων γεννητριών εναλλασσόμενου ρεύματος',
+        feedback:'Σωστό. Το βιβλίο αναφέρει αυτή τη χρήση.'
+      },
+      {
+        type:'tf',
+        text:'Οι γεννήτριες ξένης διέγερσης μπορεί να χρησιμοποιηθούν και σε ορισμένες περιπτώσεις ηλεκτροσυγκολλήσεων.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Αναφέρεται ως μία από τις εφαρμογές τους.'
+      },
+      {
+        type:'mc',
+        text:'Όταν λειτουργούν με κανονική ένταση διέγερσης και κανονικές στροφές, η διακύμανση τάσης στις γεννήτριες ξένης διέγερσης είναι περίπου:',
+        choices:['0%','5–10%','50–60%','Πάντα μεγαλύτερη από 100%'],
+        answer:'5–10%',
+        feedback:'Σωστό. Η διακύμανση τάσης αναφέρεται περίπου 5–10%.'
+      }
+    ];
+
+    const categories = [
+      { id:'sindesi', title:'Σύνδεση / τροφοδότηση διέγερσης' },
+      { id:'rythmisi', title:'Ρύθμιση τάσης' },
+      { id:'xrisi', title:'Χρήσεις / εφαρμογές' },
+      { id:'diakymansi', title:'Διακύμανση / συνθήκες λειτουργίας' }
+    ];
+
+    const dragCards = [
+      { id:'d1', text:'Το τύλιγμα διέγερσης παίρνει ρεύμα από ανεξάρτητη πηγή.', cat:'sindesi' },
+      { id:'d2', text:'Δεν στηρίζεται στην ίδια την τάση εξόδου για να τροφοδοτήσει τη διέγερση.', cat:'sindesi' },
+      { id:'d3', text:'Η τάση εξόδου μπορεί να μεταβληθεί σε μεγάλα όρια.', cat:'rythmisi' },
+      { id:'d4', text:'Η μεταβολή της τάσης γίνεται με μεταβολή του ρεύματος διέγερσης.', cat:'rythmisi' },
+      { id:'d5', text:'Χρησιμοποιείται για τροφοδότηση διέγερσης πολύ μεγάλων γεννητριών Ε.Ρ.', cat:'xrisi' },
+      { id:'d6', text:'Μπορεί να χρησιμοποιηθεί σε ορισμένες περιπτώσεις ηλεκτροσυγκολλήσεων.', cat:'xrisi' },
+      { id:'d7', text:'Η διακύμανση τάσης είναι περίπου 5–10%.', cat:'diakymansi' },
+      { id:'d8', text:'Η τιμή αυτή ισχύει για κανονική ένταση διέγερσης και κανονικές στροφές.', cat:'diakymansi' }
+    ];
+
+    const partC = [
+      {
+        text:'Σε μια εφαρμογή θέλουμε να αλλάζουμε την τάση εξόδου της γεννήτριας σε μεγάλο εύρος. Ποια ρύθμιση είναι η πιο κατάλληλη;',
+        choices:['Να μεταβάλουμε το ρεύμα διέγερσης','Να αφαιρέσουμε το τύλιγμα διέγερσης','Να κρατήσουμε σταθερή τη διέγερση και να αλλάζουμε μόνο τις ψήκτρες','Να συνδέσουμε πάντα τη γεννήτρια χωρίς φορτίο'],
+        answer:'Να μεταβάλουμε το ρεύμα διέγερσης',
+        feedback:'Σωστό. Η γεννήτρια ξένης διέγερσης επιτρέπει ρύθμιση της τάσης με μεταβολή του ρεύματος διέγερσης.'
+      },
+      {
+        text:'Μια πολύ μεγάλη γεννήτρια εναλλασσόμενου ρεύματος χρειάζεται ξεχωριστή τροφοδότηση για τη διέγερσή της. Ποια γεννήτρια μπορεί να χρησιμοποιηθεί για αυτόν τον σκοπό;',
+        choices:['Γεννήτρια Σ.Ρ. ξένης διέγερσης','Μονοφασικός ασύγχρονος κινητήρας','Μετασχηματιστής 1:1 χωρίς ανορθωτή','Γεννήτρια Σ.Ρ. χωρίς τύλιγμα διέγερσης'],
+        answer:'Γεννήτρια Σ.Ρ. ξένης διέγερσης',
+        feedback:'Σωστό. Αυτή είναι μία από τις χρήσεις που αναφέρονται για τις γεννήτριες ξένης διέγερσης.'
+      },
+      {
+        text:'Σε εργαστήριο υπάρχει γεννήτρια Σ.Ρ. όπου το τύλιγμα διέγερσης τροφοδοτείται από ξεχωριστό τροφοδοτικό. Τι είδους γεννήτρια είναι;',
+        choices:['Ξένης διέγερσης','Παράλληλης διέγερσης','Σειράς','Σύνθετης διέγερσης'],
+        answer:'Ξένης διέγερσης',
+        feedback:'Σωστό. Η ξεχωριστή πηγή για τη διέγερση δείχνει ξένη διέγερση.'
+      },
+      {
+        text:'Η γεννήτρια λειτουργεί με κανονική ένταση διέγερσης και κανονικές στροφές. Ποια τιμή διακύμανσης τάσης είναι η πιο κοντινή σε αυτή που αναφέρεται στο βιβλίο;',
+        choices:['5–10%','25–30%','70–80%','Δεν υπάρχει καμία διακύμανση'],
+        answer:'5–10%',
+        feedback:'Σωστό. Για τις συνθήκες αυτές αναφέρεται διακύμανση τάσης 5–10%.'
+      },
+      {
+        text:'Ένας μαθητής λέει: «Αφού η γεννήτρια έχει διέγερση, σίγουρα η διέγερση τροφοδοτείται από την ίδια τη γεννήτρια». Τι απαντάς για τη γεννήτρια ξένης διέγερσης;',
+        choices:['Λάθος, γιατί η διέγερση τροφοδοτείται από ξένη πηγή','Σωστό, γιατί όλες οι γεννήτριες Σ.Ρ. είναι αυτοδιεγειρόμενες','Σωστό μόνο όταν δεν υπάρχει φορτίο','Δεν έχει τύλιγμα διέγερσης'],
+        answer:'Λάθος, γιατί η διέγερση τροφοδοτείται από ξένη πηγή',
+        feedback:'Σωστό. Η ξένη διέγερση δεν είναι αυτοδιέγερση.'
+      }
+    ];
+
+    let selectedCard = null;
+
+    function shuffle(array){
+      const a = [...array];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function renderQuestions(containerId, questions, prefix){
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.dataset.answer = q.answer;
+        const choices = q.type === 'mc' ? shuffle(q.choices) : q.choices;
+        div.innerHTML = `
+          <div class="q-head"><div class="q-num">${idx+1}</div><div class="q-title">${q.text}</div></div>
+          <div class="options">
+            ${choices.map((choice, cidx)=>`
+              <label class="option">
+                <input type="radio" name="${qid}" value="${escapeHtml(choice)}" />
+                <span>${choice}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="feedback" id="fb_${qid}" data-feedback="${escapeHtml(q.feedback)}"></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderDrag(){
+      const bank = document.getElementById('cardBank');
+      const grid = document.getElementById('dropGrid');
+      bank.innerHTML = '';
+      grid.innerHTML = '';
+
+      shuffle(dragCards).forEach(card=> bank.appendChild(makeCard(card)));
+
+      categories.forEach(cat=>{
+        const zone = document.createElement('div');
+        zone.className = 'drop-zone';
+        zone.dataset.cat = cat.id;
+        zone.innerHTML = `<div class="zone-title">${cat.title}</div><div class="cards"></div>`;
+        zone.addEventListener('dragover', e=>{e.preventDefault(); zone.classList.add('dragover');});
+        zone.addEventListener('dragleave', ()=> zone.classList.remove('dragover'));
+        zone.addEventListener('drop', e=>{
+          e.preventDefault(); zone.classList.remove('dragover');
+          const id = e.dataTransfer.getData('text/plain');
+          const el = document.getElementById(id);
+          if(el) zone.querySelector('.cards').appendChild(el);
+        });
+        zone.addEventListener('click', ()=>{
+          if(selectedCard){
+            zone.querySelector('.cards').appendChild(selectedCard);
+            selectedCard.classList.remove('selected');
+            selectedCard = null;
+            document.getElementById('tapHelp').style.display='none';
+          }
+        });
+        grid.appendChild(zone);
+      });
+
+      bank.addEventListener('dragover', e=>e.preventDefault());
+      bank.addEventListener('drop', e=>{
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if(el) bank.appendChild(el);
+      });
+    }
+
+    function makeCard(card){
+      const el = document.createElement('div');
+      el.className = 'drag-card';
+      el.id = card.id;
+      el.draggable = true;
+      el.dataset.cat = card.cat;
+      el.textContent = card.text;
+      el.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', card.id));
+      el.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(selectedCard) selectedCard.classList.remove('selected');
+        selectedCard = el;
+        el.classList.add('selected');
+        document.getElementById('tapHelp').style.display='block';
+      });
+      return el;
+    }
+
+    function checkRadioQuestions(containerId, questions, prefix){
+      let correct = 0;
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const options = document.querySelectorAll(`input[name="${qid}"]`);
+        let selected = null;
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          label.classList.remove('correct','wrong');
+          if(input.checked) selected = input.value;
+        });
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          if(input.value === q.answer) label.classList.add('correct');
+          if(input.checked && input.value !== q.answer) label.classList.add('wrong');
+        });
+        const fb = document.getElementById(`fb_${qid}`);
+        fb.style.display='block';
+        if(selected === q.answer){
+          correct++;
+          fb.className='feedback ok';
+          fb.textContent = 'Σωστό! ' + q.feedback;
+        } else {
+          fb.className='feedback bad';
+          fb.textContent = 'Λάθος. Σωστή απάντηση: ' + q.answer + '. ' + q.feedback;
+        }
+      });
+      return correct;
+    }
+
+    function checkDrag(){
+      let correct = 0;
+      const cards = document.querySelectorAll('.drag-card');
+      cards.forEach(card=>{
+        card.classList.remove('correct','wrong');
+        const zone = card.closest('.drop-zone');
+        if(zone && zone.dataset.cat === card.dataset.cat){
+          correct++;
+          card.classList.add('correct');
+        } else {
+          card.classList.add('wrong');
+        }
+      });
+      const fb = document.getElementById('feedbackB');
+      fb.style.display='block';
+      if(correct === dragCards.length){
+        fb.className='feedback ok';
+        fb.textContent = `Άριστα! Σωστές καρτέλες: ${correct}/${dragCards.length}.`;
+      } else {
+        fb.className='feedback bad';
+        fb.textContent = `Σωστές καρτέλες: ${correct}/${dragCards.length}. Οι πράσινες είναι σωστές, οι κόκκινες θέλουν διόρθωση.`;
+      }
+      return correct;
+    }
+
+    function checkAll(){
+      const a = checkRadioQuestions('questionsA', partA, 'A');
+      const b = checkDrag();
+      const c = checkRadioQuestions('questionsC', partC, 'C');
+      const total = partA.length + dragCards.length + partC.length;
+      const got = a + b + c;
+      const pct = Math.round((got/total)*100);
+      const box = document.getElementById('scorebox');
+      box.style.display='block';
+      document.getElementById('scoreText').innerHTML = `<strong>Σύνολο:</strong> ${got}/${total} (${pct}%)`;
+      document.getElementById('scoreLine').innerHTML = `
+        <span class="score-pill">Μέρος Α: ${a}/${partA.length}</span>
+        <span class="score-pill">Μέρος Β: ${b}/${dragCards.length}</span>
+        <span class="score-pill">Μέρος Γ: ${c}/${partC.length}</span>
+      `;
+      box.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    function resetQuiz(){
+      document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
+      document.querySelectorAll('.option,.drag-card').forEach(el=> el.classList.remove('correct','wrong','selected'));
+      document.querySelectorAll('.feedback').forEach(fb=>{fb.style.display='none'; fb.textContent='';});
+      document.getElementById('scorebox').style.display='none';
+      document.getElementById('tapHelp').style.display='none';
+      selectedCard = null;
+      renderDrag();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    renderQuestions('questionsA', partA, 'A');
+    renderDrag();
+    renderQuestions('questionsC', partC, 'C');
+  </script>
+</body>
+</html>

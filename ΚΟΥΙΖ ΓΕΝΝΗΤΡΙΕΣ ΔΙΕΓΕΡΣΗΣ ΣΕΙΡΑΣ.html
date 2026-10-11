@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 2.3.4 - Γεννήτριες Σ.Ρ. Διέγερσης Σειράς</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --primary:#1f6feb;
+      --primary-dark:#174ea6;
+      --accent:#ff8a00;
+      --ok:#16833a;
+      --bad:#c62828;
+      --line:#d9e2ef;
+      --soft:#eef5ff;
+      --warn:#fff7e6;
+      --radius:18px;
+      --shadow:0 10px 28px rgba(18,38,63,.09);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef5ff 0%, var(--bg) 35%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.5;
+    }
+    header{
+      background:linear-gradient(135deg,#1f6feb,#0f4c81);
+      color:white;
+      padding:34px 18px 30px;
+      text-align:center;
+      border-bottom:6px solid var(--accent);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.45rem,3vw,2.25rem)}
+    header p{margin:4px auto 0;max-width:980px;font-size:1.02rem;opacity:.95}
+    main{max-width:1180px;margin:24px auto 80px;padding:0 16px}
+    .toolbar{
+      position:sticky;top:0;z-index:5;
+      background:rgba(244,247,251,.93);backdrop-filter: blur(8px);
+      border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .toolbar .left{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:.95rem}
+    button{
+      border:0;border-radius:13px;padding:10px 14px;font-weight:700;cursor:pointer;
+      transition:transform .08s ease, background .18s ease, opacity .18s ease;
+      font-size:.96rem;
+    }
+    button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
+    .btn-soft{background:var(--soft);color:var(--primary-dark);border:1px solid #cfe0ff}
+    .section{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:22px;margin:18px 0;
+    }
+    .section h2{margin:0 0 6px;font-size:1.35rem}
+    .section-intro{margin:0 0 18px;color:var(--muted)}
+    .note{
+      background:var(--warn);border:1px solid #ffe0a8;border-radius:14px;padding:12px 14px;color:#5a3a00;
+      margin:12px 0 18px;
+    }
+    .mini-diagram{
+      background:#fbfdff;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0 18px;
+      display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:center;
+    }
+    .diagram-box{border:1px dashed #b9c7da;border-radius:14px;background:white;padding:12px;text-align:center;color:#26466f;font-weight:700}
+    .diagram-box small{display:block;font-weight:500;color:var(--muted);margin-top:4px}
+    .arrow{display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--primary-dark);font-weight:800}
+    .question{
+      border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;background:#fbfdff;
+    }
+    .q-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .q-num{background:var(--primary);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;min-width:34px;text-align:center}
+    .q-title{font-weight:700;flex:1}
+    .options{display:grid;gap:8px;margin-top:10px}
+    .option{
+      display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--line);border-radius:12px;padding:10px;
+    }
+    .option input{margin-top:3px;transform:scale(1.1)}
+    .feedback{margin-top:10px;font-weight:700;display:none}
+    .correct{border-color:rgba(22,131,58,.55)!important;background:#f0fff5!important}
+    .wrong{border-color:rgba(198,40,40,.55)!important;background:#fff5f5!important}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--bad)}
+    .drag-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+    .bank,.zones{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}
+    .bank h3,.zones h3{margin:0 0 10px;font-size:1.05rem}
+    .cards{display:flex;flex-direction:column;gap:10px;min-height:54px}
+    .drag-card{
+      background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px;box-shadow:0 3px 10px rgba(18,38,63,.06);
+      cursor:grab;user-select:none;
+    }
+    .drag-card:active{cursor:grabbing}
+    .drag-card.selected{outline:3px solid rgba(31,111,235,.35);border-color:var(--primary)}
+    .drop-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px}
+    .drop-zone{
+      border:2px dashed #b9c7da;border-radius:16px;padding:12px;background:white;min-height:165px;
+    }
+    .drop-zone.dragover{border-color:var(--primary);background:#eef5ff}
+    .zone-title{font-weight:800;margin-bottom:9px;color:var(--primary-dark)}
+    .drag-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;color:var(--muted);font-size:.95rem}
+    .select-help{display:none;background:#eef5ff;border:1px solid #cfe0ff;border-radius:12px;padding:10px;margin-bottom:12px;color:#26466f}
+    .scenario-grid{display:grid;gap:14px}
+    .scorebox{
+      display:none;background:#0b1f3a;color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;margin-top:18px;
+    }
+    .scorebox h2{margin:0 0 8px}
+    .score-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .score-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 12px}
+    .small{font-size:.92rem;color:var(--muted)}
+    .hidden{display:none!important}
+    @media(max-width:880px){
+      .drag-wrap{grid-template-columns:1fr}
+      .drop-grid{grid-template-columns:1fr}
+      .toolbar{position:static}
+      .mini-diagram{grid-template-columns:1fr}
+      .arrow{transform:rotate(90deg)}
+    }
+    @media print{
+      .toolbar, .scorebox, button{display:none!important}
+      body{background:white}
+      .section{box-shadow:none;break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Κουίζ Κεφ. 2.3.4: Γεννήτριες Σ.Ρ. Διέγερσης Σειράς</h1>
+    <p>Εστίαση αποκλειστικά στη γεννήτρια διέγερσης σειράς: σύνδεση τυλίγματος διέγερσης, αυτοδιέγερση με συνδεδεμένο φορτίο, συμπεριφορά τάσης και ειδικές εφαρμογές.</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="left">
+        <span class="pill">Μέρος Α: Θεωρία</span>
+        <span class="pill">Μέρος Β: Drag & Drop</span>
+        <span class="pill">Μέρος Γ: Σενάρια</span>
+      </div>
+      <div>
+        <button class="btn-primary" onclick="checkAll()">Έλεγχος απαντήσεων</button>
+        <button class="btn-secondary" onclick="resetQuiz()">Επαναφορά</button>
+        <button class="btn-soft" onclick="window.print()">Εκτύπωση</button>
+      </div>
+    </div>
+
+    <section class="section" id="partA">
+      <h2>Μέρος Α — Σωστό/Λάθος & Πολλαπλής Επιλογής</h2>
+      <p class="section-intro">Απάντησε στις ερωτήσεις. Οι λύσεις εμφανίζονται μόνο μετά τον έλεγχο.</p>
+      <div class="note">Κεντρική ιδέα: στη γεννήτρια διέγερσης σειράς το τύλιγμα διέγερσης συνδέεται σε σειρά με το φορτίο. Γι’ αυτό το ρεύμα φόρτισης είναι ταυτόχρονα και ρεύμα διέγερσης.</div>
+      <div class="mini-diagram">
+        <div class="diagram-box">Επαγωγικό τύμπανο <small>παράγει τάση Σ.Ρ.</small></div>
+        <div class="arrow">→</div>
+        <div class="diagram-box">Τύλιγμα σειράς + φορτίο <small>ίδιο ρεύμα περνά από όλα</small></div>
+      </div>
+      <div id="questionsA"></div>
+    </section>
+
+    <section class="section" id="partB">
+      <h2>Μέρος Β — Drag & Drop ταξινόμησης</h2>
+      <p class="section-intro">Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε οθόνη αφής μπορείς να πατήσεις μια καρτέλα και μετά την κατηγορία.</p>
+      <div class="select-help" id="tapHelp">Επιλέχθηκε καρτέλα. Πάτησε τώρα την κατηγορία όπου θέλεις να τοποθετηθεί.</div>
+      <div class="drag-wrap">
+        <div class="bank">
+          <h3>Καρτέλες</h3>
+          <div class="cards" id="cardBank"></div>
+        </div>
+        <div class="zones">
+          <h3>Κατηγορίες</h3>
+          <div class="drop-grid" id="dropGrid"></div>
+        </div>
+      </div>
+      <div class="drag-actions">
+        <span>Στόχος: να ξεχωρίσεις σύνδεση, αυτοδιέγερση, κατασκευή τυλίγματος και χρήσεις της γεννήτριας σειράς.</span>
+      </div>
+      <div class="feedback" id="feedbackB"></div>
+    </section>
+
+    <section class="section" id="partC">
+      <h2>Μέρος Γ — Πρακτικά σενάρια</h2>
+      <p class="section-intro">Διάβασε το σενάριο και διάλεξε την καταλληλότερη απάντηση.</p>
+      <div id="questionsC" class="scenario-grid"></div>
+    </section>
+
+    <div class="scorebox" id="scorebox">
+      <h2>Αποτελέσματα</h2>
+      <div id="scoreText"></div>
+      <div class="score-line" id="scoreLine"></div>
+    </div>
+  </main>
+
+  <script>
+    const partA = [
+      {
+        type:'tf',
+        text:'Οι γεννήτριες διέγερσης σειράς είναι αυτοδιεγειρόμενες μηχανές.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Ανήκουν στις αυτοδιεγειρόμενες γεννήτριες, όπως και οι γεννήτριες παράλληλης διέγερσης.'
+      },
+      {
+        type:'tf',
+        text:'Στη γεννήτρια διέγερσης σειράς το τύλιγμα διέγερσης τροφοδοτείται από ανεξάρτητη ξένη πηγή.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Λάθος',
+        feedback:'Λάθος. Αυτό χαρακτηρίζει τη γεννήτρια ξένης διέγερσης. Στη γεννήτρια σειράς το τύλιγμα διέγερσης είναι σε σειρά με το φορτίο.'
+      },
+      {
+        type:'mc',
+        text:'Γιατί ονομάζεται γεννήτρια διέγερσης σειράς;',
+        choices:['Επειδή έχει δύο παράλληλα τυλίγματα διέγερσης','Επειδή το τύλιγμα διέγερσης συνδέεται σε σειρά με το φορτίο','Επειδή λειτουργεί μόνο με εναλλασσόμενο ρεύμα','Επειδή δεν έχει επαγωγικό τύμπανο'],
+        answer:'Επειδή το τύλιγμα διέγερσης συνδέεται σε σειρά με το φορτίο',
+        feedback:'Σωστό. Η σειρά σύνδεσης του τυλίγματος διέγερσης με το φορτίο δίνει και την ονομασία της.'
+      },
+      {
+        type:'mc',
+        text:'Τι πρέπει να ισχύει για να υπάρξει κυκλοφορία ρεύματος διέγερσης στη γεννήτρια σειράς;',
+        choices:['Να αφαιρεθεί το φορτίο από τους ακροδέκτες','Να συνδεθεί μόνο εξωτερική πηγή στο πεδίο','Το φορτίο να είναι συνδεδεμένο μόνιμα στη μηχανή','Να μηδενιστεί ο παραμένων μαγνητισμός'],
+        answer:'Το φορτίο να είναι συνδεδεμένο μόνιμα στη μηχανή',
+        feedback:'Σωστό. Χωρίς συνδεδεμένο φορτίο δεν υπάρχει κλειστό κύκλωμα για το ρεύμα διέγερσης.'
+      },
+      {
+        type:'mc',
+        text:'Στη γεννήτρια διέγερσης σειράς το ρεύμα φόρτισης είναι:',
+        choices:['Πάντα μηδενικό','Ανεξάρτητο από τη διέγερση','Μόνο ρεύμα των ψηκτρών','Και ρεύμα διέγερσης'],
+        answer:'Και ρεύμα διέγερσης',
+        feedback:'Σωστό. Το ίδιο ρεύμα περνά από το φορτίο και από το τύλιγμα διέγερσης σειράς.'
+      },
+      {
+        type:'mc',
+        text:'Πώς πρέπει να είναι κατασκευασμένο το τύλιγμα διέγερσης σειράς;',
+        choices:['Από σύρμα μεγάλης διατομής και μικρό αριθμό σπειρών','Από πολύ λεπτό σύρμα και χιλιάδες σπείρες','Από μονωτικό υλικό χωρίς αγωγό','Από πυκνωτές συνδεδεμένους παράλληλα'],
+        answer:'Από σύρμα μεγάλης διατομής και μικρό αριθμό σπειρών',
+        feedback:'Σωστό. Επειδή περνά το ρεύμα φόρτισης, απαιτείται μεγάλη διατομή αγωγού και λίγες σπείρες.'
+      },
+      {
+        type:'tf',
+        text:'Οι γεννήτριες σειράς παρουσιάζουν καλή σταθερότητα τάσης όπως οι γεννήτριες ξένης και παράλληλης διέγερσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Λάθος',
+        feedback:'Λάθος. Οι γεννήτριες σειράς δεν παρουσιάζουν σταθερότητα τάσης.'
+      },
+      {
+        type:'mc',
+        text:'Όταν μεταβάλλεται το φορτίο στη γεννήτρια σειράς, τι μεταβάλλεται στο τύλιγμα διέγερσης;',
+        choices:['Η συχνότητα του δικτύου','Το είδος του συλλέκτη','Η πτώση τάσης στα άκρα του τυλίγματος διέγερσης','Ο αριθμός των βοηθητικών πόλων'],
+        answer:'Η πτώση τάσης στα άκρα του τυλίγματος διέγερσης',
+        feedback:'Σωστό. Η μεταβολή αυτή επηρεάζει την πολική τάση της μηχανής.'
+      },
+      {
+        type:'mc',
+        text:'Για ποια χρήση αναφέρεται ως σημαντική εφαρμογή η γεννήτρια σειράς;',
+        choices:['Για τροφοδότηση δικτύων φωτισμού με μεταβλητό φορτίο','Για μετασχηματισμό τάσης εναλλασσόμενου ρεύματος','Για τροφοδότηση αποκλειστικά ηλεκτρονικών κινητών τηλεφώνων','Για δίκτυα μεγάλου μήκους, όπως δίκτυα έλξης'],
+        answer:'Για δίκτυα μεγάλου μήκους, όπως δίκτυα έλξης',
+        feedback:'Σωστό. Εκεί μπορεί να αντισταθμίζει τις πτώσεις τάσης στις γραμμές.'
+      },
+      {
+        type:'tf',
+        text:'Η γεννήτρια σειράς μπορεί να τοποθετηθεί κατά μήκος μιας γραμμής ώστε, όταν αυξάνει το φορτίο, να αυξάνει η παραγόμενη τάση και να αντισταθμίζονται πτώσεις τάσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Αυτή είναι η λογική χρήσης της σε δίκτυα μεγάλου μήκους.'
+      }
+    ];
+
+    const categories = [
+      { id:'sindesi', title:'Ονομασία & σύνδεση' },
+      { id:'autodiegersi', title:'Αυτοδιέγερση & φορτίο' },
+      { id:'tyligma', title:'Τύλιγμα διέγερσης' },
+      { id:'symperifora', title:'Συμπεριφορά & χρήσεις' }
+    ];
+
+    const dragCards = [
+      { id:'d1', text:'Ονομάζεται έτσι επειδή το τύλιγμα διέγερσης είναι σε σειρά με το φορτίο.', cat:'sindesi' },
+      { id:'d2', text:'Το ίδιο ρεύμα περνά από επαγωγικό τύμπανο, τύλιγμα διέγερσης και φορτίο.', cat:'sindesi' },
+      { id:'d3', text:'Είναι αυτοδιεγειρόμενη μηχανή.', cat:'autodiegersi' },
+      { id:'d4', text:'Το φορτίο πρέπει να είναι συνδεδεμένο μόνιμα για να κυκλοφορήσει ρεύμα διέγερσης.', cat:'autodiegersi' },
+      { id:'d5', text:'Το ρεύμα φόρτισης είναι και ρεύμα διέγερσης.', cat:'tyligma' },
+      { id:'d6', text:'Το τύλιγμα διέγερσης έχει σύρμα μεγάλης διατομής και μικρό αριθμό σπειρών.', cat:'tyligma' },
+      { id:'d7', text:'Δεν παρουσιάζει σταθερότητα τάσης σε μεταβολές φορτίου.', cat:'symperifora' },
+      { id:'d8', text:'Χρησιμοποιείται ειδικά σε δίκτυα μεγάλου μήκους, όπως δίκτυα έλξης.', cat:'symperifora' }
+    ];
+
+    const partC = [
+      {
+        text:'Σε μια γεννήτρια το τύλιγμα διέγερσης βρίσκεται σε σειρά με το φορτίο. Τι τύπος γεννήτριας είναι;',
+        choices:['Γεννήτρια Σ.Ρ. ξένης διέγερσης','Γεννήτρια Σ.Ρ. διέγερσης σειράς','Γεννήτρια Σ.Ρ. παράλληλης διέγερσης','Μονοφασικός μετασχηματιστής'],
+        answer:'Γεννήτρια Σ.Ρ. διέγερσης σειράς',
+        feedback:'Σωστό. Η σύνδεση του τυλίγματος διέγερσης σε σειρά με το φορτίο είναι το βασικό γνώρισμα.'
+      },
+      {
+        text:'Η γεννήτρια περιστρέφεται χωρίς να έχει συνδεθεί φορτίο. Γιατί δεν μπορεί να κυκλοφορήσει κανονικό ρεύμα διέγερσης;',
+        choices:['Επειδή η γεννήτρια σειράς χρειάζεται πάντοτε τριφασική τροφοδότηση','Επειδή ο συλλέκτης δεν λειτουργεί σε συνεχές ρεύμα','Επειδή το κύκλωμα του φορτίου είναι ανοικτό και δεν υπάρχει διαδρομή για το ρεύμα σειράς','Επειδή το τύλιγμα διέγερσης είναι παράλληλα συνδεδεμένο'],
+        answer:'Επειδή το κύκλωμα του φορτίου είναι ανοικτό και δεν υπάρχει διαδρομή για το ρεύμα σειράς',
+        feedback:'Σωστό. Στη γεννήτρια σειράς το φορτίο πρέπει να είναι συνδεδεμένο ώστε να περάσει ρεύμα διέγερσης.'
+      },
+      {
+        text:'Σε δίκτυο φωτισμού με συνεχώς μεταβαλλόμενο φορτίο θέλουμε σταθερή τάση. Είναι κατάλληλη η γεννήτρια σειράς;',
+        choices:['Ναι, γιατί έχει μηδενική διακύμανση τάσης','Ναι, επειδή είναι η πιο σταθερή από όλες','Ναι, επειδή δεν επηρεάζεται από το φορτίο','Όχι, γιατί δεν παρουσιάζει σταθερότητα τάσης'],
+        answer:'Όχι, γιατί δεν παρουσιάζει σταθερότητα τάσης',
+        feedback:'Σωστό. Για τέτοια δίκτυα δεν είναι κατάλληλη γεννήτρια σειράς.'
+      },
+      {
+        text:'Σε δίκτυο έλξης μεγάλου μήκους εμφανίζονται πτώσεις τάσης στις γραμμές όταν αυξάνει το φορτίο. Πώς μπορεί να βοηθήσει γεννήτρια σειράς τοποθετημένη κατά μήκος της γραμμής;',
+        choices:['Αυξάνοντας την παραγόμενη τάση όταν αυξάνει το φορτίο','Μετατρέποντας το δίκτυο σε μονοφασικό Ε.Ρ.','Μηδενίζοντας πλήρως το ρεύμα της γραμμής','Αποσυνδέοντας αυτόματα όλα τα φορτία'],
+        answer:'Αυξάνοντας την παραγόμενη τάση όταν αυξάνει το φορτίο',
+        feedback:'Σωστό. Έτσι μπορεί να αντισταθμίζει τις πτώσεις τάσης στις γραμμές.'
+      },
+      {
+        text:'Ένας μαθητής λέει ότι το τύλιγμα διέγερσης σειράς πρέπει να έχει λεπτό σύρμα και πολλές σπείρες, όπως σε παράλληλη διέγερση. Τι απαντάμε;',
+        choices:['Σωστό, γιατί περνά πολύ μικρό ρεύμα','Λάθος, γιατί στη σειρά περνά το ρεύμα φόρτισης και χρειάζεται σύρμα μεγάλης διατομής με λίγες σπείρες','Σωστό, γιατί το φορτίο δεν συνδέεται ποτέ','Λάθος, γιατί στη γεννήτρια σειράς δεν υπάρχει καθόλου τύλιγμα διέγερσης'],
+        answer:'Λάθος, γιατί στη σειρά περνά το ρεύμα φόρτισης και χρειάζεται σύρμα μεγάλης διατομής με λίγες σπείρες',
+        feedback:'Σωστό. Το τύλιγμα σειράς διαρρέεται από το ρεύμα φόρτισης, άρα κατασκευάζεται διαφορετικά.'
+      }
+    ];
+
+    let selectedCard = null;
+
+    function shuffle(array){
+      const a = [...array];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function renderQuestions(containerId, questions, prefix){
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.dataset.answer = q.answer;
+        const choices = q.choices;
+        div.innerHTML = `
+          <div class="q-head"><div class="q-num">${idx+1}</div><div class="q-title">${q.text}</div></div>
+          <div class="options">
+            ${choices.map((choice)=>`
+              <label class="option">
+                <input type="radio" name="${qid}" value="${escapeHtml(choice)}" />
+                <span>${choice}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="feedback" id="fb_${qid}" data-feedback="${escapeHtml(q.feedback)}"></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderDrag(){
+      const bank = document.getElementById('cardBank');
+      const grid = document.getElementById('dropGrid');
+      bank.innerHTML = '';
+      grid.innerHTML = '';
+
+      shuffle(dragCards).forEach(card=> bank.appendChild(makeCard(card)));
+
+      categories.forEach(cat=>{
+        const zone = document.createElement('div');
+        zone.className = 'drop-zone';
+        zone.dataset.cat = cat.id;
+        zone.innerHTML = `<div class="zone-title">${cat.title}</div><div class="cards"></div>`;
+        zone.addEventListener('dragover', e=>{e.preventDefault(); zone.classList.add('dragover');});
+        zone.addEventListener('dragleave', ()=> zone.classList.remove('dragover'));
+        zone.addEventListener('drop', e=>{
+          e.preventDefault(); zone.classList.remove('dragover');
+          const id = e.dataTransfer.getData('text/plain');
+          const el = document.getElementById(id);
+          if(el) zone.querySelector('.cards').appendChild(el);
+        });
+        zone.addEventListener('click', ()=>{
+          if(selectedCard){
+            zone.querySelector('.cards').appendChild(selectedCard);
+            selectedCard.classList.remove('selected');
+            selectedCard = null;
+            document.getElementById('tapHelp').style.display='none';
+          }
+        });
+        grid.appendChild(zone);
+      });
+
+      bank.addEventListener('dragover', e=>e.preventDefault());
+      bank.addEventListener('drop', e=>{
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if(el) bank.appendChild(el);
+      });
+    }
+
+    function makeCard(card){
+      const el = document.createElement('div');
+      el.className = 'drag-card';
+      el.id = card.id;
+      el.draggable = true;
+      el.dataset.cat = card.cat;
+      el.textContent = card.text;
+      el.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', card.id));
+      el.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(selectedCard) selectedCard.classList.remove('selected');
+        selectedCard = el;
+        el.classList.add('selected');
+        document.getElementById('tapHelp').style.display='block';
+      });
+      return el;
+    }
+
+    function checkRadioQuestions(containerId, questions, prefix){
+      let correct = 0;
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const options = document.querySelectorAll(`input[name="${qid}"]`);
+        let selected = null;
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          label.classList.remove('correct','wrong');
+          if(input.checked) selected = input.value;
+        });
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          if(input.value === q.answer) label.classList.add('correct');
+          if(input.checked && input.value !== q.answer) label.classList.add('wrong');
+        });
+        const fb = document.getElementById(`fb_${qid}`);
+        fb.style.display='block';
+        if(selected === q.answer){
+          correct++;
+          fb.className='feedback ok';
+          fb.textContent = 'Σωστό! ' + q.feedback;
+        } else {
+          fb.className='feedback bad';
+          fb.textContent = 'Λάθος. Σωστή απάντηση: ' + q.answer + '. ' + q.feedback;
+        }
+      });
+      return correct;
+    }
+
+    function checkDrag(){
+      let correct = 0;
+      const cards = document.querySelectorAll('.drag-card');
+      cards.forEach(card=>{
+        card.classList.remove('correct','wrong');
+        const zone = card.closest('.drop-zone');
+        if(zone && zone.dataset.cat === card.dataset.cat){
+          correct++;
+          card.classList.add('correct');
+        } else {
+          card.classList.add('wrong');
+        }
+      });
+      const fb = document.getElementById('feedbackB');
+      fb.style.display='block';
+      if(correct === dragCards.length){
+        fb.className='feedback ok';
+        fb.textContent = `Άριστα! Σωστές καρτέλες: ${correct}/${dragCards.length}.`;
+      } else {
+        fb.className='feedback bad';
+        fb.textContent = `Σωστές καρτέλες: ${correct}/${dragCards.length}. Οι πράσινες είναι σωστές, οι κόκκινες θέλουν διόρθωση.`;
+      }
+      return correct;
+    }
+
+    function checkAll(){
+      const a = checkRadioQuestions('questionsA', partA, 'A');
+      const b = checkDrag();
+      const c = checkRadioQuestions('questionsC', partC, 'C');
+      const total = partA.length + dragCards.length + partC.length;
+      const got = a + b + c;
+      const pct = Math.round((got/total)*100);
+      const box = document.getElementById('scorebox');
+      box.style.display='block';
+      document.getElementById('scoreText').innerHTML = `<strong>Σύνολο:</strong> ${got}/${total} (${pct}%)`;
+      document.getElementById('scoreLine').innerHTML = `
+        <span class="score-pill">Μέρος Α: ${a}/${partA.length}</span>
+        <span class="score-pill">Μέρος Β: ${b}/${dragCards.length}</span>
+        <span class="score-pill">Μέρος Γ: ${c}/${partC.length}</span>
+      `;
+      box.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    function resetQuiz(){
+      document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
+      document.querySelectorAll('.option,.drag-card').forEach(el=> el.classList.remove('correct','wrong','selected'));
+      document.querySelectorAll('.feedback').forEach(fb=>{fb.style.display='none'; fb.textContent='';});
+      document.getElementById('scorebox').style.display='none';
+      document.getElementById('tapHelp').style.display='none';
+      selectedCard = null;
+      renderDrag();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    renderQuestions('questionsA', partA, 'A');
+    renderDrag();
+    renderQuestions('questionsC', partC, 'C');
+  </script>
+</body>
+</html>

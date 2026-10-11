@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Γεννήτρια Παράλληλης Διέγερσης — Γ΄ ΕΠΑΛ</title>
+<style>
+:root{--bg:#0b1428;--panel:#142440;--line:#32496d;--text:#f5f7ff;--muted:#bed0ec;--a:#69ddf7;--gold:#ffcf70;--green:#72e6a3;--red:#ff929e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,'Segoe UI',sans-serif}.deck{height:calc(100dvh - 66px);overflow:hidden}
+.slide{display:none;height:100%;padding:clamp(18px,3.8vw,58px);overflow-y:auto;scrollbar-color:#3c6689 transparent}
+.slide.active{display:flex;flex-direction:column;justify-content:safe center;gap:clamp(12px,2vh,22px)}
+.eyebrow{color:var(--a);font-size:clamp(13px,1.45vw,19px);font-weight:bold;letter-spacing:.075em;text-transform:uppercase}
+h1{font-size:clamp(35px,5.2vw,72px);margin:6px 0 12px;line-height:1.11}h2{font-size:clamp(25px,3.3vw,47px);margin:0 0 8px;line-height:1.13}h3{margin:0 0 12px;font-size:clamp(19px,1.9vw,27px);color:var(--gold)}
+p,li{font-size:clamp(17px,1.68vw,24px);line-height:1.48}p{margin:2px 0}ul,ol{margin:5px 0;padding-left:29px}li{margin:7px 0}
+.lead{font-size:clamp(21px,2.25vw,31px);color:var(--muted)}.small{font-size:clamp(13px,1.2vw,17px);color:var(--muted);line-height:1.55}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}.tri-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:clamp(15px,1.85vw,23px);min-width:0}
+.highlight{color:var(--a);font-weight:bold}.gold{color:var(--gold);font-weight:bold}.green{color:var(--green);font-weight:bold}.red{color:var(--red);font-weight:bold}
+.note{background:#1a3046;border-left:5px solid var(--gold);border-radius:10px;padding:13px 18px;font-size:clamp(15px,1.45vw,20px);line-height:1.45}
+.formula{text-align:center;font-size:clamp(28px,3vw,43px);font-weight:bold;background:#0b203a;padding:22px;border:1px solid #2d597a;border-radius:18px}
+.tags{display:flex;gap:12px;flex-wrap:wrap}.tag{background:#1d4056;border-radius:12px;padding:10px 14px;font-size:clamp(15px,1.55vw,20px)}
+.center{text-align:center}.value{font-size:clamp(25px,3.6vw,51px);color:var(--green);font-weight:900}
+.controls{height:66px;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:9px 20px;background:#101e35;border-top:1px solid var(--line)}
+button{background:#204261;color:#fff;border:1px solid #4b769d;border-radius:10px;padding:9px 16px;font:inherit;font-size:clamp(14px,1.2vw,17px);cursor:pointer}button:hover{background:#326083}button:disabled{opacity:.34;cursor:default}
+button.action{background:#126f77;border-color:#3fa2ae;font-weight:700}.count{color:var(--muted);white-space:nowrap;font-size:15px}
+svg{max-width:100%;height:auto}.diagram{width:100%;height:auto;max-height:385px;display:block}.diagram text{font-family:Arial,'Segoe UI',sans-serif}
+.process{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.process .step{background:#152741;border:1px solid var(--line);border-radius:15px;padding:15px 12px;min-height:120px;display:flex;flex-direction:column;gap:9px}.step strong{font-size:clamp(15px,1.6vw,21px);color:var(--a)}.step span{font-size:clamp(13px,1.15vw,17px);line-height:1.42;color:var(--muted)}
+.bars{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;height:165px;padding:10px 8px 0}.bar{flex:1;max-width:100px;min-width:30px;border-radius:8px 8px 0 0;background:linear-gradient(#69ddf7,#317fac);transition:height .25s;display:flex;justify-content:center;align-items:flex-start;color:#061a24;font-weight:bold;padding-top:8px}
+.step-highlight{border-color:#6adcf0!important;box-shadow:inset 0 0 0 1px #6adcf0,0 0 18px rgba(105,221,247,.11)}
+.stage-box{background:#0d2a40;border:1px solid #2f6e8c;border-radius:16px;padding:16px 18px;min-height:106px}
+input[type=range]{width:100%;accent-color:#69ddf7;cursor:pointer}.meter{height:24px;background:#2a3d53;border-radius:8px;overflow:hidden;margin-top:8px}.meter-fill{height:100%;background:linear-gradient(90deg,#3485ad,#76e3f6);border-radius:8px;width:45%;transition:width .2s}
+.polar-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pol{border:1px solid var(--line);border-radius:14px;padding:17px;background:#102540}.pol.good{border-color:#3b8b71}.pol.bad{border-color:#9b5668}
+a{color:#95e5fb}.footer{position:absolute;bottom:74px;right:26px;color:#8ca3c8;font-size:12px}
+@media(max-width:800px){.grid,.tri-grid,.polar-grid{grid-template-columns:1fr}.process{grid-template-columns:repeat(2,1fr)}.slide.active{justify-content:flex-start}.diagram{max-height:290px}.controls{padding:7px 11px}button{padding:8px 10px}.card{padding:15px}}
+@media(max-width:480px){.process{grid-template-columns:1fr}.slide{padding:15px}.note{padding:12px}.controls .hint{display:none}}
+@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.deck{height:auto;overflow:visible}.slide{display:flex!important;height:190mm;page-break-after:always;border-bottom:1px solid #ddd;overflow:visible}.controls{display:none!important}}
+</style></head>
+<body><main class="deck">
+<section class="slide active">
+ <div class="eyebrow">Γ΄ ΕΠΑΛ · Ηλεκτρικές Μηχανές · §2.3.4</div>
+ <h1>Γεννήτρια<br><span class="highlight">Παράλληλης Διέγερσης</span></h1>
+ <p class="lead">Πώς μια γεννήτρια Σ.Ρ. δημιουργεί το δικό της μαγνητικό πεδίο χωρίς ξεχωριστή πηγή διέγερσης;</p>
+ <div class="tags"><span class="tag">Γεννήτρια διακλάδωσης</span><span class="tag">Αυτοδιέγερση</span><span class="tag">Σχολικό βιβλίο: σελ. 99</span></div>
+ <p class="small">Ε. Κοκκώδης · Παρουσίαση θεωρίας χωρίς κουίζ</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">1 · Σύνδεση με προηγούμενη γνώση</div><h2>Τι γνωρίζουμε από την ξένη διέγερση;</h2>
+ <div class="grid"><div class="card"><h3>Γεννήτρια ξένης διέγερσης</h3><p>Το τύλιγμα διέγερσης παίρνει ρεύμα από <strong>εξωτερική ανεξάρτητη πηγή Σ.Ρ.</strong></p><div class="note">Η γεννήτρια δεν τροφοδοτεί μόνη της το τύλιγμα διέγερσής της.</div></div>
+ <div class="card"><h3>Γεννήτρια παράλληλης διέγερσης</h3><p>Το τύλιγμα διέγερσης τροφοδοτείται από <strong>την ίδια τη γεννήτρια</strong>.</p><div class="note">Δεν χρειάζεται ξεχωριστή εξωτερική πηγή για τη διέγερση.</div></div></div>
+ <p class="lead center">Η κρίσιμη διαφορά είναι <span class="highlight">από πού προέρχεται το ρεύμα διέγερσης</span>.</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">2 · Ορισμός</div><h2>Γιατί λέγεται «παράλληλης διέγερσης»;</h2>
+ <p class="lead">Επειδή το <strong>τύλιγμα διέγερσης</strong> συνδέεται <span class="highlight">παράλληλα</span> με το επαγωγικό τύμπανο και το εξωτερικό φορτίο.</p>
+ <div class="tri-grid"><div class="card center"><h3>Τύμπανο</h3><p>Παράγει την ηλεκτρική τάση.</p></div><div class="card center"><h3>Τύλιγμα διέγερσης</h3><p>Δημιουργεί το μαγνητικό πεδίο.</p></div><div class="card center"><h3>Φορτίο</h3><p>Απορροφά ρεύμα από τη γεννήτρια.</p></div></div>
+ <div class="note"><strong>Επίσης ονομάζεται:</strong> γεννήτρια διακλάδωσης. Είναι <strong>αυτοδιεγειρόμενη</strong> μηχανή.</div>
+</section>
+<section class="slide" id="schematicSlide">
+ <div class="eyebrow">3 · Συνδεσμολογία — απλοποιημένο σχέδιο</div><h2>Το τύλιγμα διέγερσης βρίσκεται σε παράλληλο κλάδο</h2>
+ <div class="card" style="padding:12px 18px">
+ <svg class="diagram" viewBox="0 0 1100 445" role="img" aria-label="Απλοποιημένη γεννήτρια παράλληλης διέγερσης. Η γεννήτρια G, το κύκλωμα του τυλίγματος διέγερσης F1 F2 με τη ρυθμιστική αντίσταση Rδ και το εξωτερικό φορτίο συνδέονται ανάμεσα στους ίδιους δύο κόμβους.">
+  <g stroke="#96e2f6" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M214 116 H953 M214 365 H953"/>
+   <path d="M214 116 V214 M214 351 V365"/>
+   <path d="M568 116 V151 M568 222 V238 M568 339 V365"/>
+   <path d="M953 116 V228 M953 308 V365"/>
+  </g>
+  <circle cx="214" cy="283" r="69" fill="#1b3350" stroke="#ffcf70" stroke-width="5"/>
+  <text x="214" y="296" fill="#ffcf70" text-anchor="middle" font-size="49" font-weight="bold">G</text>
+  <text x="214" y="403" fill="#cde1f6" text-anchor="middle" font-size="21">Τύμπανο (A1, A2)</text>
+  <rect x="549" y="152" width="38" height="70" rx="4" fill="#173d53" stroke="#96e2f6" stroke-width="4"/>
+  <path d="M523 234 L598 143 M584 145 L598 143 L594 156" stroke="#ffcf70" stroke-width="3" fill="none"/>
+  <g stroke="#96e2f6" stroke-width="4" fill="none"><path d="M568 238 c-48 0 -48 20 0 20 c-48 0 -48 20 0 20 c-48 0 -48 20 0 20 c-48 0 -48 20 0 20 v21"/></g>
+  <text x="614" y="191" fill="#ffcf70" font-size="26" font-weight="bold">Rδ</text>
+  <text x="606" y="274" fill="#96e2f6" font-size="26" font-weight="bold">F1</text>
+  <text x="606" y="334" fill="#96e2f6" font-size="26" font-weight="bold">F2</text>
+  <rect x="933" y="228" width="40" height="80" fill="#344051" stroke="#ffcf70" stroke-width="4"/>
+  <text x="995" y="271" fill="#ffcf70" font-size="24" font-weight="bold">R</text>
+  <text x="995" y="299" fill="#ffcf70" font-size="20">φορτίου</text>
+  <g fill="#d7eeff"><circle cx="568" cy="116" r="7"/><circle cx="568" cy="365" r="7"/><circle cx="953" cy="116" r="7"/><circle cx="953" cy="365" r="7"/></g>
+  <g fill="#a5edff" font-size="25" font-weight="bold"><text x="348" y="101">Iτ →</text><text x="585" y="113">Iδ ↓</text></g><text x="828" y="100" fill="#ffcf70" font-size="25" font-weight="bold">Iφ →</text>
+  <text x="564" y="408" fill="#d9eafb" text-anchor="middle" font-size="21">Τύλιγμα διέγερσης</text>
+  <text x="953" y="408" fill="#d9eafb" text-anchor="middle" font-size="21">Φορτίο</text>
+ </svg></div>
+ <p class="small">Διδακτικό απλοποιημένο κύκλωμα, βασισμένο στη συνδεσμολογία του σχ. 2.15 (σελ. 99). Δεν είναι σχέδιο πραγματικής εγκατάστασης.</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">4 · Η βάση της αυτοδιέγερσης</div><h2>Τι είναι ο παραμένων μαγνητισμός;</h2>
+ <p class="lead">Είναι ο <strong>μικρός μαγνητισμός που παραμένει στους πυρήνες των πόλων</strong>, ακόμη κι όταν δεν περνά ρεύμα από το τύλιγμα διέγερσης.</p>
+ <div class="grid"><div class="card center"><h3>Παραμένουσα μαγνητική ροή</h3><div class="value">2–8%</div><p>της μαγνητικής ροής που απαιτείται για κανονική λειτουργία (συνήθης τιμή σύμφωνα με το βιβλίο).</p></div>
+ <div class="card"><h3>Γιατί είναι απαραίτητος;</h3><p>Όταν αρχίσει να περιστρέφεται το τύμπανο, αυτός ο ασθενής μαγνητισμός επιτρέπει να παραχθεί <span class="highlight">μια αρχική μικρή τάση</span>.</p></div></div>
+ <div class="note">Ο παραμένων μαγνητισμός είναι η <strong>αφετηρία</strong> της διαδικασίας αυτοδιέγερσης.</div>
+</section>
+<section class="slide">
+ <div class="eyebrow">5 · Ακολουθία λειτουργίας</div><h2>Πώς αναπτύσσεται η τάση;</h2>
+ <div class="process"><div class="step"><strong>1. Περιστροφή</strong><span>Η κινητήρια μηχανή θέτει σε κίνηση το τύμπανο.</span></div>
+ <div class="step"><strong>2. Αρχική ΗΕΔ</strong><span>Ο παραμένων μαγνητισμός προκαλεί μικρή αρχική τάση.</span></div>
+ <div class="step"><strong>3. Ρεύμα Iδ</strong><span>Η αρχική τάση στέλνει ρεύμα στο παράλληλο τύλιγμα.</span></div>
+ <div class="step"><strong>4. Ενίσχυση</strong><span>Το ρεύμα διέγερσης ενισχύει το μαγνητικό πεδίο των πόλων.</span></div>
+ <div class="step"><strong>5. Νέα αύξηση</strong><span>Η ισχυρότερη ροή ανεβάζει την τάση μέχρι μια τελική τιμή.</span></div></div>
+ <div class="formula" style="font-size:clamp(21px,2.5vw,37px)">Μικρή τάση → Iδ → ισχυρότερο πεδίο → μεγαλύτερη τάση</div>
+ <p class="small center">Η αύξηση δεν συνεχίζεται απεριόριστα. Η τελική τιμή εξαρτάται από τα χαρακτηριστικά της μηχανής και την ταχύτητα περιστροφής.</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">6 · Διαδραστική επίδειξη</div><h2>Παρακολούθησε την αυτοδιέγερση βήμα προς βήμα</h2>
+ <div class="grid"><div class="card"><h3>Στάδιο αυτοδιέγερσης</h3><div class="value" id="stageIndicator">1 / 5</div><div class="bars" id="stageBars"><div class="bar" style="height:12%"></div><div class="bar" style="height:8%"></div><div class="bar" style="height:8%"></div><div class="bar" style="height:8%"></div><div class="bar" style="height:8%"></div></div><p class="small">Ύψος των στηλών: ενδεικτική ανάπτυξη τάσης, όχι πραγματική μετρημένη χαρακτηριστική.</p></div>
+ <div class="card"><h3>Τι συμβαίνει τώρα;</h3><div id="stageDescription" class="stage-box" aria-live="polite">Η περιστροφή του τυμπάνου μέσα στο ασθενές πεδίο του παραμένοντος μαγνητισμού δημιουργεί αρχική μικρή τάση.</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button type="button" id="stageBack">← Προηγούμενο βήμα</button><button type="button" id="stageNext" class="action">Επόμενο βήμα →</button><button type="button" id="stageReset">Αρχή</button></div></div></div>
+ <div class="note">Η αυτοδιέγερση προϋποθέτει σωστή σύνδεση του τυλίγματος διέγερσης.</div>
+</section>
+<section class="slide">
+ <div class="eyebrow">7 · Απαραίτητη προϋπόθεση</div><h2>Γιατί μας ενδιαφέρει η πολικότητα;</h2>
+ <div class="polar-grid"><div class="pol good"><h3 class="green">✓ Σωστή σύνδεση</h3><p>Το μαγνητικό πεδίο του τυλίγματος διέγερσης έχει <strong>ίδια πολικότητα</strong> με το πεδίο του παραμένοντος μαγνητισμού.</p><p class="green">Τα δύο πεδία ενισχύονται.</p></div>
+ <div class="pol bad"><h3 class="red">✕ Λανθασμένη σύνδεση</h3><p>Το πεδίο του τυλίγματος διέγερσης <strong>αντιτίθεται</strong> στο πεδίο του παραμένοντος μαγνητισμού.</p><p class="red">Η μηχανή δεν αναπτύσσει κανονικά τάση.</p></div></div>
+ <div class="note">Σύμφωνα με το βιβλίο, αν το πεδίο διέγερσης εξασθενεί τον παραμένοντα μαγνητισμό, η γεννήτρια <strong>παύει να αυτοδιεγείρεται</strong>.</div>
+</section>
+<section class="slide">
+ <div class="eyebrow">8 · Ένα σημαντικό πλεονέκτημα λειτουργίας</div><h2>Πρώτα αναπτύσσεται η τάση — μετά συνδέεται το φορτίο</h2>
+ <div class="grid"><div class="card"><h3>Αρχικά: χωρίς φορτίο</h3><p>Η μηχανή περιστρέφεται και τροφοδοτεί το παράλληλο τύλιγμα, ώστε να εξελιχθεί η <strong>αυτοδιέγερση</strong>.</p><div class="tag" style="display:inline-block;margin-top:16px">Κύκλωμα φορτίου ανοικτό</div></div>
+ <div class="card"><h3>Στη συνέχεια: με φορτίο</h3><p>Όταν αναπτυχθεί η τάση εξόδου, μπορεί να συνδεθεί το εξωτερικό φορτίο και να τροφοδοτηθεί από τη γεννήτρια.</p><div class="tag" style="display:inline-block;margin-top:16px">Κύκλωμα φορτίου κλειστό</div></div></div>
+ <div class="note">Το βιβλίο αναφέρει ότι στη γεννήτρια παράλληλης διέγερσης μπορεί να αναπτυχθεί <strong>πρώτα η πλήρης τάση εξόδου</strong>, πριν από τη σύνδεση του φορτίου.</div>
+</section>
+<section class="slide">
+ <div class="eyebrow">9 · Τι επηρεάζει την τάση;</div><h2>Ταχύτητα, τυλίγματα και διέγερση</h2>
+ <div class="tri-grid"><div class="card"><h3>Ταχύτητα περιστροφής</h3><p>Επηρεάζει την ΗΕΔ και την τελική τιμή της τάσης.</p></div><div class="card"><h3>Σπείρες τυμπάνου</h3><p>Τα κατασκευαστικά χαρακτηριστικά του επαγωγικού τυμπάνου έχουν σημασία.</p></div><div class="card"><h3>Σπείρες πόλων</h3><p>Επηρεάζουν το μαγνητικό πεδίο που δημιουργεί το ρεύμα διέγερσης.</p></div></div>
+ <div class="card"><h3>Ποιος είναι ο ρόλος της Rδ στο σχήμα;</h3><p>Η ρυθμιστική αντίσταση βρίσκεται στο <strong>κύκλωμα διέγερσης</strong>. Με τη μεταβολή της επηρεάζεται το ρεύμα διέγερσης και επομένως η τάση, εφόσον η γεννήτρια διατηρεί την αυτοδιέγερσή της.</p><p class="small">Συμπληρωματική ποιοτική εξήγηση του στοιχείου Rδ του σχ. 2.15.</p></div>
+</section>
+<section class="slide">
+ <div class="eyebrow">10 · Σύγκριση</div><h2>Ξένη και παράλληλη διέγερση: τι αλλάζει;</h2>
+ <div class="grid"><div class="card"><h3>Ξένης διέγερσης</h3><ul><li>Η διέγερση προέρχεται από <strong>ανεξάρτητη πηγή</strong>.</li><li>Το κύκλωμα διέγερσης δεν τροφοδοτείται από την έξοδο της ίδιας της γεννήτριας.</li><li>Η διέγερση ρυθμίζεται από την εξωτερική πηγή.</li></ul></div>
+ <div class="card"><h3>Παράλληλης διέγερσης</h3><ul><li>Η διέγερση προέρχεται από <strong>την ίδια τη γεννήτρια</strong>.</li><li>Το τύλιγμα συνδέεται παράλληλα με τύμπανο και φορτίο.</li><li>Χρειάζεται <strong>παραμένοντα μαγνητισμό</strong> και σωστή πολικότητα.</li></ul></div></div>
+ <p class="lead center">Και στις δύο περιπτώσεις έχουμε <span class="highlight">γεννήτρια συνεχούς ρεύματος</span>.</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">11 · Επανάληψη</div><h2>Τα 5 σημεία που πρέπει να θυμάμαι</h2>
+ <div class="card"><ol>
+ <li>Ονομάζεται και <strong>γεννήτρια διακλάδωσης</strong>.</li>
+ <li>Το τύλιγμα διέγερσης συνδέεται <strong>παράλληλα</strong> με τύμπανο και φορτίο.</li>
+ <li>Είναι <strong>αυτοδιεγειρόμενη</strong>: δεν χρειάζεται ξεχωριστή πηγή διέγερσης.</li>
+ <li>Η αυτοδιέγερση ξεκινά από τον <strong>παραμένοντα μαγνητισμό (2–8%)</strong>.</li>
+ <li>Το πεδίο διέγερσης πρέπει να <strong>ενισχύει</strong> και όχι να εξασθενεί το αρχικό πεδίο.</li>
+ </ol></div>
+ <p class="lead center">Αρχική ΗΕΔ → Iδ → ισχυρότερο πεδίο → αύξηση τάσης</p>
+</section>
+<section class="slide">
+ <div class="eyebrow">12 · Αναφορά</div><h2>Σχολικό βιβλίο και διδακτικές σημειώσεις</h2>
+ <p>Σχολικό βιβλίο <strong>Ηλεκτρικές Μηχανές — Γ΄ ΕΠΑΛ</strong>, §2.3.4 «Είδη γεννητριών Σ.Ρ. και χαρακτηριστικά τους», υποενότητα <strong>«Γεννήτριες παράλληλης διέγερσης»</strong>, σελ. <strong>99</strong>, σχήμα 2.15.</p>
+ <p><a target="_blank" rel="noopener" href="https://ebooks.edu.gr/ebooks/d/8547/4442/24-0345-02_Ilektrikes-Michanes_G-EPAL_Vivlio-Mathiti.pdf">Επίσημο σχολικό βιβλίο (ebooks.edu.gr)</a></p>
+ <div class="note">Η παρουσίαση αναδιατυπώνει διδακτικά την ύλη. Το κύκλωμα είναι απλοποιημένο και η διαδραστική επίδειξη παρουσιάζει <strong>στάδια αυτοδιέγερσης</strong>, όχι αριθμητική προσομοίωση πραγματικής γεννήτριας.</div>
+ <p class="small">Πλοήγηση: κουμπιά κάτω δεξιά, πλήκτρα ← → ή Page Up / Page Down · F11 για πλήρη οθόνη · Ctrl+P για εκτύπωση.</p>
+ <p class="small">Ε. Κοκκώδης</p>
+</section>
+</main>
+<nav class="controls" aria-label="Πλοήγηση παρουσίασης"><span class="count" id="count">1 / 13</span><span class="count hint">Ηλεκτρικές Μηχανές · Γ΄ ΕΠΑΛ</span><div style="display:flex;gap:7px"><button id="prev" type="button" aria-label="Προηγούμενη διαφάνεια">← Προηγούμενη</button><button id="next" type="button" aria-label="Επόμενη διαφάνεια">Επόμενη →</button></div></nav>
+<script>
+(()=>{
+const slides=[...document.querySelectorAll('.slide')],count=document.getElementById('count'),prev=document.getElementById('prev'),next=document.getElementById('next');let current=0;
+function show(n){current=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('active',i===current));count.textContent=`${current+1} / ${slides.length}`;prev.disabled=current===0;next.disabled=current===slides.length-1;slides[current].scrollTop=0;}
+prev.addEventListener('click',()=>show(current-1));next.addEventListener('click',()=>show(current+1));
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(document.activeElement?.tagName) && !['Escape'].includes(e.key))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(current+1);}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(current-1);}});
+let touchStart=null;document.querySelector('.deck').addEventListener('touchstart',e=>{touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});document.querySelector('.deck').addEventListener('touchend',e=>{if(!touchStart)return;let dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;if(Math.abs(dx)>90&&Math.abs(dx)>Math.abs(dy)*1.7)show(current+(dx<0?1:-1));touchStart=null;},{passive:true});
+const stages=[
+ {bars:[12,8,8,8,8],msg:'Η περιστροφή του τυμπάνου μέσα στο ασθενές πεδίο του παραμένοντος μαγνητισμού δημιουργεί μικρή αρχική τάση.'},
+ {bars:[12,24,8,8,8],msg:'Η μικρή αρχική τάση εφαρμόζεται στο παράλληλο τύλιγμα διέγερσης. Ξεκινά να κυκλοφορεί ρεύμα διέγερσης Iδ.'},
+ {bars:[12,24,47,8,8],msg:'Το ρεύμα διέγερσης δημιουργεί μαγνητικό πεδίο ίδιας πολικότητας και ενισχύει τον παραμένοντα μαγνητισμό.'},
+ {bars:[12,24,47,74,8],msg:'Με ισχυρότερο μαγνητικό πεδίο παράγεται μεγαλύτερη ΗΕΔ. Έτσι ενισχύεται ξανά το ρεύμα διέγερσης.'},
+ {bars:[12,24,47,74,94],msg:'Η τάση αυξάνεται έως μία τελική τιμή, που εξαρτάται από την ταχύτητα περιστροφής και τα χαρακτηριστικά της μηχανής.'}
+];
+let stage=0;const bars=[...document.querySelectorAll('#stageBars .bar')];function showStage(n){stage=Math.max(0,Math.min(stages.length-1,n));let s=stages[stage];document.getElementById('stageIndicator').textContent=`${stage+1} / 5`;document.getElementById('stageDescription').textContent=s.msg;bars.forEach((b,i)=>{b.style.height=s.bars[i]+'%';b.style.opacity=i>stage?'.35':'1';});document.getElementById('stageBack').disabled=stage===0;document.getElementById('stageNext').disabled=stage===4;}
+document.getElementById('stageBack').addEventListener('click',()=>showStage(stage-1));document.getElementById('stageNext').addEventListener('click',()=>showStage(stage+1));document.getElementById('stageReset').addEventListener('click',()=>showStage(0));showStage(0);show(0);
+})();
+</script></body></html>
