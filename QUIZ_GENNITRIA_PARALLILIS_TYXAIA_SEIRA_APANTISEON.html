@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 2.3.4 - Γεννήτριες Σ.Ρ. Παράλληλης Διέγερσης</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --primary:#1f6feb;
+      --primary-dark:#174ea6;
+      --accent:#ff8a00;
+      --ok:#16833a;
+      --bad:#c62828;
+      --line:#d9e2ef;
+      --soft:#eef5ff;
+      --warn:#fff7e6;
+      --radius:18px;
+      --shadow:0 10px 28px rgba(18,38,63,.09);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef5ff 0%, var(--bg) 35%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.5;
+    }
+    header{
+      background:linear-gradient(135deg,#1f6feb,#0f4c81);
+      color:white;
+      padding:34px 18px 30px;
+      text-align:center;
+      border-bottom:6px solid var(--accent);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.45rem,3vw,2.25rem)}
+    header p{margin:4px auto 0;max-width:960px;font-size:1.02rem;opacity:.95}
+    main{max-width:1180px;margin:24px auto 80px;padding:0 16px}
+    .toolbar{
+      position:sticky;top:0;z-index:5;
+      background:rgba(244,247,251,.93);backdrop-filter: blur(8px);
+      border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .toolbar .left{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:.95rem}
+    button{
+      border:0;border-radius:13px;padding:10px 14px;font-weight:700;cursor:pointer;
+      transition:transform .08s ease, background .18s ease, opacity .18s ease;
+      font-size:.96rem;
+    }
+    button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
+    .btn-soft{background:var(--soft);color:var(--primary-dark);border:1px solid #cfe0ff}
+    .section{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:22px;margin:18px 0;
+    }
+    .section h2{margin:0 0 6px;font-size:1.35rem}
+    .section-intro{margin:0 0 18px;color:var(--muted)}
+    .note{
+      background:var(--warn);border:1px solid #ffe0a8;border-radius:14px;padding:12px 14px;color:#5a3a00;
+      margin:12px 0 18px;
+    }
+    .mini-diagram{
+      background:#fbfdff;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0 18px;
+      display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;
+    }
+    .diagram-box{border:1px dashed #b9c7da;border-radius:14px;background:white;padding:12px;text-align:center;color:#26466f;font-weight:700}
+    .diagram-box small{display:block;font-weight:500;color:var(--muted);margin-top:4px}
+    .question{
+      border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;background:#fbfdff;
+    }
+    .q-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .q-num{background:var(--primary);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;min-width:34px;text-align:center}
+    .q-title{font-weight:700;flex:1}
+    .options{display:grid;gap:8px;margin-top:10px}
+    .option{
+      display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--line);border-radius:12px;padding:10px;
+    }
+    .option input{margin-top:3px;transform:scale(1.1)}
+    .feedback{margin-top:10px;font-weight:700;display:none}
+    .correct{border-color:rgba(22,131,58,.55)!important;background:#f0fff5!important}
+    .wrong{border-color:rgba(198,40,40,.55)!important;background:#fff5f5!important}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--bad)}
+    .drag-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+    .bank,.zones{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}
+    .bank h3,.zones h3{margin:0 0 10px;font-size:1.05rem}
+    .cards{display:flex;flex-direction:column;gap:10px;min-height:54px}
+    .drag-card{
+      background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px;box-shadow:0 3px 10px rgba(18,38,63,.06);
+      cursor:grab;user-select:none;
+    }
+    .drag-card:active{cursor:grabbing}
+    .drag-card.selected{outline:3px solid rgba(31,111,235,.35);border-color:var(--primary)}
+    .drop-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px}
+    .drop-zone{
+      border:2px dashed #b9c7da;border-radius:16px;padding:12px;background:white;min-height:165px;
+    }
+    .drop-zone.dragover{border-color:var(--primary);background:#eef5ff}
+    .zone-title{font-weight:800;margin-bottom:9px;color:var(--primary-dark)}
+    .drag-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;color:var(--muted);font-size:.95rem}
+    .select-help{display:none;background:#eef5ff;border:1px solid #cfe0ff;border-radius:12px;padding:10px;margin-bottom:12px;color:#26466f}
+    .scenario-grid{display:grid;gap:14px}
+    .scorebox{
+      display:none;background:#0b1f3a;color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;margin-top:18px;
+    }
+    .scorebox h2{margin:0 0 8px}
+    .score-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .score-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 12px}
+    .small{font-size:.92rem;color:var(--muted)}
+    .hidden{display:none!important}
+    @media(max-width:880px){
+      .drag-wrap{grid-template-columns:1fr}
+      .drop-grid{grid-template-columns:1fr}
+      .toolbar{position:static}
+      .mini-diagram{grid-template-columns:1fr}
+    }
+    @media print{
+      .toolbar, .scorebox, button{display:none!important}
+      body{background:white}
+      .section{box-shadow:none;break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Κουίζ Κεφ. 2.3.4: Γεννήτριες Σ.Ρ. Παράλληλης Διέγερσης</h1>
+    <p>Εστίαση αποκλειστικά στη γεννήτρια παράλληλης διέγερσης: αυτοδιέγερση, παραμένων μαγνητισμός, σύνδεση τυλίγματος διέγερσης, ανάπτυξη τάσης και διακύμανση.</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="left">
+        <span class="pill">Μέρος Α: Θεωρία</span>
+        <span class="pill">Μέρος Γ: Σενάρια</span>
+      </div>
+      <div>
+        <button class="btn-primary" onclick="checkAll()">Έλεγχος απαντήσεων</button>
+        <button class="btn-secondary" onclick="resetQuiz()">Επαναφορά</button>
+        <button class="btn-soft" onclick="window.print()">Εκτύπωση</button>
+      </div>
+    </div>
+
+    <section class="section" id="partA">
+      <h2>Μέρος Α — Σωστό/Λάθος & Πολλαπλής Επιλογής</h2>
+      <p class="section-intro">Απάντησε στις ερωτήσεις. Οι λύσεις εμφανίζονται μόνο μετά τον έλεγχο.</p>
+      <div class="note">Κεντρική ιδέα: η γεννήτρια παράλληλης διέγερσης λέγεται και γεννήτρια διακλάδωσης, επειδή το τύλιγμα διέγερσης συνδέεται παράλληλα προς το εξωτερικό φορτίο και το επαγωγικό τύμπανο.</div>
+      <div class="mini-diagram">
+        <div class="diagram-box">Τύλιγμα διέγερσης F1–F2 <small>σε παράλληλη σύνδεση</small></div>
+        <div class="diagram-box">Παραμένων μαγνητισμός <small>δημιουργεί την αρχική τάση αυτοδιέγερσης</small></div>
+      </div>
+      <div id="questionsA"></div>
+    </section>
+
+    <section class="section" id="partC">
+      <h2>Μέρος Γ — Πρακτικά σενάρια</h2>
+      <p class="section-intro">Διάβασε το σενάριο και διάλεξε την καταλληλότερη απάντηση.</p>
+      <div id="questionsC" class="scenario-grid"></div>
+    </section>
+
+    <div class="scorebox" id="scorebox">
+      <h2>Αποτελέσματα</h2>
+      <div id="scoreText"></div>
+      <div class="score-line" id="scoreLine"></div>
+    </div>
+  </main>
+
+  <script>
+    const partA = [
+      {
+        type:'tf',
+        text:'Οι γεννήτριες παράλληλης διέγερσης ονομάζονται και γεννήτριες διακλάδωσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Η ονομασία διακλάδωσης συνδέεται με την παράλληλη σύνδεση του τυλίγματος διέγερσης.'
+      },
+      {
+        type:'tf',
+        text:'Οι γεννήτριες παράλληλης διέγερσης είναι αυτοδιεγειρόμενες μηχανές.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Η αυτοδιέγερση βασίζεται στον παραμένοντα μαγνητισμό των πόλων.'
+      },
+      {
+        type:'mc',
+        text:'Πού συνδέεται το τύλιγμα διέγερσης στη γεννήτρια παράλληλης διέγερσης;',
+        choices:['Παράλληλα προς το εξωτερικό φορτίο και το επαγωγικό τύμπανο','Σε σειρά μόνο με το φορτίο','Σε ξεχωριστή εξωτερική πηγή, χωρίς σύνδεση με τη γεννήτρια','Δεν υπάρχει τύλιγμα διέγερσης'],
+        answer:'Παράλληλα προς το εξωτερικό φορτίο και το επαγωγικό τύμπανο',
+        feedback:'Σωστό. Αυτό είναι το βασικό γνώρισμα της παράλληλης διέγερσης.'
+      },
+      {
+        type:'mc',
+        text:'Το τύλιγμα διέγερσης της γεννήτριας παράλληλης διέγερσης αποτελείται συνήθως από:',
+        choices:['Μεγάλο αριθμό σπειρών','Μία μόνο σπείρα πολύ μεγάλης διατομής','Ψήκτρες χωρίς πηνία','Μόνιμο βραχυκύκλωμα'],
+        answer:'Μεγάλο αριθμό σπειρών',
+        feedback:'Σωστό. Το βιβλίο αναφέρει ότι το τύλιγμα διέγερσης αποτελείται από μεγάλο αριθμό σπειρών.'
+      },
+      {
+        type:'mc',
+        text:'Για την αυτοδιέγερση χρησιμοποιείται κυρίως:',
+        choices:['Η μαγνητική ροή του παραμένοντος μαγνητισμού στους πυρήνες των πόλων','Η τάση του δικτύου Ε.Ρ. χωρίς ανορθωτή','Η μηχανική τριβή των ψηκτρών','Το ρεύμα του φορτίου μόνο όταν το φορτίο είναι ήδη συνδεδεμένο'],
+        answer:'Η μαγνητική ροή του παραμένοντος μαγνητισμού στους πυρήνες των πόλων',
+        feedback:'Σωστό. Ο παραμένων μαγνητισμός δίνει την αρχική μαγνητική ροή.'
+      },
+      {
+        type:'mc',
+        text:'Η μαγνητική ροή του παραμένοντος μαγνητισμού λαμβάνεται συνήθως περίπου:',
+        choices:['2–8% της μαγνητικής ροής κανονικής λειτουργίας','50–60% της μαγνητικής ροής κανονικής λειτουργίας','100% της μαγνητικής ροής κανονικής λειτουργίας','0%, γιατί δεν υπάρχει παραμένων μαγνητισμός'],
+        answer:'2–8% της μαγνητικής ροής κανονικής λειτουργίας',
+        feedback:'Σωστό. Είναι μικρό ποσοστό, αλλά αρκετό για να ξεκινήσει η αυτοδιέγερση.'
+      },
+      {
+        type:'tf',
+        text:'Κατά τη συνδεσμολογία πρέπει το ρεύμα διέγερσης να ενισχύει το μαγνητικό πεδίο των πόλων και όχι να το εξασθενεί.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Αν το εξασθενεί, η μηχανή παύει να αυτοδιεγείρεται.'
+      },
+      {
+        type:'tf',
+        text:'Στις γεννήτριες παράλληλης διέγερσης δεν επιτρέπεται να αναπτυχθεί πλήρης τάση εξόδου πριν συνδεθεί το φορτίο.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Λάθος',
+        feedback:'Λάθος. Επιτρέπεται η ανάπτυξη πλήρους τάσης εξόδου πριν τη σύνδεση του φορτίου.'
+      },
+      {
+        type:'mc',
+        text:'Η διακύμανση τάσης στις γεννήτριες παράλληλης διέγερσης είναι:',
+        choices:['Μικρή, αλλά μεγαλύτερη από αυτή των γεννητριών ξένης διέγερσης','Πάντα μηδενική χωρίς καμία ρύθμιση','Πάντα μεγαλύτερη από 80%','Ίδια με της γεννήτριας σειράς σε κάθε φορτίο'],
+        answer:'Μικρή, αλλά μεγαλύτερη από αυτή των γεννητριών ξένης διέγερσης',
+        feedback:'Σωστό. Με τη φόρτιση η ένταση διέγερσης ελαττώνεται, άρα η διακύμανση είναι μεγαλύτερη από της ξένης διέγερσης.'
+      },
+      {
+        type:'tf',
+        text:'Με κατάλληλη μεταβολή της ρυθμιστικής αντίστασης διέγερσης μπορούμε να ελαττώσουμε πολύ τη διακύμανση τάσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Σε ορισμένες περιπτώσεις μπορεί ακόμη και να μηδενιστεί.'
+      }
+    ];
+
+    const partC = [
+      {
+        text:'Σε ένα εργαστηριακό κύκλωμα το τύλιγμα διέγερσης είναι παράλληλα συνδεδεμένο με το φορτίο και το επαγωγικό τύμπανο. Τι είδους γεννήτρια έχουμε;',
+        choices:['Γεννήτρια Σ.Ρ. παράλληλης διέγερσης','Γεννήτρια Σ.Ρ. ξένης διέγερσης','Γεννήτρια Σ.Ρ. σειράς','Γεννήτρια χωρίς διέγερση'],
+        answer:'Γεννήτρια Σ.Ρ. παράλληλης διέγερσης',
+        feedback:'Σωστό. Η παράλληλη σύνδεση του τυλίγματος διέγερσης χαρακτηρίζει τη γεννήτρια παράλληλης διέγερσης.'
+      },
+      {
+        text:'Η γεννήτρια περιστρέφεται, αλλά δεν αυτοδιεγείρεται μετά από λάθος σύνδεση των πηνίων διέγερσης. Ποια είναι η πιθανότερη αιτία;',
+        choices:['Το πεδίο των πηνίων εξασθενεί αντί να ενισχύει τον παραμένοντα μαγνητισμό','Το φορτίο έχει πολύ μικρή μηχανική τριβή','Η γεννήτρια χρειάζεται υποχρεωτικά τριφασικό Ε.Ρ. στο τύλιγμα διέγερσης','Οι ψήκτρες παράγουν από μόνες τους τάση εξόδου'],
+        answer:'Το πεδίο των πηνίων εξασθενεί αντί να ενισχύει τον παραμένοντα μαγνητισμό',
+        feedback:'Σωστό. Η πολικότητα του πεδίου πρέπει να είναι ίδια με του παραμένοντος μαγνητισμού.'
+      },
+      {
+        text:'Θέλουμε πρώτα να ανέβει η τάση της γεννήτριας και μετά να συνδέσουμε το φορτίο. Είναι αποδεκτό για γεννήτρια παράλληλης διέγερσης;',
+        choices:['Ναι, επιτρέπεται η ανάπτυξη πλήρους τάσης πριν τη σύνδεση φορτίου','Όχι, πρέπει πάντα να υπάρχει φορτίο από την αρχή','Όχι, γιατί δεν υπάρχει παραμένων μαγνητισμός','Ναι, αλλά μόνο αν αφαιρεθεί το τύλιγμα διέγερσης'],
+        answer:'Ναι, επιτρέπεται η ανάπτυξη πλήρους τάσης πριν τη σύνδεση φορτίου',
+        feedback:'Σωστό. Αυτό είναι βασική διαφορά από τη γεννήτρια σειράς.'
+      },
+      {
+        text:'Με την αύξηση του φορτίου παρατηρείται πτώση στην τάση εξόδου. Ποια εξήγηση ταιριάζει στη γεννήτρια παράλληλης διέγερσης;',
+        choices:['Με τη φόρτιση ελαττώνεται η ένταση διέγερσης','Το τύλιγμα διέγερσης παύει να έχει σπείρες','Το ρεύμα διέγερσης γίνεται πάντα ίσο με μηδέν','Η γεννήτρια μετατρέπεται αυτόματα σε μετασχηματιστή'],
+        answer:'Με τη φόρτιση ελαττώνεται η ένταση διέγερσης',
+        feedback:'Σωστό. Γι’ αυτό η διακύμανση τάσης είναι μεγαλύτερη από της γεννήτριας ξένης διέγερσης.'
+      },
+      {
+        text:'Ο τεχνικός θέλει να μειώσει όσο γίνεται τη διακύμανση τάσης μιας γεννήτριας παράλληλης διέγερσης. Τι μπορεί να ρυθμίσει;',
+        choices:['Τη ρυθμιστική αντίσταση διέγερσης','Τον αριθμό των ψηκτρών χωρίς άλλο έλεγχο','Μόνο το χρώμα του ζυγώματος','Τη φορά των αγωγών του φορτίου χωρίς να πειράξει τη διέγερση'],
+        answer:'Τη ρυθμιστική αντίσταση διέγερσης',
+        feedback:'Σωστό. Με κατάλληλη μεταβολή της ρυθμιστικής αντίστασης διέγερσης μπορεί να μειωθεί πολύ η διακύμανση τάσης.'
+      }
+    ];
+
+
+    function shuffle(array){
+      const a = [...array];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function renderQuestions(containerId, questions, prefix){
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.dataset.answer = q.answer;
+        const choices = shuffle(q.choices);
+        div.innerHTML = `
+          <div class="q-head"><div class="q-num">${idx+1}</div><div class="q-title">${q.text}</div></div>
+          <div class="options">
+            ${choices.map((choice)=>`
+              <label class="option">
+                <input type="radio" name="${qid}" value="${escapeHtml(choice)}" />
+                <span>${choice}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="feedback" id="fb_${qid}" data-feedback="${escapeHtml(q.feedback)}"></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function checkRadioQuestions(containerId, questions, prefix){
+      let correct = 0;
+      questions.forEach((q, idx)=>{
+        const qid = `${prefix}_${idx}`;
+        const options = document.querySelectorAll(`input[name="${qid}"]`);
+        let selected = null;
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          label.classList.remove('correct','wrong');
+          if(input.checked) selected = input.value;
+        });
+        options.forEach(input=>{
+          const label = input.closest('.option');
+          if(input.value === q.answer) label.classList.add('correct');
+          if(input.checked && input.value !== q.answer) label.classList.add('wrong');
+        });
+        const fb = document.getElementById(`fb_${qid}`);
+        fb.style.display='block';
+        if(selected === q.answer){
+          correct++;
+          fb.className='feedback ok';
+          fb.textContent = 'Σωστό! ' + q.feedback;
+        } else {
+          fb.className='feedback bad';
+          fb.textContent = 'Λάθος. Σωστή απάντηση: ' + q.answer + '. ' + q.feedback;
+        }
+      });
+      return correct;
+    }
+
+    function checkAll(){
+      const a = checkRadioQuestions('questionsA', partA, 'A');
+      const c = checkRadioQuestions('questionsC', partC, 'C');
+      const total = partA.length + partC.length;
+      const got = a + c;
+      const pct = Math.round((got/total)*100);
+      const box = document.getElementById('scorebox');
+      box.style.display='block';
+      document.getElementById('scoreText').innerHTML = `<strong>Σύνολο:</strong> ${got}/${total} (${pct}%)`;
+      document.getElementById('scoreLine').innerHTML = `
+        <span class="score-pill">Μέρος Α: ${a}/${partA.length}</span>
+        <span class="score-pill">Μέρος Γ: ${c}/${partC.length}</span>
+      `;
+      box.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    function resetQuiz(){
+      document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
+      document.querySelectorAll('.option').forEach(el=> el.classList.remove('correct','wrong','selected'));
+      document.querySelectorAll('.feedback').forEach(fb=>{fb.style.display='none'; fb.textContent='';});
+      document.getElementById('scorebox').style.display='none';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    renderQuestions('questionsA', partA, 'A');
+    renderQuestions('questionsC', partC, 'C');
+  </script>
+</body>
+</html>

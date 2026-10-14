@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 2.3.4 - Είδη Γεννητριών Σ.Ρ.</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --primary:#1f6feb;
+      --primary-dark:#174ea6;
+      --accent:#ff8a00;
+      --ok:#16833a;
+      --bad:#c62828;
+      --line:#d9e2ef;
+      --soft:#eef5ff;
+      --warn:#fff7e6;
+      --radius:18px;
+      --shadow:0 10px 28px rgba(18,38,63,.09);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef5ff 0%, var(--bg) 35%, #f8fafc 100%);
+      color:var(--ink);
+      line-height:1.5;
+    }
+    header{
+      background:linear-gradient(135deg,#1f6feb,#0f4c81);
+      color:white;
+      padding:34px 18px 30px;
+      text-align:center;
+      border-bottom:6px solid var(--accent);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.55rem,3vw,2.35rem)}
+    header p{margin:4px auto 0;max-width:900px;font-size:1.02rem;opacity:.95}
+    main{max-width:1180px;margin:24px auto 80px;padding:0 16px}
+    .toolbar{
+      position:sticky;top:0;z-index:5;
+      background:rgba(244,247,251,.93);backdrop-filter: blur(8px);
+      border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .toolbar .left{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:.95rem}
+    button{
+      border:0;border-radius:13px;padding:10px 14px;font-weight:700;cursor:pointer;
+      transition:transform .08s ease, background .18s ease, opacity .18s ease;
+      font-size:.96rem;
+    }
+    button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
+    .btn-soft{background:var(--soft);color:var(--primary-dark);border:1px solid #cfe0ff}
+    .section{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:22px;margin:18px 0;
+    }
+    .section h2{margin:0 0 6px;font-size:1.35rem}
+    .section-intro{margin:0 0 18px;color:var(--muted)}
+    .note{
+      background:var(--warn);border:1px solid #ffe0a8;border-radius:14px;padding:12px 14px;color:#5a3a00;
+      margin:12px 0 18px;
+    }
+    .question{
+      border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;background:#fbfdff;
+    }
+    .q-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .q-num{background:var(--primary);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;min-width:34px;text-align:center}
+    .q-title{font-weight:700;flex:1}
+    .options{display:grid;gap:8px;margin-top:10px}
+    .option{
+      display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--line);border-radius:12px;padding:10px;
+    }
+    .option input{margin-top:3px;transform:scale(1.1)}
+    .feedback{margin-top:10px;font-weight:700;display:none}
+    .correct{border-color:rgba(22,131,58,.55)!important;background:#f0fff5!important}
+    .wrong{border-color:rgba(198,40,40,.55)!important;background:#fff5f5!important}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--bad)}
+    .drag-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+    .bank,.zones{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}
+    .bank h3,.zones h3{margin:0 0 10px;font-size:1.05rem}
+    .cards{display:flex;flex-direction:column;gap:10px;min-height:54px}
+    .drag-card{
+      background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px;box-shadow:0 3px 10px rgba(18,38,63,.06);
+      cursor:grab;user-select:none;
+    }
+    .drag-card:active{cursor:grabbing}
+    .drag-card.selected{outline:3px solid rgba(31,111,235,.35);border-color:var(--primary)}
+    .drop-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:14px}
+    .drop-zone{
+      border:2px dashed #b9c7da;border-radius:16px;padding:12px;background:white;min-height:165px;
+    }
+    .drop-zone.dragover{border-color:var(--primary);background:#eef5ff}
+    .zone-title{font-weight:800;margin-bottom:9px;color:var(--primary-dark)}
+    .drag-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;color:var(--muted);font-size:.95rem}
+    .select-help{display:none;background:#eef5ff;border:1px solid #cfe0ff;border-radius:12px;padding:10px;margin-bottom:12px;color:#26466f}
+    .scenario-grid{display:grid;gap:14px}
+    .scorebox{
+      display:none;background:#0b1f3a;color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;margin-top:18px;
+    }
+    .scorebox h2{margin:0 0 8px}
+    .score-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .score-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 12px}
+    .small{font-size:.92rem;color:var(--muted)}
+    .hidden{display:none!important}
+    @media(max-width:880px){
+      .drag-wrap{grid-template-columns:1fr}
+      .drop-grid{grid-template-columns:1fr}
+      .toolbar{position:static}
+    }
+    @media print{
+      .toolbar, .scorebox, button{display:none!important}
+      body{background:white}
+      .section{box-shadow:none;break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Κουίζ Κεφ. 2.3.4: Είδη γεννητριών Σ.Ρ.</h1>
+    <p>Χωρίς το τμήμα «Βασικά χαρακτηριστικά – ονομαστικά μεγέθη». Εστίαση σε τύπους διέγερσης, συνδεσμολογίες και πρακτική αναγνώριση.</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="left">
+        <span class="pill">Μέρος Α: Θεωρία</span>
+        <span class="pill">Μέρος Β: Drag & Drop</span>
+        <span class="pill">Μέρος Γ: Σενάρια</span>
+      </div>
+      <div>
+        <button class="btn-primary" onclick="checkAll()">Έλεγχος απαντήσεων</button>
+        <button class="btn-secondary" onclick="resetQuiz()">Επαναφορά</button>
+        <button class="btn-soft" onclick="window.print()">Εκτύπωση</button>
+      </div>
+    </div>
+
+    <section class="section" id="partA">
+      <h2>Μέρος Α — Σωστό/Λάθος & Πολλαπλής Επιλογής</h2>
+      <p class="section-intro">Απάντησε στις ερωτήσεις. Οι λύσεις δεν εμφανίζονται πριν τον έλεγχο.</p>
+      <div class="note">Θυμήσου: η διάκριση των γεννητριών Σ.Ρ. γίνεται κυρίως από τον τρόπο σύνδεσης του τυλίγματος διέγερσης.</div>
+      <div id="questionsA"></div>
+    </section>
+
+    <section class="section" id="partB">
+      <h2>Μέρος Β — Drag & Drop ταξινόμησης</h2>
+      <p class="section-intro">Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε οθόνη αφής μπορείς να πατήσεις μια καρτέλα και μετά την κατηγορία.</p>
+      <div class="select-help" id="tapHelp">Επιλέχθηκε καρτέλα. Πάτησε τώρα την κατηγορία όπου θέλεις να τοποθετηθεί.</div>
+      <div class="drag-wrap">
+        <div class="bank">
+          <h3>Καρτέλες</h3>
+          <div class="cards" id="cardBank"></div>
+        </div>
+        <div class="zones">
+          <h3>Κατηγορίες</h3>
+          <div class="drop-grid" id="dropGrid"></div>
+        </div>
+      </div>
+      <div class="drag-actions">
+        <span>Στόχος: να ξεχωρίσεις τον τύπο της γεννήτριας από τη σύνδεση ή τη λειτουργία της διέγερσης.</span>
+      </div>
+      <div class="feedback" id="feedbackB"></div>
+    </section>
+
+    <section class="section" id="partC">
+      <h2>Μέρος Γ — Πρακτικά σενάρια εφαρμογής</h2>
+      <p class="section-intro">Διάβασε το τεχνικό σενάριο και διάλεξε τον κατάλληλο τύπο γεννήτριας ή σύνθετης διέγερσης.</p>
+      <div id="questionsC" class="scenario-grid"></div>
+    </section>
+
+    <div class="scorebox" id="scorebox">
+      <h2>Αποτελέσματα</h2>
+      <div id="scoreText"></div>
+      <div class="score-line" id="scoreLine"></div>
+    </div>
+  </main>
+
+  <script>
+    const partA = [
+      {
+        type:'tf',
+        text:'Οι γεννήτριες Σ.Ρ. διακρίνονται σε κατηγορίες ανάλογα με τον τρόπο σύνδεσης του τυλίγματος διέγερσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Ο τρόπος σύνδεσης της διέγερσης είναι το βασικό κριτήριο διάκρισης.'
+      },
+      {
+        type:'tf',
+        text:'Στις γεννήτριες ξένης διέγερσης το τύλιγμα διέγερσης τροφοδοτείται υποχρεωτικά από την ίδια την έξοδο της γεννήτριας.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Λάθος',
+        feedback:'Λάθος. Στην ξένη διέγερση το τύλιγμα διέγερσης τροφοδοτείται από ανεξάρτητη, ξένη πηγή.'
+      },
+      {
+        type:'mc',
+        text:'Ποιος τύπος γεννήτριας χρησιμοποιεί ανεξάρτητη πηγή για το τύλιγμα διέγερσης;',
+        choices:['Γεννήτρια ξένης διέγερσης','Γεννήτρια παράλληλης διέγερσης','Γεννήτρια διέγερσης σειράς','Γεννήτρια διαφορικής σύνθετης διέγερσης'],
+        answer:'Γεννήτρια ξένης διέγερσης',
+        feedback:'Σωστό. Η λέξη-κλειδί είναι «ανεξάρτητη» ή «ξένη» πηγή.'
+      },
+      {
+        type:'mc',
+        text:'Σε ποια γεννήτρια το τύλιγμα διέγερσης συνδέεται παράλληλα με το κύκλωμα εξόδου;',
+        choices:['Ξένης διέγερσης','Παράλληλης διέγερσης','Διέγερσης σειράς','Απλής κυματοτύλιξης'],
+        answer:'Παράλληλης διέγερσης',
+        feedback:'Σωστό. Στην παράλληλη διέγερση το τύλιγμα διέγερσης συνδέεται παράλληλα.'
+      },
+      {
+        type:'tf',
+        text:'Στις γεννήτριες διέγερσης σειράς, το φορτίο πρέπει να είναι συνδεδεμένο ώστε να περάσει ρεύμα από το τύλιγμα διέγερσης.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Το ρεύμα φορτίου περνά και από το τύλιγμα διέγερσης σειράς.'
+      },
+      {
+        type:'mc',
+        text:'Σε ποιον τύπο γεννήτριας το ρεύμα φορτίου είναι ταυτόχρονα και ρεύμα διέγερσης;',
+        choices:['Γεννήτρια σειράς','Γεννήτρια ξένης διέγερσης','Γεννήτρια με μόνιμους μαγνήτες','Γεννήτρια παράλληλης διέγερσης'],
+        answer:'Γεννήτρια σειράς',
+        feedback:'Σωστό. Στη διέγερση σειράς το τύλιγμα διέγερσης είναι στο ίδιο κύκλωμα με το φορτίο.'
+      },
+      {
+        type:'tf',
+        text:'Στη σύνθετη διέγερση κάθε πόλος έχει δύο τυλίγματα: ένα παράλληλο και ένα σειράς.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Αυτό είναι το βασικό γνώρισμα της σύνθετης διέγερσης.'
+      },
+      {
+        type:'mc',
+        text:'Όταν το τύλιγμα σειράς ενισχύει το μαγνητικό πεδίο του παράλληλου τυλίγματος, η σύνθετη διέγερση λέγεται:',
+        choices:['Αθροιστική σύνθετη διέγερση','Διαφορική σύνθετη διέγερση','Ξένη διέγερση','Παράλληλη διέγερση'],
+        answer:'Αθροιστική σύνθετη διέγερση',
+        feedback:'Σωστό. Αθροιστική σημαίνει ότι τα μαγνητικά πεδία συνεργάζονται/προστίθενται.'
+      },
+      {
+        type:'tf',
+        text:'Στη διαφορική σύνθετη διέγερση το τύλιγμα σειράς εξασθενεί το μαγνητικό πεδίο του παράλληλου τυλίγματος.',
+        choices:['Σωστό','Λάθος'],
+        answer:'Σωστό',
+        feedback:'Σωστό. Διαφορική σημαίνει ότι το ένα πεδίο αντιτίθεται στο άλλο.'
+      },
+      {
+        type:'mc',
+        text:'Θέλουμε να μεταβάλλουμε την τάση εξόδου σε μεγάλα όρια, αλλάζοντας το ρεύμα διέγερσης. Ποιος τύπος ταιριάζει περισσότερο;',
+        choices:['Ξένης διέγερσης','Σειράς','Διαφορικής σύνθετης','Παράλληλης χωρίς φορτίο'],
+        answer:'Ξένης διέγερσης',
+        feedback:'Σωστό. Η ξένη διέγερση επιτρέπει εύκολη ρύθμιση μέσω ανεξάρτητου ρεύματος διέγερσης.'
+      }
+    ];
+
+    const categories = [
+      {id:'xeni', title:'Ξένης διέγερσης'},
+      {id:'parallili', title:'Παράλληλης διέγερσης'},
+      {id:'seiras', title:'Διέγερσης σειράς'},
+      {id:'synth', title:'Σύνθετης διέγερσης'}
+    ];
+
+    const dragCards = [
+      {text:'Το τύλιγμα διέγερσης τροφοδοτείται από ανεξάρτητη πηγή.', cat:'xeni'},
+      {text:'Η τάση εξόδου μπορεί να μεταβάλλεται σε μεγάλα όρια με το ρεύμα διέγερσης.', cat:'xeni'},
+      {text:'Μπορεί να χρησιμοποιηθεί για τροφοδότηση διέγερσης μεγάλων γεννητριών Ε.Ρ.', cat:'xeni'},
+      {text:'Το τύλιγμα διέγερσης συνδέεται παράλληλα με το κύκλωμα εξόδου.', cat:'parallili'},
+      {text:'Ονομάζεται και γεννήτρια διακλάδωσης.', cat:'parallili'},
+      {text:'Με τη φόρτιση της μηχανής ελαττώνεται η ένταση διέγερσης, άρα η διακύμανση τάσης είναι μεγαλύτερη από της ξένης διέγερσης.', cat:'parallili'},
+      {text:'Το τύλιγμα διέγερσης συνδέεται σε σειρά με το επαγωγικό τύμπανο.', cat:'seiras'},
+      {text:'Το φορτίο πρέπει να είναι συνδεδεμένο από την αρχή για να υπάρξει ρεύμα διέγερσης.', cat:'seiras'},
+      {text:'Το ρεύμα φόρτισης είναι και ρεύμα διέγερσης.', cat:'seiras'},
+      {text:'Κάθε πόλος έχει παράλληλο τύλιγμα και τύλιγμα σειράς.', cat:'synth'},
+      {text:'Αθροιστική: το τύλιγμα σειράς ενισχύει το μαγνητικό πεδίο.', cat:'synth'},
+      {text:'Διαφορική: το τύλιγμα σειράς εξασθενεί το μαγνητικό πεδίο.', cat:'synth'}
+    ];
+
+    const partC = [
+      {
+        text:'Σε εργαστηριακή διάταξη θέλουμε να ρυθμίζουμε την τάση εξόδου από ξεχωριστό ρυθμιστικό κύκλωμα διέγερσης. Τι επιλέγουμε;',
+        choices:['Γεννήτρια ξένης διέγερσης','Γεννήτρια σειράς','Γεννήτρια διαφορικής σύνθετης διέγερσης','Γεννήτρια χωρίς διέγερση'],
+        answer:'Γεννήτρια ξένης διέγερσης',
+        feedback:'Σωστό. Η ανεξάρτητη διέγερση δίνει καλύτερο έλεγχο της τάσης εξόδου.'
+      },
+      {
+        text:'Θέλουμε γεννήτρια που να δημιουργεί μόνη της τη διέγερση, αξιοποιώντας τον παραμένοντα μαγνητισμό, με τύλιγμα διέγερσης παράλληλα στην έξοδο. Ποια είναι;',
+        choices:['Παράλληλης διέγερσης','Ξένης διέγερσης','Σειράς','Αθροιστικής σύνθετης διέγερσης'],
+        answer:'Παράλληλης διέγερσης',
+        feedback:'Σωστό. Η περιγραφή δείχνει αυτοδιεγειρόμενη γεννήτρια παράλληλης διέγερσης.'
+      },
+      {
+        text:'Σε μια γεννήτρια παρατηρούμε ότι αν δεν συνδεθεί φορτίο, δεν μπορεί να περάσει ρεύμα από το τύλιγμα διέγερσης. Ποιος τύπος είναι;',
+        choices:['Διέγερσης σειράς','Ξένης διέγερσης','Παράλληλης διέγερσης','Μονοφασική Ε.Ρ.'],
+        answer:'Διέγερσης σειράς',
+        feedback:'Σωστό. Στη γεννήτρια σειράς το φορτίο είναι μέρος της διαδρομής του ρεύματος διέγερσης.'
+      },
+      {
+        text:'Μια γεννήτρια έχει δύο τυλίγματα διέγερσης σε κάθε πόλο: ένα παράλληλο και ένα σειράς. Πώς χαρακτηρίζεται;',
+        choices:['Σύνθετης διέγερσης','Ξένης διέγερσης','Μαγνητογεννήτρια','Απλής παράλληλης διέγερσης'],
+        answer:'Σύνθετης διέγερσης',
+        feedback:'Σωστό. Η ύπαρξη παράλληλου και τυλίγματος σειράς οδηγεί στη σύνθετη διέγερση.'
+      },
+      {
+        text:'Σε δίκτυο με μεταβαλλόμενο φορτίο θέλουμε το τύλιγμα σειράς να βοηθά το παράλληλο τύλιγμα, ενισχύοντας το μαγνητικό πεδίο. Ποια σύνθετη διέγερση είναι;',
+        choices:['Αθροιστική σύνθετη διέγερση','Διαφορική σύνθετη διέγερση','Ξένη διέγερση','Σειράς χωρίς φορτίο'],
+        answer:'Αθροιστική σύνθετη διέγερση',
+        feedback:'Σωστό. Όταν τα πεδία ενισχύονται μεταξύ τους, έχουμε αθροιστική σύνθετη διέγερση.'
+      },
+      {
+        text:'Σε εφαρμογή όπως ηλεκτροσυγκόλληση θέλουμε, όταν εμφανιστεί βραχυκύκλωμα, να μη μεγαλώσει ανεξέλεγκτα το ρεύμα. Ποια σύνθετη διέγερση ταιριάζει;',
+        choices:['Διαφορική σύνθετη διέγερση','Αθροιστική σύνθετη διέγερση','Παράλληλη διέγερση μόνο','Ξένη διέγερση με σταθερό πεδίο'],
+        answer:'Διαφορική σύνθετη διέγερση',
+        feedback:'Σωστό. Η διαφορική σύνθετη διέγερση εξασθενεί το πεδίο και περιορίζει την αύξηση του ρεύματος σε τέτοιες συνθήκες.'
+      }
+    ];
+
+    function shuffle(arr){
+      const a=[...arr];
+      for(let i=a.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function renderQuestion(containerId, data, prefix){
+      const container=document.getElementById(containerId);
+      container.innerHTML='';
+      data.forEach((q,idx)=>{
+        const qid=`${prefix}_${idx}`;
+        const choices=shuffle(q.choices);
+        const div=document.createElement('div');
+        div.className='question';
+        div.dataset.answer=q.answer;
+        div.dataset.index=idx;
+        div.innerHTML=`
+          <div class="q-head"><div class="q-num">${idx+1}</div><div class="q-title">${q.text}</div></div>
+          <div class="options">
+            ${choices.map((c,i)=>`
+              <label class="option">
+                <input type="radio" name="${qid}" value="${escapeHtml(c)}">
+                <span>${c}</span>
+              </label>`).join('')}
+          </div>
+          <div class="feedback" id="fb_${qid}"></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderDrag(){
+      const bank=document.getElementById('cardBank');
+      const grid=document.getElementById('dropGrid');
+      bank.innerHTML='';
+      grid.innerHTML='';
+
+      categories.forEach(cat=>{
+        const z=document.createElement('div');
+        z.className='drop-zone';
+        z.dataset.cat=cat.id;
+        z.innerHTML=`<div class="zone-title">${cat.title}</div><div class="cards zone-cards"></div>`;
+        z.addEventListener('dragover',e=>{e.preventDefault(); z.classList.add('dragover');});
+        z.addEventListener('dragleave',()=>z.classList.remove('dragover'));
+        z.addEventListener('drop',e=>{
+          e.preventDefault(); z.classList.remove('dragover');
+          const id=e.dataTransfer.getData('text/plain');
+          const card=document.getElementById(id);
+          if(card) z.querySelector('.zone-cards').appendChild(card);
+        });
+        z.addEventListener('click',()=>moveSelectedTo(z.querySelector('.zone-cards')));
+        grid.appendChild(z);
+      });
+
+      shuffle(dragCards).forEach((card,idx)=>{
+        const el=document.createElement('div');
+        el.className='drag-card';
+        el.draggable=true;
+        el.id=`drag_${idx}_${Date.now()}`;
+        el.dataset.correct=card.cat;
+        el.textContent=card.text;
+        el.addEventListener('dragstart',e=>{
+          e.dataTransfer.setData('text/plain',el.id);
+          selectedCard=null;
+          document.getElementById('tapHelp').style.display='none';
+        });
+        el.addEventListener('click',e=>{
+          e.stopPropagation();
+          selectCard(el);
+        });
+        bank.appendChild(el);
+      });
+
+      const bankBox=document.querySelector('.bank');
+      bankBox.addEventListener('dragover',e=>e.preventDefault());
+      bankBox.addEventListener('drop',e=>{
+        e.preventDefault();
+        const id=e.dataTransfer.getData('text/plain');
+        const card=document.getElementById(id);
+        if(card) bank.appendChild(card);
+      });
+    }
+
+    let selectedCard=null;
+    function selectCard(el){
+      document.querySelectorAll('.drag-card.selected').forEach(c=>c.classList.remove('selected'));
+      selectedCard=el;
+      el.classList.add('selected');
+      document.getElementById('tapHelp').style.display='block';
+    }
+    function moveSelectedTo(target){
+      if(!selectedCard) return;
+      target.appendChild(selectedCard);
+      selectedCard.classList.remove('selected');
+      selectedCard=null;
+      document.getElementById('tapHelp').style.display='none';
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    function checkRadioPart(containerId, data, prefix){
+      let score=0;
+      data.forEach((q,idx)=>{
+        const qBox=document.querySelector(`#${containerId} .question[data-index="${idx}"]`);
+        const selected=document.querySelector(`input[name="${prefix}_${idx}"]:checked`);
+        const fb=document.getElementById(`fb_${prefix}_${idx}`);
+        qBox.classList.remove('correct','wrong');
+        qBox.querySelectorAll('.option').forEach(o=>o.classList.remove('correct','wrong'));
+        fb.style.display='block';
+        if(selected && selected.value===q.answer){
+          score++;
+          qBox.classList.add('correct');
+          selected.closest('.option').classList.add('correct');
+          fb.className='feedback ok';
+          fb.textContent='Σωστό. ' + q.feedback;
+        }else{
+          qBox.classList.add('wrong');
+          if(selected) selected.closest('.option').classList.add('wrong');
+          qBox.querySelectorAll('input').forEach(inp=>{
+            if(inp.value===q.answer) inp.closest('.option').classList.add('correct');
+          });
+          fb.className='feedback bad';
+          fb.textContent='Λάθος. Σωστή απάντηση: ' + q.answer + '. ' + q.feedback;
+        }
+      });
+      return score;
+    }
+
+    function checkDrag(){
+      let score=0;
+      const allCards=document.querySelectorAll('.drag-card');
+      allCards.forEach(card=>{
+        card.classList.remove('correct','wrong');
+        const zone=card.closest('.drop-zone');
+        if(zone && zone.dataset.cat===card.dataset.correct){
+          score++;
+          card.classList.add('correct');
+        }else{
+          card.classList.add('wrong');
+        }
+      });
+      const fb=document.getElementById('feedbackB');
+      fb.style.display='block';
+      fb.className = score===dragCards.length ? 'feedback ok' : 'feedback bad';
+      fb.textContent = `Μέρος Β: ${score}/${dragCards.length} σωστές ταξινομήσεις.`;
+      return score;
+    }
+
+    function checkAll(){
+      const scoreA=checkRadioPart('questionsA',partA,'A');
+      const scoreB=checkDrag();
+      const scoreC=checkRadioPart('questionsC',partC,'C');
+      const total=partA.length + dragCards.length + partC.length;
+      const sum=scoreA + scoreB + scoreC;
+      const pct=Math.round((sum/total)*100);
+      document.getElementById('scorebox').style.display='block';
+      document.getElementById('scoreText').innerHTML=`Συνολικό σκορ: <strong>${sum}/${total}</strong> (${pct}%).`;
+      document.getElementById('scoreLine').innerHTML=`
+        <span class="score-pill">Μέρος Α: ${scoreA}/${partA.length}</span>
+        <span class="score-pill">Μέρος Β: ${scoreB}/${dragCards.length}</span>
+        <span class="score-pill">Μέρος Γ: ${scoreC}/${partC.length}</span>
+      `;
+      document.getElementById('scorebox').scrollIntoView({behavior:'smooth',block:'center'});
+    }
+
+    function resetQuiz(){
+      renderQuestion('questionsA',partA,'A');
+      renderQuestion('questionsC',partC,'C');
+      renderDrag();
+      document.getElementById('scorebox').style.display='none';
+      document.getElementById('feedbackB').style.display='none';
+      document.getElementById('tapHelp').style.display='none';
+      selectedCard=null;
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    resetQuiz();
+  </script>
+</body>
+</html>
