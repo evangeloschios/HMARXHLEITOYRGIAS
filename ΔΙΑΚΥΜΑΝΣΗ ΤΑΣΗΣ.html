@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Προσομοιώσεις Γεννήτριας Σ.Ρ. (HTML)</title>
+  <style>
+    :root { --bg:#fff9c4; --card:#fff; --ink:#111; --muted:#6b7280; --header-h:74px; }
+    *{box-sizing:border-box}
+    html{height:100%;scroll-behavior:smooth;scroll-snap-type:y mandatory;scroll-padding-top:var(--header-h);}
+    body{margin:0;padding-top:var(--header-h);font-family:system-ui,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+
+    /* Σταθερή επικεφαλίδα στο πάνω μέρος της οθόνης */
+    .topbar{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      height:var(--header-h);
+      z-index:1000;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg);
+      border-bottom:1px solid rgba(17,17,17,.12);
+      box-shadow:0 3px 12px rgba(0,0,0,.06);
+    }
+
+    /* Πιο συμπαγής τίτλος για να μένει χώρος σε κάθε οθόνη */
+    h1{font-size:clamp(1.35rem,3.4vw,2rem);line-height:1.1;margin:0;text-align:center}
+    .author{text-align:center;font-size:0.82rem;font-weight:700;margin-top:3px;}
+
+    .page{width:min(100%,1100px);margin:0 auto;padding:0 10px 10px;}
+
+    /* Κάθε ενότητα λειτουργεί σαν ξεχωριστή σελίδα/οθόνη */
+    .section{
+      height:calc(100svh - var(--header-h) - 12px);
+      background:var(--card);
+      border-radius:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+      padding:12px;
+      margin:6px 0;
+      overflow:hidden;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      scroll-snap-align:start;
+      scroll-margin-top:var(--header-h);
+    }
+    .section-fit{width:100%;max-width:100%;transform-origin:top center;will-change:transform;}
+
+    h2{font-size:clamp(1.02rem,2.35vh,1.45rem);line-height:1.15;margin:0 0 2px;text-align:center}
+    p.lead{font-size:clamp(0.76rem,1.75vh,0.95rem);line-height:1.2;margin:0 0 10px;text-align:center;color:var(--muted)}
+
+    .grid{display:grid;gap:10px}
+    @media(min-width:760px){.grid.two{grid-template-columns:1fr 1fr}}
+    .control{background:#fff;padding:9px;border-radius:12px;border:1px solid #e5e7eb}
+    .control label{display:block;font-weight:600;margin-bottom:6px;font-size:clamp(0.84rem,1.75vh,1rem)}
+    .control small{font-size:clamp(0.68rem,1.45vh,0.82rem)}
+    .row{display:flex;gap:8px;align-items:center}
+    input[type="number"], input[type="range"]{width:100%}
+    input[type="number"]{width:84px;padding:5px 7px;border:1px solid #d1d5db;border-radius:8px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .suffix{color:#374151}
+
+    .result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+    .result .big{font-size:clamp(1.25rem,3.3vh,1.85rem);font-weight:800;line-height:1.1}
+    .result .bigger{font-size:clamp(1.45rem,3.8vh,2.15rem);font-weight:900;line-height:1.1}
+    .result small{color:var(--muted);font-size:clamp(0.72rem,1.55vh,0.85rem)}
+
+    svg{width:100%;max-width:600px;max-height:min(35svh,285px);height:auto;display:block;margin:0 auto;}
+    .muted{color:var(--muted)}
+    .center{text-align:center}
+
+    @media(max-width:759px){
+      :root{--header-h:70px;}
+      .section{padding:10px;border-radius:14px;}
+      .grid.two{grid-template-columns:1fr;gap:8px;}
+      .result{grid-template-columns:1fr;gap:6px;}
+      svg{max-height:30svh;}
+      input[type="number"]{width:76px;}
+    }
+
+    @media print{
+      html{scroll-snap-type:none;scroll-padding-top:0;}
+      body{background:#fff;padding-top:0;}
+      .topbar{position:static;box-shadow:none;border-bottom:1px solid #ccc;}
+      .section{height:100vh;page-break-after:always;box-shadow:none;border:1px solid #e5e7eb;}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Προσομοιώσεις Γεννήτριας Σ.Ρ.</h1>
+    <div class="author">Ε. Κοκκώδης</div>
+  </header>
+
+  <div class="page">
+    <!-- ================= 1) Δίνεται Uo & UN → ε% ================= -->
+    <section class="section" id="sim1">
+      <h2>1) Δίνεται U<sub>o</sub> &amp; U<sub>N</sub> → Υπολογισμός ε%</h2>
+      <p class="lead">ε% = [(U<sub>o</sub> − U<sub>N</sub>) / U<sub>N</sub>] × 100</p>
+
+      <div class="grid two">
+        <div class="control">
+          <label>U<sub>o</sub> (χωρίς φορτίο)</label>
+          <div class="row">
+            <input id="sim1_uo_range" type="range" min="0" max="1000" step="1" value="220">
+            <input id="sim1_uo_num" type="number" min="0" max="1000" step="1" value="220">
+            <span class="suffix">V</span>
+          </div>
+        </div>
+        <div class="control">
+          <label>U<sub>N</sub> (με φορτίο)</label>
+          <div class="row">
+            <input id="sim1_un_range" type="range" min="0" max="1000" step="1" value="200">
+            <input id="sim1_un_num" type="number" min="0" max="1000" step="1" value="200">
+            <span class="suffix">V</span>
+          </div>
+          <small class="muted">Το U<sub>N</sub> περιορίζεται ώστε U<sub>N</sub> ≤ U<sub>o</sub> &amp; ≥ 0 V</small>
+        </div>
+      </div>
+
+      <div class="result" style="margin-top:14px">
+        <div>
+          <small>Διακύμανση τάσης ε%</small>
+          <div id="sim1_e" class="big">—</div>
+        </div>
+        <div>
+          <small>Πτώση τάσης ΔU</small>
+          <div id="sim1_du" class="big">—</div>
+        </div>
+        <div>
+          <small>Λόγος U<sub>N</sub>/U<sub>o</sub></small>
+          <div id="sim1_ratio" class="big">—</div>
+        </div>
+      </div>
+
+      <!-- Διάγραμμα -->
+      <div class="center" style="margin-top:18px">
+        <svg viewBox="0 0 600 300">
+          <!-- Γεννήτρια (κύκλος) -->
+          <circle cx="150" cy="150" r="70" stroke="#111" stroke-width="3" fill="none"></circle>
+          <text x="150" y="155" text-anchor="middle" font-size="14" fill="#111">Γεννήτρια</text>
+          <!-- Uo κείμενο δίπλα στη γεννήτρια -->
+          <text id="sim1_uo_label" x="240" y="155" font-size="12" fill="#111">Uo = 220 V</text>
+
+          <!-- Ψήκτρες -->
+          <rect x="140" y="60" width="20" height="20" fill="#111"></rect>
+          <rect x="140" y="220" width="20" height="20" fill="#111"></rect>
+          <!-- Κάθετες έξοδοι -->
+          <line x1="150" y1="60" x2="150" y2="20" stroke="#111" stroke-width="2"></line>
+          <line x1="150" y1="240" x2="150" y2="280" stroke="#111" stroke-width="2"></line>
+
+          <!-- Αντίσταση -->
+          <rect x="420" y="130" width="40" height="40" stroke="#111" stroke-width="3" fill="none"></rect>
+          <text x="440" y="155" text-anchor="middle" font-size="12" fill="#111">R</text>
+
+          <!-- UN κείμενο δίπλα στην αντίσταση (Ν δείκτης) -->
+          <foreignObject x="470" y="140" width="140" height="30">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:13px;color:#111">
+              U<sub>N</sub> = <span id="sim1_un_label">200.00</span> V
+            </div>
+          </foreignObject>
+
+          <!-- Αγωγοί ορθής γωνίας -->
+          <polyline points="150,20 440,20 440,130" fill="none" stroke="#111" stroke-width="2"></polyline>
+          <polyline points="150,280 440,280 440,170" fill="none" stroke="#111" stroke-width="2"></polyline>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ================= 2) Δίνεται Uo & ε% → UN ================= -->
+    <section class="section" id="sim2">
+      <h2>2) Δίνεται U<sub>o</sub> &amp; ε% → Υπολογισμός U<sub>N</sub></h2>
+      <p class="lead">U<sub>N</sub> = U<sub>o</sub> / (1 + ε/100)</p>
+
+      <div class="grid two">
+        <div class="control">
+          <label>U<sub>o</sub> (χωρίς φορτίο)</label>
+          <div class="row">
+            <input id="sim2_uo_range" type="range" min="0" max="1000" step="1" value="220">
+            <input id="sim2_uo_num" type="number" min="0" max="1000" step="1" value="220">
+            <span class="suffix">V</span>
+          </div>
+        </div>
+        <div class="control">
+          <label>Διακύμανση τάσης ε%</label>
+          <div class="row">
+            <input id="sim2_eps_range" type="range" min="0" max="100" step="0.1" value="10">
+            <input id="sim2_eps_num" type="number" min="0" max="100" step="0.1" value="10">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" style="margin-top:14px">
+        <div>
+          <small>U<sub>N</sub> (με φορτίο)</small>
+          <div id="sim2_un" class="bigger">—</div>
+        </div>
+        <div>
+          <small>Πτώση τάσης ΔU</small>
+          <div id="sim2_du" class="big">—</div>
+        </div>
+        <div>
+          <small>Τύπος</small>
+          <div class="center">U<sub>N</sub> = U<sub>o</sub> / (1 + ε/100)</div>
+        </div>
+      </div>
+
+      <!-- Διάγραμμα -->
+      <div class="center" style="margin-top:18px">
+        <svg viewBox="0 0 600 300">
+          <circle cx="150" cy="150" r="70" stroke="#111" stroke-width="3" fill="none"></circle>
+          <text x="150" y="155" text-anchor="middle" font-size="14" fill="#111">Γεννήτρια</text>
+          <text id="sim2_uo_label" x="240" y="155" font-size="12" fill="#111">Uo = 220 V</text>
+          <rect x="140" y="60" width="20" height="20" fill="#111"></rect>
+          <rect x="140" y="220" width="20" height="20" fill="#111"></rect>
+          <line x1="150" y1="60" x2="150" y2="20" stroke="#111" stroke-width="2"></line>
+          <line x1="150" y1="240" x2="150" y2="280" stroke="#111" stroke-width="2"></line>
+          <rect x="420" y="130" width="40" height="40" stroke="#111" stroke-width="3" fill="none"></rect>
+          <text x="440" y="155" text-anchor="middle" font-size="12" fill="#111">R</text>
+          <foreignObject x="470" y="140" width="140" height="30">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:16px;font-weight:800;color:#111">
+              U<sub>N</sub> = <span id="sim2_un_label">—</span> V
+            </div>
+          </foreignObject>
+          <polyline points="150,20 440,20 440,130" fill="none" stroke="#111" stroke-width="2"></polyline>
+          <polyline points="150,280 440,280 440,170" fill="none" stroke="#111" stroke-width="2"></polyline>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ================= 3) Δίνεται UN & ε% → Uo ================= -->
+    <section class="section" id="sim3">
+      <h2>3) Δίνεται U<sub>N</sub> &amp; ε% → Υπολογισμός U<sub>o</sub></h2>
+      <p class="lead">U<sub>o</sub> = U<sub>N</sub> · (1 + ε/100)</p>
+
+      <div class="grid two">
+        <div class="control">
+          <label>U<sub>N</sub> (με φορτίο)</label>
+          <div class="row">
+            <input id="sim3_un_range" type="range" min="0" max="1000" step="1" value="200">
+            <input id="sim3_un_num" type="number" min="0" max="1000" step="1" value="200">
+            <span class="suffix">V</span>
+          </div>
+        </div>
+        <div class="control">
+          <label>Διακύμανση τάσης ε%</label>
+          <div class="row">
+            <input id="sim3_eps_range" type="range" min="0" max="100" step="0.1" value="10">
+            <input id="sim3_eps_num" type="number" min="0" max="100" step="0.1" value="10">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" style="margin-top:14px">
+        <div>
+          <small>U<sub>o</sub> (χωρίς φορτίο)</small>
+          <div id="sim3_uo" class="bigger">—</div>
+        </div>
+        <div>
+          <small>Πτώση τάσης ΔU</small>
+          <div id="sim3_du" class="big">—</div>
+        </div>
+        <div>
+          <small>Τύπος</small>
+          <div class="center">U<sub>o</sub> = U<sub>N</sub> · (1 + ε/100)</div>
+        </div>
+      </div>
+
+      <!-- Διάγραμμα -->
+      <div class="center" style="margin-top:18px">
+        <svg viewBox="0 0 600 300">
+          <circle cx="150" cy="150" r="70" stroke="#111" stroke-width="3" fill="none"></circle>
+          <text x="150" y="155" text-anchor="middle" font-size="14" fill="#111">Γεννήτρια</text>
+          <foreignObject x="240" y="140" width="160" height="30">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:16px;font-weight:800;color:#111">
+              U<sub>o</sub> = <span id="sim3_uo_label">—</span> V
+            </div>
+          </foreignObject>
+          <rect x="140" y="60" width="20" height="20" fill="#111"></rect>
+          <rect x="140" y="220" width="20" height="20" fill="#111"></rect>
+          <line x1="150" y1="60" x2="150" y2="20" stroke="#111" stroke-width="2"></line>
+          <line x1="150" y1="240" x2="150" y2="280" stroke="#111" stroke-width="2"></line>
+          <rect x="420" y="130" width="40" height="40" stroke="#111" stroke-width="3" fill="none"></rect>
+          <text x="440" y="155" text-anchor="middle" font-size="12" fill="#111">R</text>
+          <foreignObject x="470" y="140" width="140" height="30">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:13px;color:#111">
+              U<sub>N</sub> = <span id="sim3_un_label">200.00</span> V
+            </div>
+          </foreignObject>
+          <polyline points="150,20 440,20 440,130" fill="none" stroke="#111" stroke-width="2"></polyline>
+          <polyline points="150,280 440,280 440,170" fill="none" stroke="#111" stroke-width="2"></polyline>
+        </svg>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ======= Αυτόματη προσαρμογή κάθε ενότητας στην οθόνη =======
+    (function(){
+      function prepareFitWrappers(){
+        document.querySelectorAll('.section').forEach(section => {
+          if(section.querySelector(':scope > .section-fit')) return;
+          const fit = document.createElement('div');
+          fit.className = 'section-fit';
+          while(section.firstChild){ fit.appendChild(section.firstChild); }
+          section.appendChild(fit);
+        });
+      }
+
+      function fitSections(){
+        document.querySelectorAll('.section').forEach(section => {
+          const fit = section.querySelector(':scope > .section-fit');
+          if(!fit) return;
+
+          fit.style.transform = 'scale(1)';
+          fit.style.marginTop = '0px';
+
+          const sectionStyles = getComputedStyle(section);
+          const availableW = section.clientWidth - parseFloat(sectionStyles.paddingLeft) - parseFloat(sectionStyles.paddingRight);
+          const availableH = section.clientHeight - parseFloat(sectionStyles.paddingTop) - parseFloat(sectionStyles.paddingBottom);
+          const contentW = fit.scrollWidth;
+          const contentH = fit.scrollHeight;
+
+          let scale = Math.min(availableW / contentW, availableH / contentH, 1);
+          scale = Math.max(scale, 0.62); // κρατά τα γράμματα/όργανα αναγνώσιμα ακόμη και σε μικρές οθόνες
+
+          fit.style.transform = `scale(${scale})`;
+          const freeSpace = Math.max((availableH - contentH * scale) / 2, 0);
+          fit.style.marginTop = `${freeSpace}px`;
+        });
+      }
+
+      function scheduleFit(){ requestAnimationFrame(fitSections); }
+      prepareFitWrappers();
+      window.addEventListener('load', scheduleFit);
+      window.addEventListener('resize', scheduleFit);
+      document.addEventListener('input', scheduleFit);
+      scheduleFit();
+    })();
+
+    // ======= Helpers =======
+    const clamp = (x, min, max) => Math.max(min, Math.min(max, Number(x)));
+    const fmt2 = (x) => Number(x).toFixed(2);
+
+    // ======= SIM 1: Uo & UN -> e% =======
+    (function(){
+      const uoR = document.getElementById('sim1_uo_range');
+      const uoN = document.getElementById('sim1_uo_num');
+      const unR = document.getElementById('sim1_un_range');
+      const unN = document.getElementById('sim1_un_num');
+
+      const eOut = document.getElementById('sim1_e');
+      const dUOut = document.getElementById('sim1_du');
+      const ratioOut = document.getElementById('sim1_ratio');
+      const uoLabel = document.getElementById('sim1_uo_label');
+      const unLabel = document.getElementById('sim1_un_label');
+
+      function syncUNtoClamp(){
+        let uo = clamp(uoR.value, 0, 1000);
+        let un = clamp(unR.value, 0, 1000);
+        if(un > uo){ un = uo; }
+        unR.value = un; unN.value = un; // reflect
+      }
+
+      function compute(){
+        const uo = clamp(uoR.value, 0, 1000);
+        let un = clamp(unR.value, 0, 1000);
+        if(un > uo){ un = uo; unR.value = un; unN.value = un; }
+        const e = (un > 0) ? ((uo - un) / un) * 100 : null;
+        const dU = uo - un;
+        const ratio = (uo > 0 && un > 0) ? (un / uo) : (un === 0 ? null : 0);
+        eOut.textContent = (e === null) ? '—' : (fmt2(e) + ' %');
+        dUOut.textContent = fmt2(dU) + ' V';
+        ratioOut.textContent = (ratio === null) ? '—' : ratio.toFixed(3);
+        uoLabel.textContent = 'Uo = ' + Math.round(uo) + ' V';
+        unLabel.textContent = fmt2(un);
+      }
+
+      // Bindings
+      [uoR, uoN].forEach(el => el.addEventListener('input', () => { uoR.value = uoN.value = clamp(el.value, 0, 1000); syncUNtoClamp(); compute(); }));
+      [unR, unN].forEach(el => el.addEventListener('input', () => { unR.value = unN.value = clamp(el.value, 0, 1000); syncUNtoClamp(); compute(); }));
+      // init
+      syncUNtoClamp(); compute();
+    })();
+
+    // ======= SIM 2: Uo & ε% -> UN =======
+    (function(){
+      const uoR = document.getElementById('sim2_uo_range');
+      const uoN = document.getElementById('sim2_uo_num');
+      const eR = document.getElementById('sim2_eps_range');
+      const eN = document.getElementById('sim2_eps_num');
+      const unOut = document.getElementById('sim2_un');
+      const dUOut = document.getElementById('sim2_du');
+      const uoLabel = document.getElementById('sim2_uo_label');
+      const unLabel = document.getElementById('sim2_un_label');
+
+      function compute(){
+        const uo = clamp(uoR.value, 0, 1000);
+        const eps = clamp(eR.value, 0, 100);
+        const un = uo / (1 + eps/100);
+        const dU = uo - un;
+        unOut.textContent = fmt2(un) + ' V';
+        dUOut.textContent = fmt2(dU) + ' V';
+        uoLabel.textContent = 'Uo = ' + Math.round(uo) + ' V';
+        unLabel.textContent = fmt2(un);
+      }
+
+      [uoR, uoN].forEach(el => el.addEventListener('input', () => { const v = clamp(el.value,0,1000); uoR.value = uoN.value = v; compute(); }));
+      [eR, eN].forEach(el => el.addEventListener('input', () => { const v = clamp(el.value,0,100); eR.value = eN.value = v; compute(); }));
+      compute();
+    })();
+
+    // ======= SIM 3: UN & ε% -> Uo =======
+    (function(){
+      const unR = document.getElementById('sim3_un_range');
+      const unN = document.getElementById('sim3_un_num');
+      const eR = document.getElementById('sim3_eps_range');
+      const eN = document.getElementById('sim3_eps_num');
+
+      const uoOut = document.getElementById('sim3_uo');
+      const dUOut = document.getElementById('sim3_du');
+      const uoLabel = document.getElementById('sim3_uo_label');
+      const unLabel = document.getElementById('sim3_un_label');
+
+      function compute(){
+        const un = clamp(unR.value, 0, 1000);
+        const eps = clamp(eR.value, 0, 100);
+        const uo = un * (1 + eps/100);
+        const dU = uo - un;
+        uoOut.textContent = fmt2(uo) + ' V';
+        dUOut.textContent = fmt2(dU) + ' V';
+        uoLabel.textContent = fmt2(uo);
+        unLabel.textContent = fmt2(un);
+      }
+
+      [unR, unN].forEach(el => el.addEventListener('input', () => { const v = clamp(el.value,0,1000); unR.value = unN.value = v; compute(); }));
+      [eR, eN].forEach(el => el.addEventListener('input', () => { const v = clamp(el.value,0,100); eR.value = eN.value = v; compute(); }));
+      compute();
+    })();
+  </script>
+</body>
+</html>
