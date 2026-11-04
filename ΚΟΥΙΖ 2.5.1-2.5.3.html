@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Κουίζ 2.5.1–2.5.3 | Κινητήρες Σ.Ρ.</title>
+  <style>
+    :root{
+      --blue:#1d4ed8;
+      --blue2:#e8f0ff;
+      --green:#15803d;
+      --green2:#e9f8ef;
+      --red:#b91c1c;
+      --red2:#fff0f0;
+      --orange:#f97316;
+      --gray:#f3f4f6;
+      --dark:#1f2937;
+      --muted:#6b7280;
+      --border:#d1d5db;
+      --shadow:0 6px 18px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef6ff 0%,#f7fafc 100%);
+      color:var(--dark);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#0f3b82,#2563eb);
+      color:#fff;
+      padding:28px 18px;
+      text-align:center;
+      box-shadow:var(--shadow);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.35rem,3vw,2.2rem)}
+    header p{margin:4px auto;max-width:900px;opacity:.96}
+    .wrap{max-width:1120px;margin:24px auto;padding:0 16px 48px}
+    .toc{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:14px;
+      margin-bottom:22px;
+    }
+    .toc a{
+      display:block;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:15px 16px;
+      text-decoration:none;
+      color:var(--dark);
+      box-shadow:var(--shadow);
+    }
+    .toc a:hover{transform:translateY(-1px);border-color:#93c5fd}
+    .card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:20px 0;
+      box-shadow:var(--shadow);
+    }
+    h2{
+      margin:0 0 8px;
+      color:#0f3b82;
+      border-left:6px solid var(--blue);
+      padding-left:12px;
+    }
+    h3{margin:22px 0 10px;color:#1f2937}
+    .note{
+      background:var(--blue2);
+      border-left:5px solid var(--blue);
+      padding:12px 14px;
+      border-radius:12px;
+      margin:14px 0 18px;
+    }
+    .question{
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:15px;
+      margin:14px 0;
+      background:#fbfdff;
+    }
+    .question p{margin:0 0 10px;font-weight:650}
+    label.option{
+      display:block;
+      padding:8px 10px;
+      margin:6px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    label.option:hover{border-color:#93c5fd;background:#f8fbff}
+    input[type="radio"]{margin-right:8px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{
+      appearance:none;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:650;
+      box-shadow:0 4px 12px rgba(37,99,235,.24);
+    }
+    button.secondary{background:#475569;box-shadow:none}
+    button.orange{background:var(--orange);box-shadow:none}
+    button.green{background:var(--green);box-shadow:none}
+    button:hover{filter:brightness(.96)}
+    .result{
+      display:none;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .ok{background:var(--green2);color:var(--green);border:1px solid #a7f3d0}
+    .bad{background:var(--red2);color:var(--red);border:1px solid #fecaca}
+    .answerKey{
+      display:none;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      border-left:5px solid var(--orange);
+      padding:12px 14px;
+      border-radius:12px;
+      margin-top:12px;
+    }
+    .correctChoice{background:var(--green2)!important;border-color:#86efac!important}
+    .wrongChoice{background:var(--red2)!important;border-color:#fecaca!important}
+    .drag-instructions{
+      color:var(--muted);
+      font-size:.95rem;
+      margin-top:4px;
+    }
+    .dragArea{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+    .cardsBank, .dropGrid{
+      border:1px dashed #cbd5e1;
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+    }
+    .cardsBank h3,.dropGrid h3{margin-top:0}
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      min-height:54px;
+    }
+    .chip{
+      background:#fff;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 7px rgba(0,0,0,.05);
+      max-width:100%;
+    }
+    .chip:active{cursor:grabbing}
+    .chip.selected{
+      outline:3px solid #fbbf24;
+      background:#fffbeb;
+    }
+    .dropGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(245px,1fr));
+      gap:12px;
+    }
+    .dropZone{
+      background:#fff;
+      border:2px dashed #cbd5e1;
+      border-radius:16px;
+      padding:12px;
+      min-height:158px;
+    }
+    .dropZone.over{background:#eef6ff;border-color:#60a5fa}
+    .dropZone h4{
+      margin:0 0 8px;
+      color:#0f3b82;
+      font-size:1rem;
+    }
+    .dropZone .chips{
+      display:block;
+      min-height:85px;
+    }
+    .dropZone .chip{
+      display:block;
+      border-radius:12px;
+      margin:7px 0;
+      cursor:grab;
+    }
+    .chip.good{background:var(--green2);border-color:#86efac}
+    .chip.miss{background:var(--red2);border-color:#fecaca}
+    .applications{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:14px;
+    }
+    .problem{
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:15px;
+      display:flex;
+      flex-direction:column;
+      min-height:305px;
+    }
+    .problem p{margin:0 0 10px}
+    .problem input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #cbd5e1;
+      font-size:1rem;
+      margin-top:auto;
+    }
+    .problem .feedback{
+      margin-top:8px;
+      font-weight:700;
+      min-height:24px;
+    }
+    .solution{
+      display:none;
+      margin-top:10px;
+      padding:10px;
+      border-radius:12px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:.95rem;
+    }
+    .formula{
+      display:inline-block;
+      background:#eef2ff;
+      border:1px solid #c7d2fe;
+      border-radius:8px;
+      padding:2px 7px;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      margin:2px 0;
+    }
+    .footer-note{
+      color:var(--muted);
+      font-size:.95rem;
+      text-align:center;
+      margin-top:28px;
+    }
+    @media (min-width: 900px){
+      .dragArea{grid-template-columns: .95fr 1.9fr;}
+    }
+    @media print{
+      header,.toc,.btnrow,button{display:none!important}
+      body{background:#fff}
+      .card{box-shadow:none;break-inside:avoid}
+      .answerKey,.solution{display:block!important}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Κουίζ 2.5.1 – 2.5.3: Ηλεκτρικοί Κινητήρες Σ.Ρ.</h1>
+  <p>Ενιαίο διαδραστικό HTML σε 3 μέρη: θεωρία, ταξινόμηση εννοιών και μικρές εφαρμογές.</p>
+  <p><strong>Οδηγία:</strong> οι μαθητές απαντούν πρώτα μόνοι τους και μετά πατούν τα κουμπιά ελέγχου.</p>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <a href="#partA"><strong>Μέρος Α</strong><br>Σωστό/Λάθος και Πολλαπλής Επιλογής</a>
+    <a href="#partB"><strong>Μέρος Β</strong><br>Drag & Drop χαρακτηριστικών</a>
+    <a href="#partC"><strong>Μέρος Γ</strong><br>Μικρές εφαρμογές – υπολογισμοί</a>
+  </nav>
+
+  <section id="partA" class="card">
+    <h2>Μέρος Α: Θεωρία και βασικές έννοιες</h2>
+    <div class="note">
+      Απάντησε στις ερωτήσεις. Οι σωστές απαντήσεις δεν εμφανίζονται από πριν. Μετά πάτησε <strong>Έλεγχος Μέρους Α</strong>.
+    </div>
+
+    <form id="quizA">
+      <div class="question" data-q="a1">
+        <p>1. Ένας κινητήρας συνεχούς ρεύματος μετατρέπει:</p>
+        <label class="option"><input type="radio" name="a1" value="A"> Α. Μηχανική ενέργεια σε ηλεκτρική</label>
+        <label class="option"><input type="radio" name="a1" value="B"> Β. Ηλεκτρική ενέργεια σε μηχανική</label>
+        <label class="option"><input type="radio" name="a1" value="C"> Γ. Θερμική ενέργεια σε ηλεκτρική</label>
+        <label class="option"><input type="radio" name="a1" value="D"> Δ. Φωτεινή ενέργεια σε μηχανική</label>
+      </div>
+
+      <div class="question" data-q="a2">
+        <p>2. Σε αγωγό που διαρρέεται από ρεύμα και βρίσκεται μέσα σε μαγνητικό πεδίο ασκείται δύναμη.</p>
+        <label class="option"><input type="radio" name="a2" value="S"> Σωστό</label>
+        <label class="option"><input type="radio" name="a2" value="L"> Λάθος</label>
+      </div>
+
+      <div class="question" data-q="a3">
+        <p>3. Το μέτρο της δύναμης σε αγωγό μέσα σε μαγνητικό πεδίο δίνεται από τη σχέση:</p>
+        <label class="option"><input type="radio" name="a3" value="A"> Α. F = U · I</label>
+        <label class="option"><input type="radio" name="a3" value="B"> Β. F = B · ℓ · I · ημ α</label>
+        <label class="option"><input type="radio" name="a3" value="C"> Γ. F = R · I²</label>
+        <label class="option"><input type="radio" name="a3" value="D"> Δ. F = E / R</label>
+      </div>
+
+      <div class="question" data-q="a4">
+        <p>4. Αν η γωνία μεταξύ αγωγού και μαγνητικών γραμμών είναι 0°, τότε η δύναμη είναι:</p>
+        <label class="option"><input type="radio" name="a4" value="A"> Α. μέγιστη</label>
+        <label class="option"><input type="radio" name="a4" value="B"> Β. διπλάσια</label>
+        <label class="option"><input type="radio" name="a4" value="C"> Γ. μηδενική</label>
+        <label class="option"><input type="radio" name="a4" value="D"> Δ. ανεξάρτητη από τη γωνία</label>
+      </div>
+
+      <div class="question" data-q="a5">
+        <p>5. Η ΑΗΕΔ ενός κινητήρα Σ.Ρ. αντιτίθεται στην τάση της πηγής.</p>
+        <label class="option"><input type="radio" name="a5" value="S"> Σωστό</label>
+        <label class="option"><input type="radio" name="a5" value="L"> Λάθος</label>
+      </div>
+
+      <div class="question" data-q="a6">
+        <p>6. Κινητήρας που λειτουργεί σε κενό σημαίνει ότι:</p>
+        <label class="option"><input type="radio" name="a6" value="A"> Α. έχει βραχυκυκλωθεί το τύμπανο</label>
+        <label class="option"><input type="radio" name="a6" value="B"> Β. δεν τροφοδοτείται με τάση</label>
+        <label class="option"><input type="radio" name="a6" value="C"> Γ. στον άξονα δεν είναι συνδεδεμένο φορτίο</label>
+        <label class="option"><input type="radio" name="a6" value="D"> Δ. έχει μηδενικές τριβές</label>
+      </div>
+
+      <div class="question" data-q="a7">
+        <p>7. Τη στιγμή της εκκίνησης η ΑΗΕΔ είναι μηδενική, επειδή ο δρομέας είναι ακίνητος.</p>
+        <label class="option"><input type="radio" name="a7" value="S"> Σωστό</label>
+        <label class="option"><input type="radio" name="a7" value="L"> Λάθος</label>
+      </div>
+
+      <div class="question" data-q="a8">
+        <p>8. Το ρεύμα εκκίνησης μπορεί να γίνει πολύ μεγάλο κυρίως επειδή:</p>
+        <label class="option"><input type="radio" name="a8" value="A"> Α. μηδενίζεται η τάση τροφοδοσίας</label>
+        <label class="option"><input type="radio" name="a8" value="B"> Β. η ΑΗΕΔ είναι μέγιστη</label>
+        <label class="option"><input type="radio" name="a8" value="C"> Γ. δεν υπάρχει μαγνητικό πεδίο</label>
+        <label class="option"><input type="radio" name="a8" value="D"> Δ. στην αρχή δεν υπάρχει ΑΗΕΔ και περιορίζει μόνο η αντίσταση του τυμπάνου</label>
+      </div>
+
+      <div class="question" data-q="a9">
+        <p>9. Η ροπή του κινητήρα Σ.Ρ. είναι ανάλογη:</p>
+        <label class="option"><input type="radio" name="a9" value="A"> Α. μόνο της τάσης τροφοδοσίας</label>
+        <label class="option"><input type="radio" name="a9" value="B"> Β. μόνο της ταχύτητας</label>
+        <label class="option"><input type="radio" name="a9" value="C"> Γ. της μαγνητικής ροής και του ρεύματος τυμπάνου</label>
+        <label class="option"><input type="radio" name="a9" value="D"> Δ. μόνο της αντίστασης του τυμπάνου</label>
+      </div>
+
+      <div class="question" data-q="a10">
+        <p>10. Όταν αυξηθεί το μηχανικό φορτίο στον άξονα, αρχικά:</p>
+        <label class="option"><input type="radio" name="a10" value="A"> Α. μειώνονται λίγο οι στροφές, μειώνεται η ΑΗΕΔ και αυξάνεται το ρεύμα τυμπάνου</label>
+        <label class="option"><input type="radio" name="a10" value="B"> Β. μηδενίζεται αμέσως το ρεύμα</label>
+        <label class="option"><input type="radio" name="a10" value="C"> Γ. αυξάνονται απότομα οι στροφές</label>
+        <label class="option"><input type="radio" name="a10" value="D"> Δ. η ροπή γίνεται πάντοτε μηδέν</label>
+      </div>
+
+      <div class="question" data-q="a11">
+        <p>11. Η ρύθμιση στροφών σε κινητήρα Σ.Ρ. μπορεί να γίνει με μεταβολή του ρεύματος διέγερσης ή της τάσης στο τύμπανο.</p>
+        <label class="option"><input type="radio" name="a11" value="S"> Σωστό</label>
+        <label class="option"><input type="radio" name="a11" value="L"> Λάθος</label>
+      </div>
+
+      <div class="question" data-q="a12">
+        <p>12. Η ηλεκτρική ισχύς που απορροφά ένας κινητήρας από την πηγή, σε απλή μορφή, υπολογίζεται από:</p>
+        <label class="option"><input type="radio" name="a12" value="A"> Α. P = U / I</label>
+        <label class="option"><input type="radio" name="a12" value="B"> Β. P = R / I</label>
+        <label class="option"><input type="radio" name="a12" value="C"> Γ. P = U · I</label>
+        <label class="option"><input type="radio" name="a12" value="D"> Δ. P = I / U</label>
+      </div>
+    </form>
+
+    <div class="btnrow">
+      <button onclick="checkQuizA()">Έλεγχος Μέρους Α</button>
+      <button class="secondary" onclick="resetQuizA()">Καθαρισμός απαντήσεων</button>
+      <button class="orange" onclick="toggleKey('keyA')">Εμφάνιση / Απόκρυψη σωστών απαντήσεων</button>
+    </div>
+    <div id="resultA" class="result"></div>
+    <div id="keyA" class="answerKey">
+      <strong>Σωστές απαντήσεις:</strong><br>
+      1Β, 2 Σωστό, 3Β, 4Γ, 5 Σωστό, 6Γ, 7 Σωστό, 8Δ, 9Γ, 10Α, 11 Σωστό, 12Γ.
+    </div>
+  </section>
+
+  <section id="partB" class="card">
+    <h2>Μέρος Β: Drag & Drop χαρακτηριστικών</h2>
+    <div class="note">
+      Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε υπολογιστή γίνεται με σύρσιμο. Σε οθόνη αφής μπορείς να πατήσεις πρώτα την καρτέλα και μετά την κατηγορία.
+    </div>
+
+    <div class="dragArea">
+      <div class="cardsBank">
+        <h3>Καρτέλες</h3>
+        <p class="drag-instructions">Τοποθέτησε όλες τις καρτέλες στις σωστές ομάδες.</p>
+        <div id="bank" class="chips">
+          <div class="chip" draggable="true" data-cat="keno">Στον άξονα δεν υπάρχει μηχανικό φορτίο.</div>
+          <div class="chip" draggable="true" data-cat="aied">Αντιτίθεται στην τάση της πηγής.</div>
+          <div class="chip" draggable="true" data-cat="ekkinisi">Ο δρομέας είναι αρχικά ακίνητος.</div>
+          <div class="chip" draggable="true" data-cat="ropi">Είναι ανάλογη της ροής Φ και του ρεύματος τυμπάνου.</div>
+          <div class="chip" draggable="true" data-cat="fortio">Το ρεύμα τυμπάνου αυξάνεται όταν αυξηθεί το φορτίο.</div>
+          <div class="chip" draggable="true" data-cat="rythmisi">Γίνεται με μεταβολή του ρεύματος διέγερσης.</div>
+          <div class="chip" draggable="true" data-cat="keno">Η ροπή καλύπτει κυρίως τριβές και μηχανικές απώλειες.</div>
+          <div class="chip" draggable="true" data-cat="aied">Δημιουργείται από την περιστροφή του τυμπάνου στο μαγνητικό πεδίο.</div>
+          <div class="chip" draggable="true" data-cat="ekkinisi">Η ΑΗΕΔ είναι μηδενική.</div>
+          <div class="chip" draggable="true" data-cat="ropi">Προκαλεί την περιστροφή του άξονα.</div>
+          <div class="chip" draggable="true" data-cat="fortio">Οι στροφές μειώνονται λίγο όταν αυξηθεί το φορτίο.</div>
+          <div class="chip" draggable="true" data-cat="rythmisi">Γίνεται με μεταβολή της τάσης του επαγωγικού τυμπάνου.</div>
+          <div class="chip" draggable="true" data-cat="keno">Το ρεύμα τυμπάνου είναι σχετικά μικρό.</div>
+          <div class="chip" draggable="true" data-cat="aied">Αυξάνεται όταν αυξάνονται οι στροφές, με σταθερή ροή.</div>
+          <div class="chip" draggable="true" data-cat="ekkinisi">Το ρεύμα εκκίνησης μπορεί να γίνει πολύ μεγάλο.</div>
+          <div class="chip" draggable="true" data-cat="ropi">Αυξάνεται όταν αυξηθεί το ρεύμα τυμπάνου, με σταθερή ροή.</div>
+          <div class="chip" draggable="true" data-cat="fortio">Η μείωση της ΑΗΕΔ οδηγεί σε αύξηση του ρεύματος.</div>
+          <div class="chip" draggable="true" data-cat="rythmisi">Οι κινητήρες Σ.Ρ. προσφέρονται για ακριβή έλεγχο ταχύτητας.</div>
+        </div>
+      </div>
+
+      <div class="dropGrid">
+        <div class="dropZone" data-cat="keno"><h4>Λειτουργία σε κενό</h4><div class="chips"></div></div>
+        <div class="dropZone" data-cat="aied"><h4>ΑΗΕΔ</h4><div class="chips"></div></div>
+        <div class="dropZone" data-cat="ekkinisi"><h4>Εκκίνηση</h4><div class="chips"></div></div>
+        <div class="dropZone" data-cat="ropi"><h4>Ροπή</h4><div class="chips"></div></div>
+        <div class="dropZone" data-cat="fortio"><h4>Μεταβολή φορτίου</h4><div class="chips"></div></div>
+        <div class="dropZone" data-cat="rythmisi"><h4>Ρύθμιση στροφών</h4><div class="chips"></div></div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button onclick="checkDrag()">Έλεγχος Μέρους Β</button>
+      <button class="secondary" onclick="resetDrag()">Επαναφορά καρτελών</button>
+      <button class="orange" onclick="showDragAnswers()">Εμφάνιση σωστής ταξινόμησης</button>
+    </div>
+    <div id="resultB" class="result"></div>
+  </section>
+
+  <section id="partC" class="card">
+    <h2>Μέρος Γ: Μικρές εφαρμογές – υπολογισμοί</h2>
+    <div class="note">
+      Γράψε μόνο τον αριθμό της απάντησης. Τα δεδομένα έχουν επιλεγεί ώστε τα αποτελέσματα να είναι ακέραιοι αριθμοί.
+    </div>
+
+    <div class="applications">
+      <div class="problem" data-answer="40">
+        <p><strong>1.</strong> Κινητήρας Σ.Ρ. τροφοδοτείται με <strong>U = 220 V</strong>. Η ΑΗΕΔ είναι <strong>E<sub>α</sub> = 200 V</strong> και η αντίσταση τυμπάνου <strong>R<sub>τ</sub> = 0,5 Ω</strong>. Να βρεθεί το ρεύμα τυμπάνου <strong>I<sub>τ</sub></strong> σε A.</p>
+        <input type="text" placeholder="Απάντηση σε A">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          <span class="formula">I<sub>τ</sub> = (U − E<sub>α</sub>) / R<sub>τ</sub></span><br>
+          I<sub>τ</sub> = (220 − 200) / 0,5 = 20 / 0,5 = <strong>40 A</strong>
+        </div>
+      </div>
+
+      <div class="problem" data-answer="210">
+        <p><strong>2.</strong> Κινητήρας Σ.Ρ. έχει τάση τροφοδοσίας <strong>U = 240 V</strong>, ρεύμα τυμπάνου <strong>I<sub>τ</sub> = 30 A</strong> και αντίσταση τυμπάνου <strong>R<sub>τ</sub> = 1 Ω</strong>. Να βρεθεί η ΑΗΕΔ <strong>E<sub>α</sub></strong> σε V.</p>
+        <input type="text" placeholder="Απάντηση σε V">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          <span class="formula">U = E<sub>α</sub> + I<sub>τ</sub>·R<sub>τ</sub></span><br>
+          E<sub>α</sub> = U − I<sub>τ</sub>·R<sub>τ</sub> = 240 − 30·1 = <strong>210 V</strong>
+        </div>
+      </div>
+
+      <div class="problem" data-answer="200">
+        <p><strong>3.</strong> Στη στιγμή της εκκίνησης ενός κινητήρα Σ.Ρ. η ΑΗΕΔ είναι μηδενική. Αν <strong>U = 120 V</strong> και <strong>R<sub>τ</sub> = 0,6 Ω</strong>, να βρεθεί το ρεύμα εκκίνησης σε A.</p>
+        <input type="text" placeholder="Απάντηση σε A">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          Στην εκκίνηση: E<sub>α</sub> = 0.<br>
+          <span class="formula">I<sub>εκ</sub> = U / R<sub>τ</sub></span><br>
+          I<sub>εκ</sub> = 120 / 0,6 = <strong>200 A</strong>
+        </div>
+      </div>
+
+      <div class="problem" data-answer="80">
+        <p><strong>4.</strong> Κινητήρας απορροφά ηλεκτρική ισχύ <strong>P<sub>1</sub> = 5000 W</strong> και αποδίδει στον άξονα <strong>P = 4000 W</strong>. Να βρεθεί ο βαθμός απόδοσης σε %.</p>
+        <input type="text" placeholder="Απάντηση σε %">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          <span class="formula">η = P / P<sub>1</sub></span><br>
+          η = 4000 / 5000 = 0,8 = <strong>80%</strong>
+        </div>
+      </div>
+
+      <div class="problem" data-answer="50">
+        <p><strong>5.</strong> Σε κινητήρα Σ.Ρ. η μαγνητική ροή Φ μένει σταθερή. Το ρεύμα τυμπάνου μειώνεται από <strong>60 A</strong> σε <strong>30 A</strong>. Σε ποιο ποσοστό της αρχικής γίνεται η ροπή;</p>
+        <input type="text" placeholder="Απάντηση σε %">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          Με σταθερή ροή: <span class="formula">T ∝ I<sub>τ</sub></span><br>
+          Νέα ροπή = 30/60 = 1/2 = <strong>50%</strong> της αρχικής.
+        </div>
+      </div>
+
+      <div class="problem" data-answer="30">
+        <p><strong>6.</strong> Κινητήρας αποδίδει μηχανική ισχύ <strong>P = 3000 W</strong> στις <strong>n = 955 στρ/min</strong>. Να βρεθεί η ροπή στον άξονα σε N·m.</p>
+        <input type="text" placeholder="Απάντηση σε N·m">
+        <div class="feedback"></div>
+        <button class="orange" onclick="toggleSolution(this)">Εμφάνιση λύσης</button>
+        <div class="solution">
+          <span class="formula">T = 9,55 · P / n</span><br>
+          T = 9,55 · 3000 / 955 = 30 <strong>N·m</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button onclick="checkProblems()">Έλεγχος Μέρους Γ</button>
+      <button class="secondary" onclick="resetProblems()">Καθαρισμός απαντήσεων</button>
+      <button class="orange" onclick="toggleAllSolutions()">Εμφάνιση / Απόκρυψη όλων των λύσεων</button>
+    </div>
+    <div id="resultC" class="result"></div>
+  </section>
+
+  <p class="footer-note">
+    Εκπαιδευτικό κουίζ για το μάθημα «Ηλεκτρικές Μηχανές» – Κεφάλαιο 2.5.1 έως 2.5.3.
+  </p>
+</div>
+
+<script>
+  const answersA = {
+    a1:"B", a2:"S", a3:"B", a4:"C", a5:"S", a6:"C",
+    a7:"S", a8:"D", a9:"C", a10:"A", a11:"S", a12:"C"
+  };
+
+  function checkQuizA(){
+    let score=0, total=Object.keys(answersA).length;
+    Object.keys(answersA).forEach(q=>{
+      const question = document.querySelector(`.question[data-q="${q}"]`);
+      question.querySelectorAll("label.option").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+      const selected = document.querySelector(`input[name="${q}"]:checked`);
+      question.querySelectorAll("input").forEach(inp=>{
+        const lab = inp.closest("label");
+        if(inp.value === answersA[q]) lab.classList.add("correctChoice");
+      });
+      if(selected && selected.value === answersA[q]){
+        score++;
+      }else if(selected){
+        selected.closest("label").classList.add("wrongChoice");
+      }
+    });
+    const box = document.getElementById("resultA");
+    box.style.display="block";
+    box.className = "result " + (score>=9 ? "ok" : "bad");
+    box.innerHTML = `Αποτέλεσμα Μέρους Α: ${score}/${total}.`;
+  }
+
+  function resetQuizA(){
+    document.getElementById("quizA").reset();
+    document.querySelectorAll("#quizA label.option").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+    document.getElementById("resultA").style.display="none";
+    document.getElementById("keyA").style.display="none";
+  }
+
+  function toggleKey(id){
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === "block" ? "none" : "block";
+  }
+
+  let dragged = null;
+  let selectedChip = null;
+
+  function initDrag(){
+    document.querySelectorAll(".chip").forEach(chip=>{
+      chip.addEventListener("dragstart", e=>{
+        dragged = chip;
+        e.dataTransfer.setData("text/plain", chip.textContent);
+      });
+      chip.addEventListener("click", ()=>{
+        if(selectedChip) selectedChip.classList.remove("selected");
+        selectedChip = chip;
+        chip.classList.add("selected");
+      });
+    });
+
+    document.querySelectorAll(".dropZone, #bank").forEach(zone=>{
+      zone.addEventListener("dragover", e=>{
+        e.preventDefault();
+        zone.classList.add("over");
+      });
+      zone.addEventListener("dragleave", ()=>zone.classList.remove("over"));
+      zone.addEventListener("drop", e=>{
+        e.preventDefault();
+        zone.classList.remove("over");
+        if(dragged){
+          const container = zone.id === "bank" ? zone : zone.querySelector(".chips");
+          container.appendChild(dragged);
+          dragged = null;
+        }
+      });
+    });
+
+    document.querySelectorAll(".dropZone").forEach(zone=>{
+      zone.addEventListener("click", e=>{
+        if(selectedChip && !e.target.classList.contains("chip")){
+          zone.querySelector(".chips").appendChild(selectedChip);
+          selectedChip.classList.remove("selected");
+          selectedChip = null;
+        }
+      });
+    });
+    document.getElementById("bank").addEventListener("click", e=>{
+      if(selectedChip && e.target.id === "bank"){
+        document.getElementById("bank").appendChild(selectedChip);
+        selectedChip.classList.remove("selected");
+        selectedChip = null;
+      }
+    });
+  }
+
+  function checkDrag(){
+    let total=0, score=0;
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("good","miss"));
+    document.querySelectorAll(".dropZone").forEach(zone=>{
+      const cat = zone.dataset.cat;
+      zone.querySelectorAll(".chip").forEach(chip=>{
+        total++;
+        if(chip.dataset.cat === cat){
+          score++;
+          chip.classList.add("good");
+        }else{
+          chip.classList.add("miss");
+        }
+      });
+    });
+    const inBank = document.querySelectorAll("#bank .chip").length;
+    const expectedTotal = document.querySelectorAll(".chip").length;
+    const box = document.getElementById("resultB");
+    box.style.display="block";
+    box.className = "result " + (score===expectedTotal ? "ok" : "bad");
+    box.innerHTML = `Αποτέλεσμα Μέρους Β: ${score}/${expectedTotal}.` + (inBank ? ` Έμειναν ${inBank} καρτέλες χωρίς ταξινόμηση.` : "");
+  }
+
+  function resetDrag(){
+    const bank = document.getElementById("bank");
+    document.querySelectorAll(".chip").forEach(chip=>{
+      chip.classList.remove("good","miss","selected");
+      bank.appendChild(chip);
+    });
+    selectedChip=null;
+    document.getElementById("resultB").style.display="none";
+  }
+
+  function showDragAnswers(){
+    document.querySelectorAll(".chip").forEach(chip=>{
+      const target = document.querySelector(`.dropZone[data-cat="${chip.dataset.cat}"] .chips`);
+      target.appendChild(chip);
+      chip.classList.remove("miss");
+      chip.classList.add("good");
+    });
+    const box = document.getElementById("resultB");
+    box.style.display="block";
+    box.className="result ok";
+    box.innerHTML="Εμφανίστηκε η σωστή ταξινόμηση.";
+  }
+
+  function normalizeNumber(value){
+    return String(value).trim()
+      .replace(",", ".")
+      .replace("%","")
+      .replace("A","")
+      .replace("V","")
+      .replace("N·m","")
+      .replace("Nm","")
+      .trim();
+  }
+
+  function checkProblems(){
+    let score=0,total=0;
+    document.querySelectorAll(".problem").forEach(p=>{
+      total++;
+      const ans = Number(p.dataset.answer);
+      const raw = normalizeNumber(p.querySelector("input").value);
+      const val = Number(raw);
+      const fb = p.querySelector(".feedback");
+      if(raw !== "" && Math.abs(val - ans) < 0.001){
+        score++;
+        fb.textContent = "Σωστό!";
+        fb.style.color = "#15803d";
+      }else{
+        fb.textContent = "Λάθος ή κενό. Ξαναδοκίμασε ή δες τη λύση.";
+        fb.style.color = "#b91c1c";
+      }
+    });
+    const box = document.getElementById("resultC");
+    box.style.display="block";
+    box.className = "result " + (score>=5 ? "ok" : "bad");
+    box.innerHTML = `Αποτέλεσμα Μέρους Γ: ${score}/${total}.`;
+  }
+
+  function resetProblems(){
+    document.querySelectorAll(".problem").forEach(p=>{
+      p.querySelector("input").value="";
+      p.querySelector(".feedback").textContent="";
+      p.querySelector(".solution").style.display="none";
+    });
+    document.getElementById("resultC").style.display="none";
+  }
+
+  function toggleSolution(btn){
+    const sol = btn.nextElementSibling;
+    sol.style.display = sol.style.display === "block" ? "none" : "block";
+  }
+
+  function toggleAllSolutions(){
+    const sols = document.querySelectorAll(".solution");
+    const anyHidden = Array.from(sols).some(s=>s.style.display !== "block");
+    sols.forEach(s=>s.style.display = anyHidden ? "block" : "none");
+  }
+
+  initDrag();
+</script>
+</body>
+</html>
