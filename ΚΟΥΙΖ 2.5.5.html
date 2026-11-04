@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 2.5.4 | Σελίδες 118-119 | Κινητήρες Σ.Ρ.</title>
+  <style>
+    :root{
+      --blue:#1d4ed8;
+      --blueDark:#0f3b82;
+      --blueLight:#e8f0ff;
+      --green:#15803d;
+      --greenLight:#e9f8ef;
+      --red:#b91c1c;
+      --redLight:#fff0f0;
+      --orange:#f97316;
+      --orangeLight:#fff7ed;
+      --gray:#f3f4f6;
+      --dark:#1f2937;
+      --muted:#6b7280;
+      --border:#d1d5db;
+      --shadow:0 6px 18px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+      background:linear-gradient(180deg,#eef6ff 0%,#f7fafc 100%);
+      color:var(--dark);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#0f3b82,#2563eb);
+      color:white;
+      text-align:center;
+      padding:28px 18px;
+      box-shadow:var(--shadow);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.35rem,3vw,2.15rem)}
+    header p{margin:4px auto;max-width:960px;opacity:.95}
+    .wrap{max-width:1120px;margin:24px auto;padding:0 16px 48px}
+    .toc{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:14px;
+      margin-bottom:22px;
+    }
+    .toc a{
+      display:block;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:15px 16px;
+      text-decoration:none;
+      color:var(--dark);
+      box-shadow:var(--shadow);
+    }
+    .toc a:hover{transform:translateY(-1px);border-color:#93c5fd}
+    .card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:20px 0;
+      box-shadow:var(--shadow);
+    }
+    h2{
+      margin:0 0 8px;
+      color:var(--blueDark);
+      border-left:6px solid var(--blue);
+      padding-left:12px;
+    }
+    h3{margin:22px 0 10px;color:#1f2937}
+    .note{
+      background:var(--blueLight);
+      border-left:5px solid var(--blue);
+      padding:12px 14px;
+      border-radius:12px;
+      margin:14px 0 18px;
+    }
+    .question{
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:15px;
+      margin:14px 0;
+      background:#fbfdff;
+    }
+    .question p{margin:0 0 10px;font-weight:650}
+    label.option{
+      display:block;
+      padding:8px 10px;
+      margin:6px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    label.option:hover{border-color:#93c5fd;background:#f8fbff}
+    input[type="radio"]{margin-right:8px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:650;
+      box-shadow:0 4px 12px rgba(37,99,235,.22);
+    }
+    button.secondary{background:#475569;box-shadow:none}
+    button.orange{background:var(--orange);box-shadow:none}
+    button.green{background:var(--green);box-shadow:none}
+    button:hover{filter:brightness(.96)}
+    .result{
+      display:none;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .ok{background:var(--greenLight);color:var(--green);border:1px solid #a7f3d0}
+    .bad{background:var(--redLight);color:var(--red);border:1px solid #fecaca}
+    .answerKey{
+      display:none;
+      background:var(--orangeLight);
+      border:1px solid #fed7aa;
+      border-left:5px solid var(--orange);
+      padding:12px 14px;
+      border-radius:12px;
+      margin-top:12px;
+    }
+    .correctChoice{background:var(--greenLight)!important;border-color:#86efac!important}
+    .wrongChoice{background:var(--redLight)!important;border-color:#fecaca!important}
+    .drag-instructions{color:var(--muted);font-size:.95rem;margin-top:4px}
+    .dragArea{display:grid;grid-template-columns:1fr;gap:18px}
+    .cardsBank, .dropGrid{
+      border:1px dashed #cbd5e1;
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+    }
+    .cardsBank h3,.dropGrid h3{margin-top:0}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;min-height:54px}
+    .chip{
+      background:#fff;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 7px rgba(0,0,0,.05);
+      max-width:100%;
+    }
+    .chip:active{cursor:grabbing}
+    .chip.selected{outline:3px solid #fbbf24;background:#fffbeb}
+    .dropGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(245px,1fr));
+      gap:12px;
+    }
+    .dropZone{
+      background:#fff;
+      border:2px dashed #cbd5e1;
+      border-radius:16px;
+      padding:12px;
+      min-height:180px;
+    }
+    .dropZone.over{background:#eef6ff;border-color:#60a5fa}
+    .dropZone, .cardsBank{touch-action:manipulation}
+    .dropZone h4{margin:0 0 8px;color:var(--blueDark);font-size:1rem}
+    .dropZone .chips{display:block;min-height:110px}
+    .dropZone .chip{display:block;border-radius:12px;margin:7px 0;cursor:grab}
+    .chip.good{background:var(--greenLight);border-color:#86efac}
+    .chip.miss{background:var(--redLight);border-color:#fecaca}
+    .applications{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:14px;
+    }
+    .scenario{
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:15px;
+      display:flex;
+      flex-direction:column;
+      min-height:315px;
+    }
+    .scenario p{margin:0 0 10px}
+    .scenario .choices label{
+      display:block;
+      padding:8px 10px;
+      margin:7px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .feedback{
+      display:none;
+      margin-top:auto;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+    }
+    footer{
+      text-align:center;
+      color:var(--muted);
+      padding:20px 10px 36px;
+      font-size:.92rem;
+    }
+    @media print{
+      body{background:#fff}
+      header,.toc,.btnrow,footer{display:none}
+      .card{box-shadow:none;break-inside:avoid}
+      .answerKey{display:block}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Κουίζ: Κινητήρες Σ.Ρ. — Κεφ. 2.5.4</h1>
+  <p><strong>Μόνο για τις σελίδες 118 και 119</strong>: είδη κινητήρων Σ.Ρ., κινητήρας παράλληλης διέγερσης, συνδεσμολογία, ροοστάτης εκκίνησης, ροοστάτης διέγερσης και αλλαγή φοράς περιστροφής.</p>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <a href="#partA"><strong>Μέρος Α</strong><br>Σωστό/Λάθος και Πολλαπλής Επιλογής</a>
+    <a href="#partB"><strong>Μέρος Β</strong><br>Drag & Drop ταξινόμηση εννοιών</a>
+    <a href="#partC"><strong>Μέρος Γ</strong><br>Πρακτικά σενάρια εφαρμογής</a>
+  </nav>
+
+  <section class="card" id="partA">
+    <h2>Μέρος Α — Θεωρία και βασικές έννοιες</h2>
+    <div class="note">
+      Επίλεξε μία απάντηση σε κάθε ερώτηση. Στο τέλος πάτησε <strong>Έλεγχος απαντήσεων</strong>.
+    </div>
+    <div id="quizA"></div>
+    <div class="btnrow">
+      <button onclick="checkPartA()">Έλεγχος απαντήσεων</button>
+      <button class="secondary" onclick="resetPartA()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyA')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultA"></div>
+    <div class="answerKey" id="keyA"></div>
+  </section>
+
+  <section class="card" id="partB">
+    <h2>Μέρος Β — Drag & Drop ταξινόμηση</h2>
+    <div class="note">
+      Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε κινητό ή tablet μπορείς να πατήσεις μία καρτέλα και μετά την κατηγορία όπου θέλεις να μπει.
+    </div>
+    <p class="drag-instructions">Οι καρτέλες βασίζονται αποκλειστικά στα σημεία των σελίδων 118–119. Μπορείς πλέον να αφήνεις την καρτέλα οπουδήποτε μέσα στο πλαίσιο της κατηγορίας.</p>
+
+    <div class="dragArea">
+      <div class="cardsBank">
+        <h3>Καρτέλες</h3>
+        <div class="chips" id="bank"></div>
+      </div>
+
+      <div class="dropGrid" id="dropGrid">
+        <div class="dropZone" data-zone="kinds">
+          <h4>Α. Είδη / διάκριση κινητήρων Σ.Ρ.</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="parallel">
+          <h4>Β. Παράλληλη και ξένη διέγερση</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="connection">
+          <h4>Γ. Συνδεσμολογία σχήματος 2.22</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="operation">
+          <h4>Δ. Λειτουργία, χρήσεις και αλλαγή φοράς</h4>
+          <div class="chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button onclick="checkDrag()">Έλεγχος ταξινόμησης</button>
+      <button class="secondary" onclick="resetDrag()">Ανακάτεμα ξανά</button>
+      <button class="orange" onclick="toggleKey('keyB')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultB"></div>
+    <div class="answerKey" id="keyB"></div>
+  </section>
+
+  <section class="card" id="partC">
+    <h2>Μέρος Γ — Πρακτικά σενάρια εφαρμογής</h2>
+    <div class="note">
+      Διάβασε κάθε μικρό σενάριο και επίλεξε την καταλληλότερη απάντηση.
+    </div>
+    <div class="applications" id="scenarios"></div>
+    <div class="btnrow">
+      <button onclick="checkPartC()">Έλεγχος σεναρίων</button>
+      <button class="secondary" onclick="resetPartC()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyC')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultC"></div>
+    <div class="answerKey" id="keyC"></div>
+  </section>
+</div>
+
+<footer>
+  Κουίζ για εκπαιδευτική χρήση — Κεφάλαιο 2.5.4, σελίδες 118–119.
+</footer>
+
+<script>
+const questionsA = [
+  {
+    q:"1. Οι κινητήρες Σ.Ρ. διακρίνονται ανάλογα με τον τρόπο σύνδεσης του τυλίγματος διέγερσης.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. Η διάκριση γίνεται με βάση τη σύνδεση του τυλίγματος διέγερσης."
+  },
+  {
+    q:"2. Ποιο από τα παρακάτω ΔΕΝ αναφέρεται ως βασικό είδος κινητήρα Σ.Ρ. στη σελ. 118;",
+    choices:["Κινητήρας με παράλληλη διέγερση","Κινητήρας με διέγερση σειράς","Κινητήρας με πυκνωτή εκκίνησης","Κινητήρας με σύνθετη διέγερση"],
+    correct:2,
+    exp:"Ο κινητήρας με πυκνωτή εκκίνησης δεν ανήκει στους τύπους κινητήρων Σ.Ρ. που αναφέρονται εδώ."
+  },
+  {
+    q:"3. Οι κινητήρες σύνθετης διέγερσης διακρίνονται σε:",
+    choices:["αθροιστικής και διαφορικής σύνθετης διέγερσης","μονοφασικούς και τριφασικούς","ξηρούς και λαδιού","βροχοτυλίγματος και κυματοτυλίγματος"],
+    correct:0,
+    exp:"Οι κινητήρες σύνθετης διέγερσης διακρίνονται σε αθροιστικής και διαφορικής σύνθετης διέγερσης."
+  },
+  {
+    q:"4. Στον κινητήρα παράλληλης διέγερσης το κύκλωμα διέγερσης τροφοδοτείται από:",
+    choices:["ανεξάρτητη πηγή Σ.Ρ.","το κύκλωμα του οπλισμού του","τριφασικό δίκτυο Ε.Ρ.","πυκνωτή εκκίνησης"],
+    correct:1,
+    exp:"Στον κινητήρα παράλληλης διέγερσης το κύκλωμα διέγερσης τροφοδοτείται από το κύκλωμα του οπλισμού."
+  },
+  {
+    q:"5. Στον κινητήρα ξένης διέγερσης το κύκλωμα διέγερσης τροφοδοτείται από ανεξάρτητη πηγή Σ.Ρ.",
+    choices:["Σωστό","Λάθος"],
+    correct:0,
+    exp:"Σωστό. Αυτό είναι το βασικό γνώρισμα του κινητήρα ξένης διέγερσης."
+  },
+  {
+    q:"6. Αν η τάση τροφοδοσίας παραμένει σταθερή, ανάμεσα στον κινητήρα παράλληλης και ξένης διέγερσης:",
+    choices:["υπάρχει τεράστια πρακτική διαφορά","δεν υπάρχει καμία πρακτική διαφορά","ο ένας γίνεται πάντα γεννήτρια","μηδενίζεται η διέγερση"],
+    correct:1,
+    exp:"Με σταθερή τάση τροφοδοσίας δεν υπάρχει καμία πρακτική διαφορά ανάμεσα στους δύο τύπους."
+  },
+  {
+    q:"7. Ο ροοστάτης εκκίνησης Rε συνδέεται:",
+    choices:["παράλληλα με το δίκτυο","σε σειρά με το επαγωγικό τύμπανο","μόνο με το τύλιγμα διέγερσης","μόνο με τους βοηθητικούς πόλους"],
+    correct:1,
+    exp:"Το Rε συνδέεται σε σειρά με το επαγωγικό τύμπανο και χρησιμεύει στην εκκίνηση."
+  },
+  {
+    q:"8. Το τύλιγμα διέγερσης στον κινητήρα παράλληλης διέγερσης είναι συνδεδεμένο παράλληλα προς το επαγωγικό τύμπανο.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. Από εκεί προκύπτει και η ονομασία «παράλληλης διέγερσης»."
+  },
+  {
+    q:"9. Το ρεύμα διέγερσης στον κινητήρα παράλληλης διέγερσης προκαλείται από:",
+    choices:["τη σταθερή τάση εφαρμογής U","την ταχύτητα του άξονα μόνο","τη θερμοκρασία του κινητήρα","τη συχνότητα του δικτύου"],
+    correct:0,
+    exp:"Το ρεύμα διέγερσης προκαλείται από τη σταθερή τάση εφαρμογής της μηχανής."
+  },
+  {
+    q:"10. Για αλλαγή φοράς περιστροφής στους κινητήρες παράλληλης διέγερσης, συνήθως προτιμάται:",
+    choices:["να αλλάξει η φορά του ρεύματος διέγερσης","να αυξηθεί μόνο η τάση U","να αλλάξει η φορά του ρεύματος τυμπάνου","να αφαιρεθεί ο ροοστάτης εκκίνησης"],
+    correct:2,
+    exp:"Το βιβλίο αναφέρει δύο τρόπους, αλλά συνήθως προτιμάται η αλλαγή φοράς του ρεύματος τυμπάνου."
+  }
+];
+
+const dragItems = [
+  {text:"Η διάκριση γίνεται από τη σύνδεση του τυλίγματος διέγερσης.", zone:"kinds"},
+  {text:"Κινητήρας με ξένη διέγερση.", zone:"kinds"},
+  {text:"Κινητήρας με διέγερση σειράς.", zone:"kinds"},
+  {text:"Κινητήρας με σύνθετη διέγερση.", zone:"kinds"},
+
+  {text:"Στην παράλληλη διέγερση το κύκλωμα διέγερσης τροφοδοτείται από τον οπλισμό.", zone:"parallel"},
+  {text:"Στην ξένη διέγερση το κύκλωμα διέγερσης τροφοδοτείται από ανεξάρτητη πηγή Σ.Ρ.", zone:"parallel"},
+  {text:"Με σταθερή τάση τροφοδοσίας δεν υπάρχει πρακτική διαφορά ανάμεσα στους δύο τύπους.", zone:"parallel"},
+
+  {text:"Το Rε συνδέεται σε σειρά με το επαγωγικό τύμπανο.", zone:"connection"},
+  {text:"Το Rε χρησιμεύει για την εκκίνηση.", zone:"connection"},
+  {text:"Το RΔ είναι ροοστάτης διέγερσης.", zone:"connection"},
+  {text:"Το τύλιγμα διέγερσης είναι παράλληλα συνδεδεμένο προς το επαγωγικό τύμπανο.", zone:"connection"},
+
+  {text:"Η διέγερση δρα ανεξάρτητα από το φορτίο.", zone:"operation"},
+  {text:"Κατάλληλος για μηχανήματα μεταβλητού φορτίου.", zone:"operation"},
+  {text:"Χρησιμοποιείται όταν ζητείται σταθερή ταχύτητα περιστροφής.", zone:"operation"},
+  {text:"Η φορά αλλάζει είτε με αντιστροφή ρεύματος διέγερσης είτε με αντιστροφή ρεύματος τυμπάνου.", zone:"operation"}
+];
+
+const scenarios = [
+  {
+    q:"1. Θέλουμε κινητήρα Σ.Ρ. για μηχάνημα με μεταβλητό φορτίο, όπου μας ενδιαφέρει η σχετικά σταθερή ταχύτητα. Ποιος τύπος ταιριάζει με βάση τις σελίδες 118–119;",
+    choices:["Κινητήρας παράλληλης διέγερσης","Κινητήρας μόνο με πυκνωτή","Κινητήρας Ε.Ρ. με δακτυλίδια","Μετασχηματιστής"],
+    correct:0,
+    exp:"Ο κινητήρας παράλληλης διέγερσης αναφέρεται ως κατάλληλος για μηχανήματα μεταβλητού φορτίου ή για διατήρηση σταθερής ταχύτητας."
+  },
+  {
+    q:"2. Σε έναν κινητήρα παράλληλης διέγερσης θέλουμε να περιορίσουμε το ρεύμα κατά την εκκίνηση. Ποιο στοιχείο χρησιμοποιείται;",
+    choices:["Ο ροοστάτης διέγερσης RΔ μόνο","Ο ροοστάτης εκκίνησης Rε","Ο συλλέκτης ως αντίσταση","Το τύλιγμα σειράς"],
+    correct:1,
+    exp:"Ο ροοστάτης εκκίνησης Rε συνδέεται σε σειρά με το επαγωγικό τύμπανο και χρησιμεύει στην εκκίνηση."
+  },
+  {
+    q:"3. Σε κινητήρα ξένης διέγερσης, το κύκλωμα διέγερσης πρέπει να πάρει ρεύμα από:",
+    choices:["το κύκλωμα του οπλισμού","ανεξάρτητη πηγή συνεχούς ρεύματος","πυκνωτή","τριφασικό δίκτυο χωρίς ανορθωτή"],
+    correct:1,
+    exp:"Η ξένη διέγερση σημαίνει τροφοδότηση του κυκλώματος διέγερσης από ανεξάρτητη πηγή Σ.Ρ."
+  },
+  {
+    q:"4. Στο σχήμα 2.22, το τύλιγμα διέγερσης του κινητήρα παράλληλης διέγερσης είναι:",
+    choices:["σε σειρά με το επαγωγικό τύμπανο","βραχυκυκλωμένο","παράλληλα προς το επαγωγικό τύμπανο","ανεξάρτητο από κάθε κύκλωμα"],
+    correct:2,
+    exp:"Στη συνδεσμολογία του σχήματος 2.22 το τύλιγμα διέγερσης είναι παράλληλα συνδεδεμένο προς το επαγωγικό τύμπανο."
+  },
+  {
+    q:"5. Θέλουμε να αλλάξουμε φορά περιστροφής. Ποια από τις παρακάτω ενέργειες είναι μία σωστή μέθοδος που αναφέρεται στο βιβλίο;",
+    choices:["Αλλαγή φοράς του ρεύματος τυμπάνου χωρίς μεταβολή πολικότητας των μαγνητικών πόλων","Μείωση μόνο του φορτίου","Αύξηση μόνο της μηχανικής ισχύος","Αφαίρεση των ψηκτρών"],
+    correct:0,
+    exp:"Μία από τις δύο μεθόδους είναι η αλλαγή φοράς του ρεύματος τυμπάνου χωρίς να μεταβληθεί η πολικότητα των μαγνητικών πόλων."
+  },
+  {
+    q:"6. Μετά την αλλαγή φοράς του ρεύματος τυμπάνου, τι πρέπει να ληφθεί υπόψη για τους βοηθητικούς πόλους;",
+    choices:["Να αποσυνδεθούν οριστικά","Να αλλάξει και η πολικότητά τους","Να γίνουν μόνιμοι μαγνήτες","Να συνδεθούν σε τρίγωνο"],
+    correct:1,
+    exp:"Για να ισχύει η διαδοχή κύριων και βοηθητικών πόλων, πρέπει να αλλάξει και η πολικότητα των βοηθητικών πόλων."
+  }
+];
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderPartA(){
+  const box=document.getElementById("quizA");
+  box.innerHTML="";
+  questionsA.forEach((item,idx)=>{
+    const q=document.createElement("div");
+    q.className="question";
+    q.dataset.index=idx;
+    let html=`<p>${item.q}</p>`;
+    item.choices.forEach((choice,cidx)=>{
+      html+=`<label class="option"><input type="radio" name="qa${idx}" value="${cidx}">${choice}</label>`;
+    });
+    q.innerHTML=html;
+    box.appendChild(q);
+  });
+  document.getElementById("keyA").innerHTML="<strong>Λύσεις Μέρους Α:</strong><br>" + questionsA.map((q,i)=>`${i+1}. ${q.choices[q.correct]} — ${q.exp}`).join("<br>");
+}
+
+function checkPartA(){
+  let score=0;
+  questionsA.forEach((q,i)=>{
+    const labels=document.querySelectorAll(`input[name="qa${i}"]`);
+    labels.forEach(input=>{
+      const lab=input.closest("label");
+      lab.classList.remove("correctChoice","wrongChoice");
+      if(Number(input.value)===q.correct) lab.classList.add("correctChoice");
+      if(input.checked && Number(input.value)!==q.correct) lab.classList.add("wrongChoice");
+    });
+    const checked=document.querySelector(`input[name="qa${i}"]:checked`);
+    if(checked && Number(checked.value)===q.correct) score++;
+  });
+  const res=document.getElementById("resultA");
+  res.style.display="block";
+  res.className="result " + (score>=8 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Α: ${score}/${questionsA.length}`;
+}
+
+function resetPartA(){
+  document.querySelectorAll("#quizA input").forEach(i=>i.checked=false);
+  document.querySelectorAll("#quizA label").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+  document.getElementById("resultA").style.display="none";
+}
+
+let selectedChip=null;
+
+function renderDrag(){
+  const bank=document.getElementById("bank");
+  bank.innerHTML="";
+  document.querySelectorAll(".dropZone .chips").forEach(z=>z.innerHTML="");
+  shuffle(dragItems).forEach((item,idx)=>{
+    const chip=document.createElement("div");
+    chip.className="chip";
+    chip.draggable=true;
+    chip.textContent=item.text;
+    chip.dataset.correctZone=item.zone;
+    chip.id="chip"+idx+"_"+Math.random().toString(16).slice(2);
+    addChipEvents(chip);
+    bank.appendChild(chip);
+  });
+  document.getElementById("resultB").style.display="none";
+  document.getElementById("keyB").innerHTML = `
+    <strong>Λύσεις Μέρους Β:</strong>
+    <ul>
+      <li><strong>Είδη / διάκριση:</strong> διάκριση με βάση τη σύνδεση διέγερσης, ξένης, σειράς, σύνθετης.</li>
+      <li><strong>Παράλληλη και ξένη:</strong> τροφοδότηση από οπλισμό, τροφοδότηση από ανεξάρτητη πηγή Σ.Ρ., πρακτικά ίδια αν η τάση είναι σταθερή.</li>
+      <li><strong>Συνδεσμολογία:</strong> Rε σε σειρά με τύμπανο, Rε για εκκίνηση, RΔ ροοστάτης διέγερσης, τύλιγμα διέγερσης παράλληλα προς τύμπανο.</li>
+      <li><strong>Λειτουργία / χρήσεις / φορά:</strong> ανεξάρτητη διέγερση από φορτίο, μεταβλητό φορτίο, σταθερή ταχύτητα, τρόποι αλλαγής φοράς.</li>
+    </ul>`;
+}
+
+function addChipEvents(chip){
+  chip.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",chip.id);});
+  chip.addEventListener("click",()=>{
+    if(selectedChip) selectedChip.classList.remove("selected");
+    selectedChip = chip;
+    chip.classList.add("selected");
+  });
+}
+
+function moveSelectedTo(targetContainer){
+  if(selectedChip && targetContainer && targetContainer !== selectedChip.parentElement){
+    targetContainer.appendChild(selectedChip);
+    selectedChip.classList.remove("selected");
+    selectedChip=null;
+  }
+}
+
+function setupDropZones(){
+  const bankList = document.getElementById("bank");
+  const bankBox = document.querySelector(".cardsBank");
+  const zones = document.querySelectorAll(".dropZone");
+
+  function enableTarget(targetElement, listElement){
+    targetElement.addEventListener("dragover", e => {
+      e.preventDefault();
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.add("over");
+    });
+
+    targetElement.addEventListener("dragleave", e => {
+      const z = targetElement.closest(".dropZone");
+      if(z && !z.contains(e.relatedTarget)) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("drop", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = e.dataTransfer.getData("text/plain");
+      const chip = document.getElementById(id);
+      if(chip) listElement.appendChild(chip);
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("click", e => {
+      // Αν πατήθηκε καρτέλα, αφήνουμε τη δική της λειτουργία επιλογής να δουλέψει.
+      if(e.target.classList && e.target.classList.contains("chip")) return;
+      moveSelectedTo(listElement);
+    });
+  }
+
+  // Τώρα η επιστροφή στις καρτέλες γίνεται από ολόκληρο το πλαίσιο «Καρτέλες».
+  enableTarget(bankBox, bankList);
+
+  // Τώρα η απόθεση γίνεται σε ολόκληρο το πλαίσιο κάθε κατηγορίας, όχι μόνο στη μικρή εσωτερική περιοχή.
+  zones.forEach(zone => {
+    const list = zone.querySelector(".chips");
+    enableTarget(zone, list);
+    enableTarget(list, list);
+  });
+}
+
+function checkDrag(){
+  let total=dragItems.length, score=0;
+  document.querySelectorAll(".chip").forEach(chip=>{
+    chip.classList.remove("good","miss");
+    const parentZone=chip.closest(".dropZone");
+    if(!parentZone){
+      chip.classList.add("miss");
+      return;
+    }
+    if(parentZone.dataset.zone === chip.dataset.correctZone){
+      chip.classList.add("good");
+      score++;
+    } else {
+      chip.classList.add("miss");
+    }
+  });
+  const res=document.getElementById("resultB");
+  res.style.display="block";
+  res.className="result " + (score>=12 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Β: ${score}/${total}`;
+}
+
+function resetDrag(){
+  renderDrag();
+}
+
+function renderPartC(){
+  const box=document.getElementById("scenarios");
+  box.innerHTML="";
+  scenarios.forEach((s,idx)=>{
+    const div=document.createElement("div");
+    div.className="scenario";
+    let html=`<p><strong>${s.q}</strong></p><div class="choices">`;
+    s.choices.forEach((c,cidx)=>{
+      html+=`<label><input type="radio" name="sc${idx}" value="${cidx}"> ${c}</label>`;
+    });
+    html+=`</div><div class="feedback" id="fb${idx}"></div>`;
+    div.innerHTML=html;
+    box.appendChild(div);
+  });
+  document.getElementById("keyC").innerHTML="<strong>Λύσεις Μέρους Γ:</strong><br>" + scenarios.map((s,i)=>`${i+1}. ${s.choices[s.correct]} — ${s.exp}`).join("<br>");
+}
+
+function checkPartC(){
+  let score=0;
+  scenarios.forEach((s,i)=>{
+    const inputs=document.querySelectorAll(`input[name="sc${i}"]`);
+    inputs.forEach(inp=>{
+      const lab=inp.closest("label");
+      lab.classList.remove("correctChoice","wrongChoice");
+      if(Number(inp.value)===s.correct) lab.classList.add("correctChoice");
+      if(inp.checked && Number(inp.value)!==s.correct) lab.classList.add("wrongChoice");
+    });
+    const checked=document.querySelector(`input[name="sc${i}"]:checked`);
+    const fb=document.getElementById("fb"+i);
+    fb.style.display="block";
+    if(checked && Number(checked.value)===s.correct){
+      score++;
+      fb.className="feedback ok";
+      fb.textContent="Σωστό! " + s.exp;
+    }else{
+      fb.className="feedback bad";
+      fb.textContent="Θέλει διόρθωση. " + s.exp;
+    }
+  });
+  const res=document.getElementById("resultC");
+  res.style.display="block";
+  res.className="result " + (score>=5 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Γ: ${score}/${scenarios.length}`;
+}
+
+function resetPartC(){
+  document.querySelectorAll("#scenarios input").forEach(i=>i.checked=false);
+  document.querySelectorAll("#scenarios label").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+  document.querySelectorAll(".feedback").forEach(f=>f.style.display="none");
+  document.getElementById("resultC").style.display="none";
+}
+
+function toggleKey(id){
+  const el=document.getElementById(id);
+  el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+renderPartA();
+renderDrag();
+setupDropZones();
+renderPartC();
+</script>
+</body>
+</html>
