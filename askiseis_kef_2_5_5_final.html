@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="el">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>7 Ασκήσεις Κεφ. 2.5.5 - Κινητήρες Σ.Ρ.</title>
+<style>
+    :root{
+      --blue:#1d4ed8;
+      --blue-dark:#123a82;
+      --light:#f3f7ff;
+      --green:#15803d;
+      --green-light:#eaf8ef;
+      --orange:#ea580c;
+      --orange-light:#fff7ed;
+      --border:#d7dce5;
+      --text:#1f2937;
+      --muted:#64748b;
+      --shadow:0 8px 22px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#eaf2ff,#ffffff);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#123a82,#2563eb);
+      color:#fff;
+      padding:30px 18px;
+      text-align:center;
+      box-shadow:var(--shadow);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.45rem,3vw,2.25rem)}
+    header p{margin:4px auto;max-width:950px;opacity:.95}
+    main{max-width:1080px;margin:24px auto;padding:0 16px 48px}
+    .intro,.exercise{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:18px 0;
+      box-shadow:var(--shadow);
+    }
+    .intro{
+      background:var(--light);
+      border-left:7px solid var(--blue);
+    }
+    h2{
+      margin:0 0 12px;
+      color:var(--blue-dark);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    h3{
+      color:#0f172a;
+      margin:18px 0 8px;
+    }
+    .tag{
+      display:inline-block;
+      background:#e0ecff;
+      color:#123a82;
+      border:1px solid #b8cffd;
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:.88rem;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .given{
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:12px 14px;
+      margin:12px 0;
+    }
+    .given strong{color:#0f172a}
+    ul{margin-top:6px}
+    .formula{
+      display:inline-block;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      padding:5px 9px;
+      font-family:"Segoe UI", Arial, sans-serif;
+      margin:2px 0;
+      font-weight:650;
+    }
+    .answer-space{
+      margin:14px 0 4px;
+      padding:12px 14px;
+      border:1px dashed #cbd5e1;
+      border-radius:14px;
+      color:var(--muted);
+      background:#fcfcfd;
+    }
+    button{
+      margin-top:14px;
+      border:0;
+      border-radius:12px;
+      padding:10px 16px;
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      color:#fff;
+      background:var(--blue);
+      box-shadow:0 4px 12px rgba(37,99,235,.22);
+    }
+    button:hover{filter:brightness(.96)}
+    button.hide{background:#475569;box-shadow:none}
+    .solution{
+      display:none;
+      margin-top:14px;
+      background:var(--green-light);
+      border:1px solid #9ae6b4;
+      border-left:7px solid var(--green);
+      border-radius:16px;
+      padding:16px;
+    }
+    .solution h3{
+      margin-top:0;
+      color:var(--green);
+    }
+    .final{
+      background:#fff;
+      border:1px solid #bbf7d0;
+      border-radius:12px;
+      padding:10px 12px;
+      margin-top:10px;
+      font-weight:800;
+      color:#166534;
+    }
+    .teacher-note{
+      margin-top:18px;
+      background:var(--orange-light);
+      border:1px solid #fed7aa;
+      border-left:7px solid var(--orange);
+      border-radius:16px;
+      padding:14px;
+    }
+    footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:.9rem;
+      padding:24px 10px 36px;
+    }
+    @media print{
+      body{background:#fff}
+      header, footer, button{display:none}
+      .intro,.exercise{box-shadow:none;break-inside:avoid}
+      .solution{display:block}
+    }
+  
+    /* Τυπογραφικά κλάσματα με οριζόντια κλασματική γραμμή, χωρίς εξωτερικές βιβλιοθήκες */
+    .formula{
+      display:inline-block; max-width:100%; overflow-x:auto;
+      vertical-align:middle; white-space:nowrap;
+      background:#f8fafc; border:1px solid #e2e8f0;
+      border-radius:10px; padding:9px 12px;
+      font-family:"Segoe UI", Arial, sans-serif;
+      font-weight:600; line-height:1.35;
+    }
+    .formula sub,.final sub,.given sub {font-size:.72em; line-height:0; vertical-align:sub}
+    .fraction{
+      display:inline-flex; flex-direction:column; vertical-align:middle;
+      align-items:stretch; text-align:center; white-space:nowrap;
+      margin:0 .16em; line-height:1.25;
+    }
+    .fraction > .numerator{
+      display:block; padding:0 .22em .11em;
+      border-bottom:1.7px solid currentColor;
+    }
+    .fraction > .denominator{display:block; padding:.11em .22em 0}
+    .math-inline {white-space:nowrap}
+    @media(max-width:500px){.formula{font-size:.93rem}}
+    @media print{.formula{overflow:visible;white-space:normal}}
+</style>
+</head>
+<body>
+<header>
+<h1>7 Ασκήσεις Κινητήρων Σ.Ρ. — Κεφ. 2.5.5</h1>
+<p>Οι μαθητές λύνουν πρώτα μόνοι τους κάθε άσκηση και μετά πατούν το κουμπί κάτω από την εκφώνηση για να εμφανιστεί η αναλυτική λύση.</p>
+</header>
+<main>
+<section class="intro">
+<h2>Οδηγίες</h2>
+<p>Τα δεδομένα έχουν επιλεγεί ώστε τα αποτελέσματα να βγαίνουν <strong>ακέραιοι αριθμοί</strong>. Οι ασκήσεις ακολουθούν τη λογική του κεφ. 2.5.5: ΑΗΕΔ, ρεύμα εκκίνησης, αντίσταση εκκινητή, ισχύς δρομέα, ροπή, μεταβολή στροφών και βαθμός απόδοσης. <strong>Συμβολισμοί:</strong> I<sub>εκ</sub> = ρεύμα εκκίνησης χωρίς εκκινητή, I<sub>εκ(επ)</sub> = επιτρεπόμενο ρεύμα εκκίνησης με εκκινητή.</p>
+<p><strong>Χρήσιμες σχέσεις:</strong>
+<span class="formula"><span class="math-inline">E<sub>α</sub> = U − I<sub>τ</sub> · R<sub>τ</sub></span></span>
+<span class="formula"><span class="math-inline">I<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">R<sub>τ</sub></span></span></span></span><span class="formula">R<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">I<sub>εκ(επ)</sub></span></span> − R<sub>τ</sub></span>
+<span class="formula"><span class="math-inline">P<sub>δρ</sub> = E<sub>α</sub> · I<sub>τ</sub></span></span>
+<span class="formula"><span class="math-inline">η = <span class="fraction"><span class="numerator">P<sub>ωφ</sub></span><span class="denominator">P<sub>εισ</sub></span></span></span></span>
+<span class="formula"><span class="math-inline">P = <span class="fraction"><span class="numerator">T · n</span><span class="denominator">9,55</span></span></span></span>
+</p>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 1 — Υπολογισμός ΑΗΕΔ</span>
+<h2>Εκφώνηση</h2>
+<p>Να βρεθεί η <strong>ΑΗΕΔ</strong> κινητήρα Σ.Ρ. τάσης <strong>U = 240 V</strong>, του οποίου το τύλιγμα του τυμπάνου διαρρέεται από ρεύμα <strong>Iτ = 50 A</strong> και έχει αντίσταση <strong>Rτ = 0,4 Ω</strong>.</p>
+<div class="answer-space">Χώρος λύσης μαθητή: Eα = .................... V</div>
+<button onclick="toggleSolution('sol1', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol1">
+<h3>Λύση</h3>
+<p>Χρησιμοποιούμε τη σχέση:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α</sub> = U − I<sub>τ</sub> · R<sub>τ</sub></span></span></p>
+<p>Άρα:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α</sub> = 240 − 50 · 0,4 = 240 − 20 = 220 V</span></span></p>
+<div class="final">Απάντηση: Eα = 220 V</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 2 — Ρεύμα εκκίνησης και αντίσταση εκκινητή</span>
+<h2>Εκφώνηση</h2>
+<p>Σε κινητήρα Σ.Ρ. δίνονται:</p>
+<div class="given">
+<strong>U = 240 V</strong>, <strong>Iτ = 60 A</strong>, <strong>Rτ = 1 Ω</strong>.
+    </div>
+<p>Να υπολογισθούν:</p>
+<ul>
+<li>α. Ποια θα ήταν η ένταση εκκίνησης αν δεν χρησιμοποιούσαμε εκκινητή;</li>
+<li>β. Ποια πρέπει να είναι η αντίσταση του εκκινητή, ώστε η ένταση εκκίνησης να μην υπερβαίνει το <strong>200%</strong> της έντασης πλήρους φορτίου;</li>
+</ul>
+<div class="answer-space">Χώρος λύσης μαθητή: Iεκ = ........ A, Iεκ(επ) = ........ A, Rεκ = ........ Ω</div>
+<button onclick="toggleSolution('sol2', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol2">
+<h3>Λύση</h3>
+<p><strong>α.</strong> Στην εκκίνηση η ΑΗΕΔ είναι μηδέν, άρα το ρεύμα περιορίζεται μόνο από την αντίσταση του τυμπάνου:</p>
+<p><span class="formula"><span class="math-inline">I<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">R<sub>τ</sub></span></span> = <span class="fraction"><span class="numerator">240</span><span class="denominator">1</span></span> = 240 A</span></span></p>
+<p><strong>β.</strong> Το επιτρεπόμενο ρεύμα εκκίνησης υπολογίζεται από το 200% του ρεύματος τυμπάνου που δίνεται στην εκφώνηση:</p>
+<p><span class="formula"><span class="math-inline">I<sub>εκ(επ)</sub> = 200% · I<sub>τ</sub> = 2 · 60 = 120 A</span></span></p>
+
+
+<p>Η αντίσταση του εκκινητή υπολογίζεται <strong>απευθείας</strong> από τον τύπο:</p>
+<p><span class="formula"><span class="math-inline">R<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">I<sub>εκ(επ)</sub></span></span> − R<sub>τ</sub> = <span class="fraction"><span class="numerator">240</span><span class="denominator">120</span></span> − 1 = 2 − 1 = 1 Ω</span></span></p>
+<div class="final">Απάντηση: Iεκ (χωρίς εκκινητή) = 240 A, Iεκ(επ) = 120 A, Rεκ = 1 Ω</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 3 — ΑΗΕΔ και ισχύς στον δρομέα</span>
+<h2>Εκφώνηση</h2>
+<p>Κινητήρας παράλληλης διέγερσης τροφοδοτείται με τάση <strong>U = 200 V</strong>. Το τύλιγμα του τυμπάνου έχει αντίσταση <strong>Rτ = 0,4 Ω</strong> και διαρρέεται από ρεύμα <strong>Iτ = 40 A</strong>.</p>
+<p>Να βρεθούν:</p>
+<ul>
+<li>α. Η ΑΗΕΔ του κινητήρα.</li>
+<li>β. Η ισχύς που αναπτύσσεται στον δρομέα σε <strong>W</strong> και σε <strong>HP</strong>.</li>
+</ul>
+<p>Δίνεται: <strong>1 HP = 736 W</strong>.</p>
+<div class="answer-space">Χώρος λύσης μαθητή: Eα = .................... V, Pδρ = .................... W = .................... HP</div>
+<button onclick="toggleSolution('sol3', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol3">
+<h3>Λύση</h3>
+<p><strong>α.</strong></p>
+<p><span class="formula"><span class="math-inline">E<sub>α</sub> = U − I<sub>τ</sub> · R<sub>τ</sub> = 200 − 40 · 0,4 = 200 − 16 = 184 V</span></span></p>
+<p><strong>β.</strong> Η ισχύς που αναπτύσσεται στον δρομέα είναι:</p>
+<p><span class="formula"><span class="math-inline">P<sub>δρ</sub> = E<sub>α</sub> · I<sub>τ</sub> = 184 · 40 = 7360 W</span></span></p>
+<p>Μετατροπή σε HP:</p>
+<p><span class="formula"><span class="math-inline">P<sub>δρ</sub> = <span class="fraction"><span class="numerator">7360</span><span class="denominator">736</span></span> = 10 HP</span></span></p>
+<div class="final">Απάντηση: Eα = 184 V, Pδρ = 7360 W = 10 HP</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 4 — Δύο περιπτώσεις φορτίου</span>
+<h2>Εκφώνηση</h2>
+<p>Κινητήρας παράλληλης διέγερσης τάσης <strong>U = 230 V</strong> έχει αντίσταση τυλίγματος τυμπάνου <strong>Rτ = 1,15 Ω</strong>.</p>
+<p>Για κανονικό φορτίο το ρεύμα τυμπάνου είναι <strong>Iτ1 = 40 A</strong>. Για αυξημένο φορτίο το ρεύμα τυμπάνου γίνεται <strong>Iτ2 = 80 A</strong>.</p>
+<p>Να βρεθούν:</p>
+<ul>
+<li>α. Η ΑΗΕΔ για <strong>Iτ1 = 40 A</strong>.</li>
+<li>β. Η ΑΗΕΔ για <strong>Iτ2 = 80 A</strong>.</li>
+<li>γ. Η ισχύς που αναπτύσσεται στον δρομέα σε <strong>W</strong> και σε <strong>HP</strong> για κάθε περίπτωση.</li>
+</ul>
+<p>Δίνεται: <strong>1 HP = 736 W</strong>.</p>
+<div class="answer-space">Χώρος λύσης μαθητή: Eα1 = ............ V, Eα2 = ............ V, P1 = ............ HP, P2 = ............ HP</div>
+<button onclick="toggleSolution('sol4', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol4">
+<h3>Λύση</h3>
+<p><strong>α.</strong> Για Iτ1 = 40 A:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α1</sub> = U − I<sub>τ1</sub> · R<sub>τ</sub> = 230 − 40 · 1,15 = 230 − 46 = 184 V</span></span></p>
+<p><strong>β.</strong> Για Iτ2 = 80 A:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α2</sub> = U − I<sub>τ2</sub> · R<sub>τ</sub> = 230 − 80 · 1,15 = 230 − 92 = 138 V</span></span></p>
+<p><strong>γ.</strong> Ισχύς στον δρομέα:</p>
+<p><span class="formula"><span class="math-inline">P<sub>1</sub> = E<sub>α1</sub> · I<sub>τ1</sub> = 184 · 40 = 7360 W</span></span></p>
+<p>Μετατροπή σε HP:</p>
+<p><span class="formula"><span class="math-inline">P<sub>1</sub> = <span class="fraction"><span class="numerator">7360</span><span class="denominator">736</span></span> = 10 HP</span></span></p>
+<p><span class="formula"><span class="math-inline">P<sub>2</sub> = E<sub>α2</sub> · I<sub>τ2</sub> = 138 · 80 = 11040 W</span></span></p>
+<p>Μετατροπή σε HP:</p>
+<p><span class="formula"><span class="math-inline">P<sub>2</sub> = <span class="fraction"><span class="numerator">11040</span><span class="denominator">736</span></span> = 15 HP</span></span></p>
+<div class="final">Απάντηση: Eα1 = 184 V, Eα2 = 138 V, P1 = 7360 W = 10 HP, P2 = 11040 W = 15 HP</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 5 — Κινητήρια ροπή κινητήρα Σ.Ρ.</span>
+<h2>Εκφώνηση</h2>
+<p>Τετραπολικός κινητήρας διέγερσης σειράς έχει:</p>
+<div class="given">
+<strong>P = 2</strong>, <strong>s·w = 314 αγωγοί</strong>, <strong>α = 1</strong>, <strong>Φ = 0,05 Vs</strong>, <strong>Iτ = 40 A</strong>.
+    </div>
+<p>Να βρεθεί η κινητήρια ροπή του κινητήρα.</p>
+<p>Δίνεται ο τύπος:</p>
+<p><span class="formula"><span class="math-inline">T = <span class="fraction"><span class="numerator">P · s · w</span><span class="denominator">2π · α</span></span> · Φ · I<sub>τ</sub></span></span></p>
+<p>Να χρησιμοποιηθεί <strong>π = 3,14</strong>.</p>
+<div class="answer-space">Χώρος λύσης μαθητή: T = .................... Nm</div>
+<button onclick="toggleSolution('sol5', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol5">
+<h3>Λύση</h3>
+<p>Αντικαθιστούμε στον τύπο:</p>
+<p><span class="formula"><span class="math-inline">T = <span class="fraction"><span class="numerator">2 · 314</span><span class="denominator">2 · 3,14 · 1</span></span> · 0,05 · 40</span></span></p>
+<p><span class="formula"><span class="math-inline">T = <span class="fraction"><span class="numerator">628</span><span class="denominator">6,28</span></span> · 2</span></span></p>
+<p><span class="formula"><span class="math-inline">T = 100 · 2 = 200 Nm</span></span></p>
+<div class="final">Απάντηση: T = 200 Nm</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 6 — Μεταβολή ΑΗΕΔ και στροφών</span>
+<h2>Εκφώνηση</h2>
+<p>Κινητήρας παράλληλης διέγερσης εργάζεται με τάση <strong>U = 240 V</strong> και ταχύτητα <strong>n1 = 1000 στρ/min</strong>.</p>
+<p>Το τύλιγμα του τυμπάνου έχει αντίσταση <strong>Rτ = 0,4 Ω</strong> και διαρρέεται αρχικά από ρεύμα <strong>Iτ1 = 100 A</strong>.</p>
+<p>Το μηχάνημα που κινείται από τον κινητήρα απαιτεί στη συνέχεια τη <strong>μισή ροπή</strong> από την αρχική.</p>
+<p>Να βρεθούν:</p>
+<ul>
+<li>α. Το νέο ρεύμα τυμπάνου <strong>Iτ2</strong>.</li>
+<li>β. Η αρχική ΑΗΕΔ <strong>Eα1</strong>.</li>
+<li>γ. Η νέα ΑΗΕΔ <strong>Eα2</strong>.</li>
+<li>δ. Η νέα ταχύτητα <strong>n2</strong>.</li>
+<li>ε. Η εκατοστιαία μεταβολή της ΑΗΕΔ και των στροφών.</li>
+</ul>
+<div class="answer-space">Χώρος λύσης μαθητή: Iτ2 = ............ A, Eα1 = ............ V, Eα2 = ............ V, n2 = ............ στρ/min</div>
+<button onclick="toggleSolution('sol6', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol6">
+<h3>Λύση</h3>
+<p>Σε κινητήρα παράλληλης διέγερσης θεωρούμε τη ροή Φ σταθερή. Επειδή η ροπή είναι ανάλογη του ρεύματος τυμπάνου, όταν η ροπή γίνεται μισή, γίνεται μισό και το ρεύμα τυμπάνου:</p>
+<p><span class="formula"><span class="math-inline">I<sub>τ2</sub> = <span class="fraction"><span class="numerator">I<sub>τ1</sub></span><span class="denominator">2</span></span> = <span class="fraction"><span class="numerator">100</span><span class="denominator">2</span></span> = 50 A</span></span></p>
+<p>Αρχική ΑΗΕΔ:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α1</sub> = U − I<sub>τ1</sub> · R<sub>τ</sub> = 240 − 100 · 0,4 = 240 − 40 = 200 V</span></span></p>
+<p>Νέα ΑΗΕΔ:</p>
+<p><span class="formula"><span class="math-inline">E<sub>α2</sub> = U − I<sub>τ2</sub> · R<sub>τ</sub> = 240 − 50 · 0,4 = 240 − 20 = 220 V</span></span></p>
+<p>Με σταθερή ροή, η ΑΗΕΔ είναι ανάλογη των στροφών:</p>
+<p><span class="formula"><span class="math-inline"><span class="fraction"><span class="numerator">E<sub>α2</sub></span><span class="denominator">E<sub>α1</sub></span></span> = <span class="fraction"><span class="numerator">n<sub>2</sub></span><span class="denominator">n<sub>1</sub></span></span></span></span></p>
+<p><span class="formula"><span class="math-inline">n<sub>2</sub> = n<sub>1</sub> · <span class="fraction"><span class="numerator">E<sub>α2</sub></span><span class="denominator">E<sub>α1</sub></span></span> = 1000 · <span class="fraction"><span class="numerator">220</span><span class="denominator">200</span></span> = 1100 στρ/min</span></span></p>
+<p>Ποσοστιαία μεταβολή:</p>
+<p><span class="formula"><span class="math-inline">ΔE<sub>%</sub> = <span class="fraction"><span class="numerator">220 − 200</span><span class="denominator">200</span></span> · 100 = 10%</span></span></p>
+<p><span class="formula"><span class="math-inline">Δn<sub>%</sub> = <span class="fraction"><span class="numerator">1100 − 1000</span><span class="denominator">1000</span></span> · 100 = 10%</span></span></p>
+<div class="final">Απάντηση: Iτ2 = 50 A, Eα1 = 200 V, Eα2 = 220 V, n2 = 1100 στρ/min, μεταβολή = 10%</div>
+</div>
+</section>
+<section class="exercise">
+<span class="tag">Άσκηση 7 — Εκκινητής, ροπή και ΑΗΕΔ</span>
+<h2>Εκφώνηση</h2>
+<p>Κινητήρας συνεχούς ρεύματος αποδίδει ισχύ <strong>Pωφ = 12 kW</strong> και έχει βαθμό απόδοσης <strong>η = 80%</strong>. Η τάση τροφοδοσίας είναι <strong>U = 300 V</strong> και η αντίσταση του τυλίγματος τυμπάνου είναι <strong>Rτ = 2 Ω</strong>.</p>
+<p>Με τη χρήση εκκινητή θέλουμε το <strong>επιτρεπόμενο ρεύμα εκκίνησης I<sub>εκ(επ)</sub></strong> να είναι <strong>2 φορές</strong> το ονομαστικό ρεύμα του κινητήρα. Η ταχύτητα του κινητήρα είναι <strong>n = 955 στρ/min</strong>.</p>
+<p>Να υπολογισθούν:</p>
+<ul><li>α. Το ονομαστικό ρεύμα Iον.</li><li>β. Το ρεύμα εκκίνησης χωρίς εκκινητή Iεκ.</li><li>γ. Το επιτρεπόμενο ρεύμα εκκίνησης Iεκ(επ), που είναι διπλάσιο του ονομαστικού.</li><li>δ. Η αντίσταση του εκκινητή Rεκ.</li><li>ε. Η ροπή στην έξοδο.</li><li>στ. Η ΑΗΕΔ του κινητήρα.</li></ul>
+<div class="answer-space">Χώρος λύσης: Iον = ........ A, Iεκ = ........ A, Iεκ(επ) = ........ A, Rεκ = ........ Ω, T = ........ Nm, Eα = ........ V</div>
+<button onclick="toggleSolution('sol7', this)">Εμφάνιση λύσης</button>
+<div class="solution" id="sol7">
+<h3>Λύση</h3>
+<p>Η αποδιδόμενη ισχύς είναι:</p>
+<p><span class="formula"><span class="math-inline">P<sub>ωφ</sub> = 12 kW = 12000 W</span></span></p>
+<p>Από τον βαθμό απόδοσης:</p>
+<p><span class="formula"><span class="math-inline">η = <span class="fraction"><span class="numerator">P<sub>ωφ</sub></span><span class="denominator">P<sub>εισ</sub></span></span> ⇒ P<sub>εισ</sub> = <span class="fraction"><span class="numerator">P<sub>ωφ</sub></span><span class="denominator">η</span></span> = <span class="fraction"><span class="numerator">12000</span><span class="denominator">0,8</span></span> = 15000 W</span></span></p>
+<p><strong>α.</strong> Ονομαστικό ρεύμα:</p>
+<p><span class="formula"><span class="math-inline">I<sub>ον</sub> = <span class="fraction"><span class="numerator">P<sub>εισ</sub></span><span class="denominator">U</span></span> = <span class="fraction"><span class="numerator">15000</span><span class="denominator">300</span></span> = 50 A</span></span></p>
+<p><strong>β.</strong> Ρεύμα εκκίνησης <strong>χωρίς εκκινητή</strong> (η ΑΗΕΔ στην εκκίνηση είναι μηδέν):</p>
+<p><span class="formula"><span class="math-inline">I<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">R<sub>τ</sub></span></span> = <span class="fraction"><span class="numerator">300</span><span class="denominator">2</span></span> = 150 A</span></span></p>
+<p><strong>γ.</strong> Επιτρεπόμενο ρεύμα εκκίνησης με εκκινητή:</p>
+<p><span class="formula"><span class="math-inline">I<sub>εκ(επ)</sub> = 2 · I<sub>ον</sub> = 2 · 50 = 100 A</span></span></p>
+<p><strong>δ.</strong> Αντίσταση εκκινητή, με χρήση του επιτρεπόμενου ρεύματος:</p>
+<p><span class="formula"><span class="math-inline">R<sub>εκ</sub> = <span class="fraction"><span class="numerator">U</span><span class="denominator">I<sub>εκ(επ)</sub></span></span> − R<sub>τ</sub> = <span class="fraction"><span class="numerator">300</span><span class="denominator">100</span></span> − 2 = 3 − 2 = 1 Ω</span></span></p>
+<p><strong>ε.</strong> Ροπή στην έξοδο:</p>
+<p><span class="formula"><span class="math-inline">P<sub>ωφ</sub> = <span class="fraction"><span class="numerator">T · n</span><span class="denominator">9,55</span></span> ⇒ T = <span class="fraction"><span class="numerator">9,55 · P<sub>ωφ</sub></span><span class="denominator">n</span></span></span></span></p>
+<p><span class="formula"><span class="math-inline">T = <span class="fraction"><span class="numerator">9,55 · 12000</span><span class="denominator">955</span></span> = 120 Nm</span></span></p>
+<p><strong>στ.</strong> ΑΗΕΔ κινητήρα (θεωρούμε I<sub>τ</sub> = I<sub>ον</sub> για τα δεδομένα της άσκησης):</p>
+<p><span class="formula"><span class="math-inline">E<sub>α</sub> = U − I<sub>τ</sub> · R<sub>τ</sub> = 300 − 50 · 2 = 300 − 100 = 200 V</span></span></p>
+<div class="final">Απάντηση: Iον = 50 A, Iεκ (χωρίς εκκινητή) = 150 A, Iεκ(επ) = 100 A, Rεκ = 1 Ω, T = 120 Nm, Eα = 200 V</div>
+</div>
+</section>
+<section class="intro">
+<h2>Σύντομος πίνακας αποτελεσμάτων για γρήγορο έλεγχο</h2>
+<ol>
+<li><strong>Eα = 220 V</strong></li>
+<li><strong>Iεκ = 240 A (χωρίς εκκινητή)</strong>, <strong>Iεκ(επ) = 120 A</strong>, <strong>Rεκ = 1 Ω</strong></li>
+<li><strong>Eα = 184 V</strong>, <strong>Pδρ = 7360 W = 10 HP</strong></li>
+<li><strong>Eα1 = 184 V</strong>, <strong>Eα2 = 138 V</strong>, <strong>P1 = 7360 W = 10 HP</strong>, <strong>P2 = 11040 W = 15 HP</strong></li>
+<li><strong>T = 200 Nm</strong></li>
+<li><strong>Iτ2 = 50 A</strong>, <strong>Eα1 = 200 V</strong>, <strong>Eα2 = 220 V</strong>, <strong>n2 = 1100 στρ/min</strong>, <strong>10%</strong></li>
+<li><strong>Iον = 50 A</strong>, <strong>Iεκ = 150 A (χωρίς εκκινητή)</strong>, <strong>Iεκ(επ) = 100 A</strong>, <strong>Rεκ = 1 Ω</strong>, <strong>T = 120 Nm</strong>, <strong>Eα = 200 V</strong></li>
+</ol>
+</section>
+</main>
+<footer>
+  Ασκήσεις Κεφ. 2.5.5 — Κινητήρες Συνεχούς Ρεύματος
+</footer>
+<script>
+  function toggleSolution(id, btn){
+    const sol = document.getElementById(id);
+    const isVisible = sol.style.display === "block";
+    sol.style.display = isVisible ? "none" : "block";
+    btn.textContent = isVisible ? "Εμφάνιση λύσης" : "Απόκρυψη λύσης";
+    btn.className = isVisible ? "" : "hide";
+  }
+</script>
+</body>
+</html>
