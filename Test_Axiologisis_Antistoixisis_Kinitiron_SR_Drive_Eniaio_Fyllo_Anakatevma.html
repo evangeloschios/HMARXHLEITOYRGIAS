@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Τεστ Αξιολόγησης — Αντιστοίχιση Τύπων Κινητήρων Σ.Ρ.</title>
+<style>
+:root{--navy:#132f4c;--blue:#206fa8;--teal:#087c73;--ink:#203c54;--muted:#5b7285;--bg:#f2f6fa;--line:#cfdfe9;--pale:#f1f9fd;--gold:#c79328}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(#edf4fa,var(--bg) 22rem);font:16px/1.48 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.wrap{max-width:1110px;margin:0 auto;padding:18px}.hero{background:linear-gradient(118deg,#112e4c,#216392 74%,#148078);border-radius:17px;padding:28px 30px;color:white;box-shadow:0 9px 26px #19334c22}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;font-weight:800;text-transform:uppercase;opacity:.9}.hero h1{font-size:clamp(1.65rem,3.4vw,2.5rem);line-height:1.2;margin:9px 0}.hero p{margin:8px 0;color:#e0eef7}.pills{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.pill{padding:5px 11px;border:1px solid #ffffff65;border-radius:40px;background:#ffffff1b;font-size:.84rem;font-weight:750}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:21px;margin:17px 0;box-shadow:0 4px 14px #17354a0b}.card h2{margin:0 0 10px;font-size:1.25rem;color:var(--navy)}
+.fields{display:grid;grid-template-columns:2fr 1.25fr 1fr;gap:13px}.field label{display:block;font-size:.87rem;font-weight:760;margin:0 0 5px}.field input{display:block;width:100%;font:inherit;color:var(--ink);padding:11px 12px;border-radius:9px;border:1px solid #b8cfdf;background:white}.field input:focus{outline:2px solid #7ab5de;outline-offset:1px}
+.instructions{margin:15px 0 0;background:#eff7fd;border:1px solid #d2e5f3;border-radius:10px;padding:12px 14px;font-size:.93rem}
+.progressbar{height:9px;background:#dce7ef;border-radius:50px;overflow:hidden;margin:11px 0 3px}.progressbar div{height:100%;width:0%;background:linear-gradient(90deg,#2376b4,#149284);transition:width .18s}.count{font-weight:800;font-size:.9rem}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 14px}.tab{border:1.5px solid #ccdae6;background:#fff;border-radius:11px;cursor:pointer;padding:11px 13px;text-align:left;font:inherit;font-size:.94rem;color:var(--navy);font-weight:750}.tab small{display:block;color:var(--muted);font-size:.78rem;margin-top:3px}.tab.active{background:#edf7ff;border-color:var(--blue);box-shadow:0 0 0 2px #d9ecfa}.tab:disabled{cursor:default;opacity:.9}
+.phase{display:none}.phase.active{display:block}.phase h2{margin:0 0 5px;font-size:1.35rem}.tiny{color:var(--muted);font-size:.91rem;margin:0 0 13px}.match-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:18px}.colhead{font-size:.84rem;font-weight:820;text-transform:uppercase;letter-spacing:.05em;color:#506a7c;margin:0 0 10px}
+.match-list{display:grid;gap:9px;align-content:start}.pair{width:100%;min-height:78px;border:1.4px solid #cfdce9;border-radius:10px;background:white;color:var(--ink);font:inherit;display:flex;gap:12px;align-items:center;padding:12px;cursor:pointer;text-align:left;box-shadow:0 2px 4px #15415c08;transition:background .1s,border-color .1s}.pair:focus-visible{outline:3px solid #75b4de;outline-offset:2px}.pair:hover:not(:disabled){border-color:#529ed0}.pair.selected{background:#fff7dd;border-color:#c1952f}.pair.paired{background:#f5faff;border-color:#a8cbe4}.pair:disabled{cursor:default;opacity:1}.pair .symbol{border-radius:8px;display:inline-flex;flex:0 0 34px;align-items:center;justify-content:center;height:34px;font-weight:850;background:#e8f1f9;color:#235c86}.symbol.right{background:#e4f3f1;color:#116e69}.formula{font-family:Cambria,"Cambria Math","Times New Roman",serif;font-size:clamp(1.09rem,1.45vw,1.28rem);font-weight:640}.formula sub{font-size:.66em;vertical-align:-.26em}.greek-eta{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.17em;font-weight:700}.desc{font-size:.99rem;font-weight:670}.choice{margin-left:auto;font-size:.89rem;font-weight:850;color:#37698c}.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.11;margin:0 .09em;font-size:.95em}.frac>span:first-child{border-bottom:1.6px solid currentColor;padding:0 .17em .10em}.frac>span:last-child{padding:.10em .17em 0}
+.controls{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px;margin:16px 0}.buttons{display:flex;flex-wrap:wrap;gap:10px}.btn{font:inherit;font-weight:800;padding:11px 16px;border:0;border-radius:10px;cursor:pointer}.btn:disabled{opacity:.42;cursor:not-allowed}.btn.primary{background:#dd782a;color:white}.btn.drive{background:var(--teal);color:white}.btn.secondary{background:#eaf1f7;border:1px solid #c5d7e4;color:var(--navy)}
+.result{display:none;background:#f2f8fd;border:1px solid #b7d7ef;border-top:4px solid var(--blue);border-radius:12px;padding:18px;margin-top:14px}.result.show{display:block}.bigscore{font-size:2.1rem;font-weight:900;color:var(--navy)}.status{font-size:.92rem;color:#4b6173;line-height:1.55;margin-top:12px;min-height:1em}.notice{background:#fff9e9;border:1px solid #ebd6a7;border-radius:10px;padding:11px 14px;font-size:.88rem;margin-top:13px}.footer{text-align:center;font-size:.82rem;color:#637b8d;padding:9px 0 25px}
+@media(max-width:700px){.wrap{padding:10px}.hero{padding:22px 18px}.card{padding:15px}.fields{grid-template-columns:1fr}.tabs{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr;gap:20px}.pair{min-height:60px}.controls{justify-content:center}.buttons{width:100%}.btn{flex:1}}
+@media print{body{background:white}.hero{background:white;color:#172f45;box-shadow:none;border:1px solid #555}.hero p{color:#333}.wrap{max-width:none}.tabs,.controls,.progressbar,.count,.status,.notice,.no-print,.instructions{display:none!important}.phase{display:block!important;break-after:page;margin-bottom:25px}.phase:last-of-type{break-after:auto}.pair{border:1px solid #999;box-shadow:none;min-height:54px;break-inside:avoid}.card{box-shadow:none;break-inside:avoid}}
+
+/* Ενιαίο φύλλο αξιολόγησης */
+.wrap{max-width:1050px;padding:14px}
+.hero{padding:17px 22px;border-radius:12px}
+.hero h1{font-size:1.55rem;margin:5px 0}
+.pills{margin-top:9px}
+.card{margin:12px 0;padding:16px 19px}
+.instructions{margin:12px 0 0}
+.progress-line{display:flex;gap:14px;align-items:center;margin-bottom:13px}
+.progressbar{flex:1;margin:0}
+.match-grid{gap:18px}
+.match-list{gap:6px}
+.pair{min-height:50px;padding:7px 9px;gap:10px;border-radius:8px}
+.pair .symbol{flex-basis:29px;height:29px}
+.formula{font-size:1.13rem}
+.desc{font-size:.95rem}
+.colhead{margin-bottom:7px}
+.small-notice{margin:11px 0 0;font-size:.83rem;color:var(--muted)}
+@media(max-width:700px){.progress-line{display:block}.progressbar{margin:9px 0}.match-grid{gap:16px}.pair{min-height:49px}.hero h1{font-size:1.35rem}}
+@page{size:A4 portrait;margin:8mm}
+@media print{
+ html,body{margin:0!important;padding:0!important;background:#fff!important;color:#111!important;font:10pt/1.2 Arial,sans-serif!important}
+ .wrap{max-width:none!important;margin:0!important;padding:0!important}
+ .hero{border:0!important;border-radius:0!important;padding:0 0 5mm!important;box-shadow:none!important;color:#111!important;background:none!important}
+ .hero .eyebrow{font-size:8pt!important}
+ .hero h1{font-size:15pt!important;margin:2mm 0 0!important}
+ .hero .pills,.instructions,.progress-line,.controls,.result,.status,.small-notice{display:none!important}
+ .identity,.exam-sheet{border:0!important;box-shadow:none!important;border-radius:0!important;margin:0!important;padding:0!important;break-inside:auto!important}
+ .identity{margin-bottom:4mm!important}
+ .fields{display:grid!important;grid-template-columns:2fr 1.25fr 1fr!important;gap:4mm!important}
+ .field label{font-size:8pt!important;margin:0!important}
+ .field input{font-size:9pt!important;padding:1.5mm!important;min-height:8mm!important;border:1px solid #aaa!important}
+ .match-grid{display:grid!important;grid-template-columns:1.05fr .95fr!important;gap:4mm!important}
+ .colhead{font-size:8pt!important;margin:0 0 1.5mm!important}
+ .match-list{gap:1.4mm!important}
+ .pair{min-height:0!important;height:13.8mm!important;padding:1.5mm 1.8mm!important;border:1px solid #aaa!important;border-radius:1.5mm!important;box-shadow:none!important;break-inside:avoid!important}
+ .pair .symbol{flex:0 0 6mm!important;height:6mm!important;border-radius:1mm!important;font-size:9pt!important}
+ .formula{font-size:11pt!important}
+ .desc{font-size:9.2pt!important}
+ .choice{font-size:9pt!important}
+ .frac{font-size:.91em!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero"><div class="eyebrow">Γ΄ ΕΠΑ.Λ. · Ηλεκτρικές Μηχανές · Κεφάλαιο 2.5</div>
+<h1>Τεστ αξιολόγησης — Αντιστοίχιση τύπων</h1>
+<div class="pills"><span class="pill">12 αντιστοιχίσεις</span><span class="pill">Βαθμός /20</span><span class="pill">Υποβολή στο Google Drive</span></div></header>
+<section class="card identity">
+<div class="fields"><div class="field"><label for="studentName">Ονοματεπώνυμο *</label><input id="studentName" maxlength="90" placeholder="Ονοματεπώνυμο" autocomplete="name" required></div>
+<div class="field"><label for="studentClass">Τμήμα *</label><input id="studentClass" maxlength="55" value="Γ΄ Ηλεκτρολόγων" required></div>
+<div class="field"><label for="testDate">Ημερομηνία *</label><input id="testDate" type="date" required></div></div>
+<p class="instructions"><strong>Οδηγίες:</strong> Πάτησε έναν αριθμημένο τύπο και στη συνέχεια το αντίστοιχο ηλεκτρολογικό μέγεθος. Κάθε μέγεθος χρησιμοποιείται μία φορά. Μετά τη συμπλήρωση και των 12, πάτησε «Οριστικός έλεγχος» και κατόπιν «Υποβολή στο Drive».</p>
+</section>
+<section class="card exam-sheet">
+<div class="progress-line"><span class="count" id="progressLabel" role="status">0 / 12 απαντημένες</span><div class="progressbar"><div id="progressFill"></div></div></div>
+<div id="phases"></div>
+<div class="controls"><button class="btn primary" id="gradeBtn" type="button">✓ Οριστικός έλεγχος</button><button class="btn drive" id="submitBtn" type="button" disabled>Υποβολή στο Drive</button></div>
+<div class="result" id="resultBox" aria-live="polite"></div><div class="status" id="submitStatus" aria-live="polite"></div>
+<p class="small-notice no-print">Η υποβολή ανοίγει νέα καρτέλα. Η αποθήκευση επιβεβαιώνεται μόνο με το μήνυμα «OK: Η υποβολή αποθηκεύτηκε στο Google Drive.»</p>
+</section>
+</div>
+<script>
+(()=>{'use strict';
+const WEB_APP_URL='https://script.google.com/macros/s/AKfycbyEBwNbDyROChNcUKfHZUZ7FlS8iZNV2xgNpjdDaADGEoeWPYqun2qPZ8xuN_bqsMZ8/exec';
+const QUIZ_CODE='HM_G_KINITIRES_SR_2_5_1_2_5_4_ANTISTOIXISI_TYPON_2026';
+const QUIZ_TITLE='Τεστ Αξιολόγησης — Αντιστοίχιση Τύπων Κινητήρων Σ.Ρ. (Ηλεκτρικές Μηχανές Γ΄ ΕΠΑ.Λ., 2.5.1–2.5.4)';
+const ITEMS=[{"id":"f1","no":1,"eq":"F = B · ℓ · I · ημ(α)","label":"Δύναμη Laplace"},{"id":"f2","no":2,"eq":"U = E<sub>α</sub> + I<sub>τ</sub> · R<sub>τ</sub>","label":"Τάση τροφοδοσίας"},{"id":"f3","no":3,"eq":"I<sub>τ</sub> = <span class=\"frac\"><span>U − E<sub>α</sub></span><span>R<sub>τ</sub></span></span>","label":"Ρεύμα τυμπάνου"},{"id":"f4","no":4,"eq":"E<sub>α</sub> = κ · Φ · n","label":"Αντιηλεκτρεγερτική δύναμη"},{"id":"f7","no":5,"eq":"I<sub>εκ</sub> = <span class=\"frac\"><span>U</span><span>R<sub>τ</sub></span></span>","label":"Ρεύμα εκκίνησης χωρίς εκκινητή"},{"id":"f9","no":6,"eq":"T = <span class=\"frac\"><span>p · s · w</span><span>2π · α</span></span> · Φ · I<sub>τ</sub>","label":"Ροπή στρέψης"},{"id":"f12","no":7,"eq":"n = <span class=\"frac\"><span>U − I<sub>τ</sub> · R<sub>τ</sub></span><span>κ · Φ</span></span>","label":"Ταχύτητα περιστροφής"},{"id":"f13","no":8,"eq":"P<sub>1</sub> = U · I","label":"Απορροφούμενη ισχύς"},{"id":"f14","no":9,"eq":"P = <span class=\"frac\"><span>T<sub>α</sub> · n</span><span>9,55</span></span>","label":"Μηχανική ισχύς"},{"id":"f15","no":10,"eq":"P<sub>δρ</sub> = E<sub>α</sub> · I<sub>τ</sub>","label":"Ισχύς στο δρομέα"},{"id":"f16","no":11,"eq":"P<sub>απ</sub> = P<sub>1</sub> − P","label":"Απώλειες ισχύος"},{"id":"f17","no":12,"eq":"<span class=\"greek-eta\" lang=\"el\" aria-label=\"ελληνικό ήτα\">η</span> = <span class=\"frac\"><span>P</span><span>P<sub>1</sub></span></span>","label":"Βαθμός απόδοσης"}];
+const N=ITEMS.length,LETTER=['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ'];
+const STORAGE_KEY=QUIZ_CODE+'_single_sheet_shuffled_v2';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+function shuffle(array){let out=[...array];for(let i=out.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;}
+let saved={};try{saved=JSON.parse(sessionStorage.getItem(STORAGE_KEY)||'{}');}catch(_){saved={};}
+// Κάθε νέο άνοιγμα μη ολοκληρωμένου τεστ ανακατεύει ΧΩΡΙΣ ΣΥΝΔΕΣΗ τις δύο στήλες.
+// Οι απαντήσεις αποθηκεύονται με σταθερά IDs τύπων/μεγεθών, όχι με θέσεις ή γράμματα.
+const allIds=ITEMS.map(x=>x.id);
+function validOrder(order){return Array.isArray(order)&&order.length===N&&new Set(order).size===N&&order.every(id=>allIds.includes(id));}
+function newOrder(previous){let next=shuffle(allIds);while(validOrder(previous)&&next.every((id,i)=>id===previous[i]))next=shuffle(allIds);return next;}
+if(!validOrder(saved.formulaOrder)||!validOrder(saved.order)){
+ saved={matches:{},graded:false,submissionId:'',submissionAttempts:0};
+}
+if(!saved.graded){
+ saved.formulaOrder=newOrder(saved.formulaOrder); // αριστερή στήλη: Τύποι
+ saved.order=newOrder(saved.order);              // δεξιά στήλη: Μεγέθη
+}
+if(!saved.sessionSeed){let token='';try{token=Array.from(crypto.getRandomValues(new Uint32Array(3))).map(x=>x.toString(16)).join('-');}catch(_){token=Date.now()+'-'+Math.random();}saved.sessionSeed=token;}
+function store(){try{sessionStorage.setItem(STORAGE_KEY,JSON.stringify(saved));}catch(_){}}
+store();
+const state={selected:null,matches:saved.matches||{},graded:!!saved.graded};
+let resultDetails=saved.details||[],rawScore=Number(saved.rawScore)||0,grade20=Number(saved.grade20)||0,percent=Number(saved.percent)||0,submissionAttempts=Number(saved.submissionAttempts)||0;
+function ownerFor(id){return Object.keys(state.matches).find(k=>state.matches[k]===id);}
+function chooseFormula(id){if(state.graded)return;state.selected=id;render();}
+function chooseMeaning(id){if(state.graded||!state.selected)return;
+ const former=ownerFor(id);if(former)delete state.matches[former];state.matches[state.selected]=id;state.selected=null;saved.matches=state.matches;store();render();}
+function render(){const root=$('phases');root.innerHTML='';
+ const grid=document.createElement('div');grid.className='match-grid';const left=document.createElement('div'),right=document.createElement('div');
+ left.innerHTML='<p class="colhead">Τύποι</p>';right.innerHTML='<p class="colhead">Ηλεκτρολογικά μεγέθη</p>';
+ const ll=document.createElement('div'),rr=document.createElement('div');ll.className=rr.className='match-list';
+ saved.formulaOrder.forEach((id,idx)=>{const item=ITEMS.find(x=>x.id===id),shownNo=idx+1,choice=state.matches[id],b=document.createElement('button');b.type='button';b.disabled=state.graded;b.className='pair'+(state.selected===id?' selected':'')+(choice?' paired':'');b.setAttribute('aria-label','Τύπος '+shownNo);
+ const letter=choice?LETTER[saved.order.indexOf(choice)]:'—';b.innerHTML='<span class="symbol">'+shownNo+'</span><span class="formula">'+item.eq+'</span><span class="choice">'+letter+'</span>';b.onclick=()=>chooseFormula(id);ll.appendChild(b);});
+ saved.order.forEach((id,idx)=>{const item=ITEMS.find(x=>x.id===id),owner=ownerFor(id),b=document.createElement('button');b.type='button';b.disabled=state.graded;b.className='pair'+(owner?' paired':'');b.innerHTML='<span class="symbol right">'+LETTER[idx]+'</span><span class="desc">'+esc(item.label)+'</span>';b.onclick=()=>chooseMeaning(id);rr.appendChild(b);});
+ left.appendChild(ll);right.appendChild(rr);grid.appendChild(left);grid.appendChild(right);root.appendChild(grid);
+ const done=Object.keys(state.matches).length;$('progressLabel').textContent=done+' / '+N+' απαντημένες'+(state.selected&&!state.graded?' · Επίλεξε μέγεθος δεξιά':'');$('progressFill').style.width=100*done/N+'%';}
+function validMeta(){if(!$('studentName').value.trim()||!$('studentClass').value.trim()||!$('testDate').value){alert('Συμπλήρωσε ονοματεπώνυμο, τμήμα και ημερομηνία.');return false;}return true;}
+function grade(){if(state.graded||!validMeta())return;const missing=ITEMS.filter(x=>!state.matches[x.id]);if(missing.length){state.selected=null;render();alert('Απομένουν '+missing.length+' αντιστοιχίσεις. Συμπλήρωσέ τες πριν από τον οριστικό έλεγχο.');$('phases').scrollIntoView({behavior:'smooth',block:'start'});return;}
+ if(!confirm('Ο οριστικός έλεγχος θα κλειδώσει όλες τις αντιστοιχίσεις. Να προχωρήσουμε;'))return;
+ resultDetails=saved.formulaOrder.map((id,idx)=>{const x=ITEMS.find(item=>item.id===id),chosen=ITEMS.find(y=>y.id===state.matches[id]);return {no:idx+1,id:x.id,formula:x.eq,answer:chosen?chosen.label:'',correct:x.label,ok:state.matches[id]===id};});
+ rawScore=resultDetails.filter(x=>x.ok).length;grade20=Math.round(rawScore*20/N*100)/100;percent=Math.round(rawScore*100/N*100)/100;
+ state.graded=true;state.selected=null;saved.graded=true;saved.details=resultDetails;saved.rawScore=rawScore;saved.grade20=grade20;saved.percent=percent;saved.studentName=$('studentName').value.trim();saved.studentClass=$('studentClass').value.trim();saved.testDate=$('testDate').value;store();applyGraded();$('resultBox').scrollIntoView({behavior:'smooth',block:'center'});}
+function format(num){return Number(num).toLocaleString('el-GR',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function applyGraded(){state.graded=true;for(const id of ['studentName','studentClass','testDate'])$(id).disabled=true;$('gradeBtn').disabled=true;$('submitBtn').disabled=false;
+ render();$('resultBox').classList.add('show');$('resultBox').innerHTML='<h2>Οριστικό αποτέλεσμα</h2><div class="bigscore">'+format(grade20)+' / 20</div><p>Σωστές αντιστοιχίσεις: <strong>'+rawScore+' / '+N+'</strong> · Ποσοστό: <strong>'+format(percent)+'%</strong></p><p>Το τεστ κλειδώθηκε. Για να ολοκληρωθεί, πάτησε <strong>Υποβολή στο Drive</strong>.</p>';
+ $('submitStatus').innerHTML='Η βαθμολόγηση ολοκληρώθηκε. <strong>Η αποθήκευση στο Drive δεν έχει ακόμη επιβεβαιωθεί.</strong>';}
+function reportHtml(){const rows=resultDetails.map(r=>'<tr><td>'+r.no+'</td><td class="formula">'+r.formula+'</td><td>'+esc(r.answer)+'</td><td>'+esc(r.correct)+'</td><td class="'+(r.ok?'ok':'bad')+'">'+(r.ok?'Σωστό':'Λάθος')+'</td></tr>').join('');
+ return '<!doctype html><html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(QUIZ_TITLE)+'</title><style>body{font:15px/1.5 Arial,sans-serif;color:#203c54;padding:24px}h1{font-size:24px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #b8cddb;text-align:left;vertical-align:middle;padding:9px;font-size:13px}th{background:#e9f3fa}.score{font-size:26px;font-weight:800}.ok{color:#116b47}.bad{color:#a83737}.formula{font:18px Cambria,"Times New Roman",serif}.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.1}.frac>span:first-child{border-bottom:1.5px solid;padding:0 3px 2px}.frac>span:last-child{padding:2px 3px 0}@media print{tr{break-inside:avoid}}</style></head><body><h1>'+esc(QUIZ_TITLE)+'</h1><p><strong>Μαθητής:</strong> '+esc(saved.studentName)+'<br><strong>Τμήμα:</strong> '+esc(saved.studentClass)+'<br><strong>Ημερομηνία:</strong> '+esc(saved.testDate)+'</p><p class="score">Βαθμός: '+format(grade20)+' / 20</p><p>Σωστές αντιστοιχίσεις: '+rawScore+' / '+N+' · Ποσοστό: '+format(percent)+'%</p><table><thead><tr><th>Α/Α</th><th>Τύπος</th><th>Απάντηση μαθητή</th><th>Σωστό μέγεθος</th><th>Αποτέλεσμα</th></tr></thead><tbody>'+rows+'</tbody></table><p>Αυτόματο αρχείο αποτελεσμάτων τεστ.</p></body></html>';}
+function hidden(form,k,v){const field=document.createElement('input');field.type='hidden';field.name=k;field.value=String(v);form.appendChild(field);}
+function submitToDrive(){if(!state.graded)return;const status=$('submitStatus');if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec\/?$/.test(WEB_APP_URL)){status.textContent='Λανθασμένη διεύθυνση Apps Script.';return;}
+ if(submissionAttempts>0&&!confirm('Επανάληψη υποβολής; Αν η προηγούμενη πέτυχε, ίσως δημιουργηθεί δεύτερο αρχείο.'))return;
+ const target='driveResult_'+Date.now(),popup=window.open('',target);if(!popup){status.textContent='Επίτρεψε τα αναδυόμενα παράθυρα και ξαναπροσπάθησε.';return;}
+ try{popup.document.open();popup.document.write('<!doctype html><html lang="el"><meta charset="utf-8"><title>Υποβολή στο Drive</title><body style="font:16px Arial,sans-serif;padding:24px"><h2>Υποβολή αποτελέσματος...</h2><p>Η αποθήκευση επιβεβαιώνεται μόνο με μήνυμα OK από το Google Apps Script.</p></body></html>');popup.document.close();
+ const form=document.createElement('form');form.method='POST';form.action=WEB_APP_URL;form.target=target;form.acceptCharset='UTF-8';form.style.display='none';
+ const name=saved.studentName,cls=saved.studentClass,date=saved.testDate,html=reportHtml();if(!saved.submissionId){saved.submissionId=QUIZ_CODE+'_'+Date.now()+'_'+String(saved.sessionSeed).slice(0,12);store();}
+ const data={quizCode:QUIZ_CODE,quizTitle:QUIZ_TITLE,name,studentName:name,class:cls,section:cls,classSection:cls,date,testDate:date,score:String(grade20),total:'20',score20:String(grade20),grade20:String(grade20),percentage:String(percent),percent:String(percent),rawScore:String(rawScore),rawTotal:String(N),answers:JSON.stringify(resultDetails),html,htmlContent:html,submissionId:saved.submissionId,userAgent:navigator.userAgent};
+ Object.entries(data).forEach(([k,v])=>hidden(form,k,v));document.body.appendChild(form);form.submit();form.remove();submissionAttempts++;saved.submissionAttempts=submissionAttempts;store();
+ status.innerHTML='Η αποστολή <strong>ξεκίνησε</strong>. Έλεγξε τη νέα καρτέλα. <strong>Μόνο το μήνυμα OK επιβεβαιώνει την αποθήκευση.</strong>';$('submitBtn').textContent='Επανάληψη υποβολής (σε περίπτωση σφάλματος)';
+ }catch(err){status.textContent='Αποτυχία έναρξης υποβολής: '+err.message;try{popup.close();}catch(_){}}}
+const now=new Date(),local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$('studentName').value=saved.studentName||'';$('studentClass').value=saved.studentClass||'Γ΄ Ηλεκτρολόγων';$('testDate').value=saved.testDate||local;
+for(const id of ['studentName','studentClass','testDate'])$(id).addEventListener('input',()=>{if(state.graded)return;saved[id]=$(id).value;store();});
+$('gradeBtn').onclick=grade;$('submitBtn').onclick=submitToDrive;
+render();if(state.graded)applyGraded();
+})();
+</script></body></html>
